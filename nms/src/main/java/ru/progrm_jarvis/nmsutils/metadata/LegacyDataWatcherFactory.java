@@ -1,4 +1,4 @@
-package ru.progrm_jarvis.nmsutils.datawatcher;
+package ru.progrm_jarvis.nmsutils.metadata;
 
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.BlockPosition;
@@ -76,7 +76,7 @@ public class LegacyDataWatcherFactory implements DataWatcherFactory {
     }
 
     @Override
-    public WrappedWatchableObject createWatchable(final int id, final Optional<BlockPosition> value) {
+    public WrappedWatchableObject createWatchableOptionalBlockPosition(final int id, final Optional<BlockPosition> value) {
         return new WrappedWatchableObject(id, value);
     }
 
@@ -96,7 +96,7 @@ public class LegacyDataWatcherFactory implements DataWatcherFactory {
     }
 
     @Override
-    public WrappedWatchableObject createWatchable(final int id, final Object value) {
+    public WrappedWatchableObject createWatchableObject(final int id, final Object value) {
         return new WrappedWatchableObject(id, value);
     }
 
@@ -199,7 +199,7 @@ public class LegacyDataWatcherFactory implements DataWatcherFactory {
         }
 
         @Override
-        public DataWatcherModifier set(final int id, final Optional<BlockPosition> value) {
+        public DataWatcherModifier setOptionalBlockPosition(final int id, final Optional<BlockPosition> value) {
             dataWatcher.setObject(id, value);
 
             return this;
@@ -220,15 +220,15 @@ public class LegacyDataWatcherFactory implements DataWatcherFactory {
         }
 
         @Override
-        public DataWatcherModifier setOptionalUUID(final int id, final Object value) {
+        public DataWatcherModifier setOptionalUUID(final int id, final Optional<UUID> value) {
             dataWatcher.setObject(id, value);
 
             return this;
         }
 
-        // should be used if and only if none of default #set(id, value) methods don't provide type given
+        // should be used if and only if none of default #setOptionalBlockPosition(id, value) methods don't provide type given
         @Override
-        public DataWatcherModifier set(final int id, final Object value) {
+        public DataWatcherModifier setObject(final int id, final Object value) {
             dataWatcher.setObject(id, value);
 
             return this;

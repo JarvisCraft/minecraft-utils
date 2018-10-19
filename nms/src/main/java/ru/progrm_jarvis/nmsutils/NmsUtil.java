@@ -7,9 +7,9 @@ import lombok.Value;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.bukkit.Bukkit;
-import ru.progrm_jarvis.nmsutils.datawatcher.DataWatcherFactory;
-import ru.progrm_jarvis.nmsutils.datawatcher.LatestDataWatcherFactory;
-import ru.progrm_jarvis.nmsutils.datawatcher.LegacyDataWatcherFactory;
+import ru.progrm_jarvis.nmsutils.metadata.DataWatcherFactory;
+import ru.progrm_jarvis.nmsutils.metadata.LatestDataWatcherFactory;
+import ru.progrm_jarvis.nmsutils.metadata.LegacyDataWatcherFactory;
 import ru.progrm_jarvis.reflector.wrapper.FieldWrapper;
 import ru.progrm_jarvis.reflector.wrapper.fast.FastFieldWrapper;
 

@@ -1,4 +1,4 @@
-package ru.progrm_jarvis.nmsutils.datawatcher;
+package ru.progrm_jarvis.nmsutils.metadata;
 
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
@@ -92,7 +92,7 @@ public class LatestDataWatcherFactory implements DataWatcherFactory {
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // #createWatchable(id, value)
+    // #createWatchableObject(id, value)
     ///////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -146,7 +146,7 @@ public class LatestDataWatcherFactory implements DataWatcherFactory {
     }
 
     @Override
-    public WrappedWatchableObject createWatchable(final int id, final Optional<BlockPosition> value) {
+    public WrappedWatchableObject createWatchableOptionalBlockPosition(final int id, final Optional<BlockPosition> value) {
         return new WrappedWatchableObject(watcherObjectOptionalBlockPosition(id), value);
     }
 
@@ -166,7 +166,7 @@ public class LatestDataWatcherFactory implements DataWatcherFactory {
     }
 
     @Override
-    public WrappedWatchableObject createWatchable(final int id, final Object value) {
+    public WrappedWatchableObject createWatchableObject(final int id, final Object value) {
         return new WrappedWatchableObject(watcherObjectObject(id), value);
     }
 
@@ -266,7 +266,7 @@ public class LatestDataWatcherFactory implements DataWatcherFactory {
         }
 
         @Override
-        public DataWatcherModifier set(final int id, final Optional<BlockPosition> value) {
+        public DataWatcherModifier setOptionalBlockPosition(final int id, final Optional<BlockPosition> value) {
             dataWatcher.setObject(watcherObjectOptionalBlockPosition(id), value);
 
             return this;
@@ -280,7 +280,7 @@ public class LatestDataWatcherFactory implements DataWatcherFactory {
         }
 
         @Override
-        public DataWatcherModifier setOptionalUUID(final int id, final Object value) {
+        public DataWatcherModifier setOptionalUUID(final int id, final Optional<UUID> value) {
             dataWatcher.setObject(watcherObjectOptionalUUID(id), value);
 
             return this;
@@ -294,7 +294,7 @@ public class LatestDataWatcherFactory implements DataWatcherFactory {
         }
 
         @Override
-        public DataWatcherModifier set(final int id, final Object value) {
+        public DataWatcherModifier setObject(final int id, final Object value) {
             dataWatcher.setObject(watcherObjectObject(id), value);
 
             return this;
