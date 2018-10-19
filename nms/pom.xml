@@ -7,10 +7,10 @@
         <groupId>ru.progrm-jarvis</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+    <artifactId>nms-utils</artifactId>
+    <version>${version.nms-utils}</version>
 
     <packaging>jar</packaging>
-
-    <artifactId>nms-utils</artifactId>
 
     <dependencies>
         <dependency>
