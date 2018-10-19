@@ -13,7 +13,6 @@ import ru.progrm_jarvis.nmsutils.datawatcher.LegacyDataWatcherFactory;
 import ru.progrm_jarvis.reflector.wrapper.FieldWrapper;
 import ru.progrm_jarvis.reflector.wrapper.fast.FastFieldWrapper;
 
-import static lombok.AccessLevel.NONE;
 import static ru.progrm_jarvis.reflector.Reflector.classForName;
 import static ru.progrm_jarvis.reflector.Reflector.getDeclaredField;
 
@@ -116,7 +115,7 @@ public class NmsUtil {
      * Version of a server.
      */
     @Value
-    @RequiredArgsConstructor(access = NONE)
+    @RequiredArgsConstructor
     public static final class NmsVersion {
 
         /**
@@ -135,8 +134,7 @@ public class NmsUtil {
          * @param name name of a version
          */
         private NmsVersion(@NonNull final String name) {
-            this.name = name;
-            generation = Short.parseShort(name.substring(3, name.indexOf('_', 4)));
+            this(name, Short.parseShort(name.substring(3, name.indexOf('_', 4))));
         }
 
         /**
