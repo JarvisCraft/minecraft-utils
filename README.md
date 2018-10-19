@@ -1,2 +1,2 @@
-# spigot-utils
-A big utility pack for various minecraft Spigot-powered servers
+# minecraft-utils
+A big utility pack for various Minecraft things
