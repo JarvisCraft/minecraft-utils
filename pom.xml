@@ -13,9 +13,9 @@
     </modules>
     <packaging>pom</packaging>
 
-    <name>QMissiles</name>
+    <name>Minecraft Utils</name>
 
-    <description>Missiles for QuestCraft Minecraft server</description>
+    <description>An utility class for various minecraft-related developer features</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
