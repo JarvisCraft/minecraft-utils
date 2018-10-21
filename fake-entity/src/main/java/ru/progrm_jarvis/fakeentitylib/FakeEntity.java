@@ -3,10 +3,11 @@ package ru.progrm_jarvis.fakeentitylib;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import ru.progrm_jarvis.playerutils.collection.PlayerContainer;
 
 import java.util.Collection;
 
-public interface FakeEntity {
+public interface FakeEntity extends PlayerContainer {
 
     /**
      * Gets the world of this fake entity.
@@ -23,5 +24,10 @@ public interface FakeEntity {
      */
     Location getLocation();
 
+    /**
+     * Gets the players associated with this fake entity.
+     *
+     * @return all players associated with this entity
+     */
     Collection<Player> getPlayers();
 }

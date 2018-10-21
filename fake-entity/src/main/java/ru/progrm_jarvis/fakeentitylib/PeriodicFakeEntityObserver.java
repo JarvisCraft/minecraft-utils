@@ -122,20 +122,6 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implemen
         for (val task : runnables) task.cancel();
     }
 
-    private void redraw(final ObservableFakeEntity entity) {
-        val world = entity.getWorld();
-        val location = entity.getLocation();
-
-        for (val player : entity.getPlayers()) {
-            val distance = entity.getLocation().distance(location);
-            if (entity.isRendered(player)) {
-                if (world != player.getWorld() || player.getEyeLocation().distance(location) > maxDistance) entity
-                        .unrender(player);
-            } else if (world == player.getWorld() && player.getEyeLocation().distance(location) <= maxDistance) entity
-                    .render(player);
-        }
-    }
-
     protected class RedrawEntitiesRunnable extends BukkitRunnable {
 
         protected final Collection<ObservableFakeEntity> entities = new HashSet<>();
@@ -167,7 +153,7 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implemen
         public void run() {
             lock.readLock().lock();
             try {
-                for (val entity : entities) redraw(entity);
+                for (val entity : entities) entity.attemptRerenderForAll();
             } finally {
                 lock.readLock().unlock();
             }
