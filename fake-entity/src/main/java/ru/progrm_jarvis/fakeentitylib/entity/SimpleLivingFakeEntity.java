@@ -1,4 +1,4 @@
-package ru.progrm_jarvis.fakeentitylib;
+package ru.progrm_jarvis.fakeentitylib.entity;
 
 import com.comphenix.packetwrapper.*;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;

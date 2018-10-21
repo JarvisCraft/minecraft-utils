@@ -1,4 +1,4 @@
-package ru.progrm_jarvis.fakeentitylib;
+package ru.progrm_jarvis.fakeentitylib.entity;
 
 import org.bukkit.Location;
 import org.bukkit.World;

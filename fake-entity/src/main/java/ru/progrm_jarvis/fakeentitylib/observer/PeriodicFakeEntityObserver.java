@@ -1,4 +1,4 @@
-package ru.progrm_jarvis.fakeentitylib;
+package ru.progrm_jarvis.fakeentitylib.observer;
 
 import com.google.common.base.Preconditions;
 import lombok.*;
@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import ru.progrm_jarvis.fakeentitylib.entity.ObservableFakeEntity;
 
 import java.util.Collection;
 import java.util.HashSet;

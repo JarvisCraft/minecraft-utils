@@ -1,4 +1,6 @@
-package ru.progrm_jarvis.fakeentitylib;
+package ru.progrm_jarvis.fakeentitylib.observer;
+
+import ru.progrm_jarvis.fakeentitylib.entity.ObservableFakeEntity;
 
 /**
  * An object responsible

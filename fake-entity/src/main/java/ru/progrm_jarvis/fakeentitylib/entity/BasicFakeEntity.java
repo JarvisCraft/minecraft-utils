@@ -1,4 +1,4 @@
-package ru.progrm_jarvis.fakeentitylib;
+package ru.progrm_jarvis.fakeentitylib.entity;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
@@ -16,8 +16,14 @@ public interface BasicFakeEntity extends ObservableFakeEntity {
     // Spawning
     ///////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Spawns the entity for all players related to it who can see it.
+     */
     void spawn();
 
+    /**
+     * Despawns this entity for all players related to it who can't see it.
+     */
     void despawn();
 
     ///////////////////////////////////////////////////////////////////////////

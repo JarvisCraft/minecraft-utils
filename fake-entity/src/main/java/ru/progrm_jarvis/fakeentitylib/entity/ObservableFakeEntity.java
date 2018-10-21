@@ -1,4 +1,4 @@
-package ru.progrm_jarvis.fakeentitylib;
+package ru.progrm_jarvis.fakeentitylib.entity;
 
 import com.google.common.base.Preconditions;
 import lombok.val;
@@ -78,13 +78,4 @@ public interface ObservableFakeEntity extends FakeEntity {
     default void attemptRerenderForAll() {
         for (val player : getPlayers()) attemptRerender(player);
     }
-
-    /*
-
-    TODO think about it
-
-    default void onWorldChange(Consumer<World> callback) {}
-
-    default void onLocationChange(Consumer<Location> callback) {}
-    */
 }
