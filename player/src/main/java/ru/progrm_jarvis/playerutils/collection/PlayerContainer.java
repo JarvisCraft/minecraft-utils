@@ -1,5 +1,6 @@
 package ru.progrm_jarvis.playerutils.collection;
 
+import lombok.val;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -10,28 +11,65 @@ import java.util.Collection;
 public interface PlayerContainer {
 
     /**
-     * Adds a player to this object.
+     * Adds a player to this container.
      *
      * @param player player to add
      */
     void addPlayer(Player player);
 
     /**
-     * Removes a player from this object.
+     * Adds players to this container.
+     *
+     * @param players players to add
+     */
+    default void addPlayers(final Player... players) {
+        for (val player : players) addPlayer(player);
+    }
+
+    /**
+     * Adds players to this container. {@link Collection} is used rather than {@link Iterable}
+     * as there are usual cases when it is a minimal requirement for an effective solution.
+     *
+     * @param players players to add
+     */
+    default void addPlayers(final Collection<Player> players) {
+        for (val player : players) addPlayer(player);
+    }
+
+    /**
+     * Removes a player from this container.
      *
      * @param player player to remove
      */
     void removePlayer(Player player);
 
     /**
-     * Returns {@code true} if this object contains the specified player and {@code false} otherwise.
+     * Removes players from this container.
+     *
+     * @param players players to remove
+     */
+    default void removePlayesr(final Player... players) {
+        for (val player : players) removePlayer(player);
+    }
+
+    /**
+     * Removes players from this container.
+     *
+     * @param players players to remove
+     */
+    default void removePlayers(final Collection<Player> players) {
+        for (val player : players) removePlayer(player);
+    }
+
+    /**
+     * Returns {@code true} if this container contains the specified player and {@code false} otherwise.
      *
      * @param player player to check for containment
      */
     boolean containsPlayer(Player player);
 
     /**
-     * Gets all players available in this collection.
+     * Gets all players available in this container.
      *
      * @return all players contained
      */
