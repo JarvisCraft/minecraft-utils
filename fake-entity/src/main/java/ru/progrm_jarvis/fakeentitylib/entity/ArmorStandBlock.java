@@ -18,9 +18,8 @@ import ru.progrm_jarvis.nmsutils.metadata.MetadataGenerator.ArmorStand.Flag;
 import ru.progrm_jarvis.playerutils.registry.PlayerRegistry;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static ru.progrm_jarvis.nmsutils.metadata.MetadataGenerator.ArmorStand.armorStandFlags;
 import static ru.progrm_jarvis.nmsutils.metadata.MetadataGenerator.ArmorStand.headRotation;
@@ -44,13 +43,14 @@ public class ArmorStandBlock extends SimpleLivingFakeEntity {
      */
     WrapperPlayServerEntityEquipment equipmentPacket;
 
-    public ArmorStandBlock(final Plugin plugin, @Nullable final UUID uuid,
+    public ArmorStandBlock(final Plugin plugin,
+                           @Nullable final PlayerRegistry registry, final boolean registerInDefaultRegistry,
+                           @Nullable final UUID uuid,
                            final Map<Player, Boolean> players, final boolean global,
                            final int viewDistance, final Location location,
-                           final Vector3F rotation, final boolean small, @NonNull final ItemStack item,
-                           @Nullable final PlayerRegistry registry) {
+                           final Vector3F rotation, final boolean small, @NonNull final ItemStack item) {
         super(
-                plugin, registry,
+                plugin, registry, registerInDefaultRegistry,
                 NmsUtil.nextEntityId(), uuid, EntityType.ARMOR_STAND,
                 players, global, viewDistance, location, 0, null, createMetadata(rotation, small)
         );
@@ -61,6 +61,16 @@ public class ArmorStandBlock extends SimpleLivingFakeEntity {
         equipmentPacket.setEntityID(id);
         equipmentPacket.setSlot(EnumWrappers.ItemSlot.HEAD);
         equipmentPacket.setItem(item);
+    }
+
+    public static ArmorStandBlock create(final Plugin plugin, final boolean register,
+                                  final boolean concurrent, final boolean global, final int viewDistance,
+                                  final Location location,
+                                  final Vector3F rotation, final boolean small, @NonNull final ItemStack item) {
+        return new ArmorStandBlock(
+                plugin, null, register, null, concurrent ? new ConcurrentHashMap<>() : new HashMap(),
+                global, viewDistance, location, rotation, small, item
+        );
     }
 
     public static WrappedDataWatcher createMetadata(final Vector3F headRotation,
@@ -76,7 +86,12 @@ public class ArmorStandBlock extends SimpleLivingFakeEntity {
     public void spawn() {
         actualizeSpawnPacket();
 
-        for (val entry : players.entrySet()) if (entry.getValue()) spawnPacket.sendPacket(entry.getKey());
+        for (val entry : players.entrySet()) if (entry.getValue()) {
+            val player = entry.getKey();
+
+            spawnPacket.sendPacket(player);
+            equipmentPacket.sendPacket(player);
+        }
     }
 
     /**
