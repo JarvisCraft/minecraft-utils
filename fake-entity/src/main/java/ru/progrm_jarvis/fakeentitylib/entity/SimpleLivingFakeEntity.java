@@ -124,7 +124,8 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
     WrapperPlayServerEntityTeleport teleportPacket;
 
     @Builder
-    public SimpleLivingFakeEntity(@NonNull final Plugin plugin, @Nullable PlayerRegistry registry,
+    public SimpleLivingFakeEntity(@NonNull final Plugin plugin, @Nullable final PlayerRegistry registry,
+                                  final boolean registerInDefaultRegistry,
                                   final int entityId, @Nullable final UUID uuid, @NonNull final EntityType type,
                                   @NonNull final Map<Player, Boolean> players,
                                   final boolean global, final int viewDistance,
@@ -157,8 +158,9 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
 
         // register
 
-        if (registry == null) PlayerContainers.registerInDefaultRegistry(plugin, this);
-        else registry.register(this);
+        if (registry == null) {
+            if (registerInDefaultRegistry) PlayerContainers.registerInDefaultRegistry(plugin, this);
+        } else registry.register(this);
     }
 
     protected void actualizeSpawnPacket() {
