@@ -26,7 +26,7 @@ public class NmsUtil {
     /**
      * Base package of NMS (<i>net.minecraft.server.{version}</i>)
      */
-    private final String NMS_PACKAGE = "org.bukkit.craftbukkit." + NMS_VERSION.name,
+    private final String NMS_PACKAGE = "net.minecraft.server." + NMS_VERSION.name,
     /**
      * Base package of CraftBukkit (<i>org.bukkit.craftbukkit.{version}</i>)
      */
