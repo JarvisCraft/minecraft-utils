@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class PlayerUtil {
 
-    public static Collection<Player> playersAround(@NonNull final Location location, final double radius) {
+    public Collection<Player> playersAround(@NonNull final Location location, final double radius) {
         return Bukkit.getOnlinePlayers().stream()
                 .filter(player -> player.getEyeLocation().distance(location) <= radius)
                 .collect(Collectors.toList());
