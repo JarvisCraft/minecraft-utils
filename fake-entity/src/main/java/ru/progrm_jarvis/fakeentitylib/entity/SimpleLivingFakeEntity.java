@@ -53,7 +53,7 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
     /**
      * PLayers related to this fake entity
      */
-    @NonNull private final Map<Player, Boolean> players;
+    @NonNull final Map<Player, Boolean> players;
 
     /**
      * Whether or not this fake entity is global
