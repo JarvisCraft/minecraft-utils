@@ -35,7 +35,8 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
     Lock playerContainersReadLock = playerContainersLock.readLock();
     Lock playerContainersWriteLock = playerContainersLock.writeLock();
 
-    public DefaultPlayerRegistry(@NonNull final Plugin plugin, @NonNull final Set<Player> playerSet) {
+    public DefaultPlayerRegistry(@NonNull final Plugin plugin, @NonNull final Set<Player> playerSet,
+                                 final long checkInterval) {
         Preconditions.checkArgument(playerSet.isEmpty(), "playerSet should be empty");
 
         this.plugin = plugin;
@@ -55,12 +56,12 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
         }, plugin);
     }
 
-    public DefaultPlayerRegistry(@NonNull final Plugin plugin, final boolean concurrent) {
-        this(plugin, concurrent ? new HashSet<>() : ConcurrentHashMap.newKeySet());
+    public DefaultPlayerRegistry(@NonNull final Plugin plugin, final boolean concurrent, final long checkInterval) {
+        this(plugin, concurrent ? new HashSet<>() : ConcurrentHashMap.newKeySet(), checkInterval);
     }
 
-    public DefaultPlayerRegistry(@NonNull final Plugin plugin) {
-        this(plugin, true);
+    public DefaultPlayerRegistry(@NonNull final Plugin plugin, final long checkInterval) {
+        this(plugin, true, checkInterval);
     }
 
     @Override

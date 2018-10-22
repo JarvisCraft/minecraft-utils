@@ -1,5 +1,6 @@
 package ru.progrm_jarvis.playerutils.collection;
 
+import com.google.common.base.MoreObjects;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.UtilityClass;
@@ -17,9 +18,12 @@ import java.util.function.Function;
 public class PlayerContainers {
 
     private final Map<Plugin, PlayerRegistry> DEFAULT_REGISTRIES = new ConcurrentHashMap<>();
+    private static final long defaultCheckInterval = Long.parseLong(MoreObjects.firstNonNull(
+            System.getProperty(PlayerContainers.class.getTypeName()).concat(".defaultCheckInterval"), "5")
+    );
 
     public PlayerRegistry defaultRegistry(@NonNull final Plugin plugin) {
-        return DEFAULT_REGISTRIES.computeIfAbsent(plugin, DefaultPlayerRegistry::new);
+        return DEFAULT_REGISTRIES.computeIfAbsent(plugin, pl -> new DefaultPlayerRegistry(pl, defaultCheckInterval));
     }
 
     public PlayerContainer wrap(@NonNull final Collection<Player> collectionOfPlayers) {
