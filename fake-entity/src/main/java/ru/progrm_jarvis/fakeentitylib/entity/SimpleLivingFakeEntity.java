@@ -124,12 +124,12 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
     WrapperPlayServerEntityTeleport teleportPacket;
 
     @Builder
-    public SimpleLivingFakeEntity(@NonNull final Plugin plugin,
+    public SimpleLivingFakeEntity(@NonNull final Plugin plugin, @Nullable PlayerRegistry registry,
                                   final int entityId, @Nullable final UUID uuid, @NonNull final EntityType type,
                                   @NonNull final Map<Player, Boolean> players,
                                   final boolean global, final int viewDistance,
                                   @NonNull final Location location, float headPitch, @Nullable final Vector velocity,
-                                  @Nullable final WrappedDataWatcher metadata, @Nullable PlayerRegistry registry) {
+                                  @Nullable final WrappedDataWatcher metadata) {
         // setup fields
 
         this.id = entityId;
