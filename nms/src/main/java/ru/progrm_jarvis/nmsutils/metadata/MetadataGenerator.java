@@ -19,7 +19,7 @@ import java.util.UUID;
  * containing static methods for developer-friendly object creation.
  */
 @UtilityClass
-public class MetadataEditor {
+public class MetadataGenerator {
 
     private final int VERSION = NmsUtil.getVersion().getGeneration();
     private final DataWatcherFactory FACTORY = NmsUtil.getDataWatcherFactory();
