@@ -28,8 +28,7 @@ public class LatestDataWatcherFactory implements DataWatcherFactory {
             OPTIONAL_BLOCK_POSITION_SERIALIZER = Registry.getBlockPositionSerializer(true),
             ENUM_DIRECTION_SERIALIZER = Registry.getDirectionSerializer(),
             OPTIONAL_UUID_SERIALIZER = Registry.getUUIDSerializer(true),
-            NBT_TAG_COMPOUND_SERIALIZER = Registry.getNBTCompoundSerializer(),
-            OBJECT_SERIALIZER = Registry.get(Object.class);
+            NBT_TAG_COMPOUND_SERIALIZER = Registry.getNBTCompoundSerializer();
 
     protected WrappedDataWatcher.WrappedDataWatcherObject watcherObjectByte(final int id) {
         return new WrappedDataWatcher.WrappedDataWatcherObject(id, BYTE_SERIALIZER);
@@ -85,10 +84,6 @@ public class LatestDataWatcherFactory implements DataWatcherFactory {
 
     protected WrappedDataWatcher.WrappedDataWatcherObject watcherObjectNBTTagCompound(final int id) {
         return new WrappedDataWatcher.WrappedDataWatcherObject(id, NBT_TAG_COMPOUND_SERIALIZER);
-    }
-
-    protected WrappedDataWatcher.WrappedDataWatcherObject watcherObjectObject(final int id) {
-        return new WrappedDataWatcher.WrappedDataWatcherObject(id, OBJECT_SERIALIZER);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -167,7 +162,7 @@ public class LatestDataWatcherFactory implements DataWatcherFactory {
 
     @Override
     public WrappedWatchableObject createWatchableObject(final int id, final Object value) {
-        return new WrappedWatchableObject(watcherObjectObject(id), value);
+        return new WrappedWatchableObject(id, value);
     }
 
     @Override
@@ -295,7 +290,7 @@ public class LatestDataWatcherFactory implements DataWatcherFactory {
 
         @Override
         public DataWatcherModifier setObject(final int id, final Object value) {
-            dataWatcher.setObject(watcherObjectObject(id), value);
+            dataWatcher.setObject(id, value);
 
             return this;
         }
