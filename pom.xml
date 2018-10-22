@@ -61,17 +61,17 @@
         <dependencies>
             <!-- Local elements -->
             <dependency>
-                <groupId>${groupId}</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>nms-utils</artifactId>
                 <version>${version.nms-utils}</version>
             </dependency>
             <dependency>
-                <groupId>${groupId}</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>player-utils</artifactId>
                 <version>${version.player-utils}</version>
             </dependency>
             <dependency>
-                <groupId>${groupId}</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>fake-entity-lib</artifactId>
                 <version>${version.fake-entity-lib}</version>
             </dependency>
