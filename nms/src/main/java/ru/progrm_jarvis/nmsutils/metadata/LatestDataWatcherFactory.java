@@ -14,7 +14,7 @@ import java.util.UUID;
  */
 public class LatestDataWatcherFactory implements DataWatcherFactory {
 
-    protected final WrappedDataWatcher.Serializer
+    protected static final WrappedDataWatcher.Serializer
             BYTE_SERIALIZER = Registry.get(Byte.class),
             INTEGER_SERIALIZER = Registry.get(Integer.class),
             FLOAT_SERIALIZER = Registry.get(Float.class),
