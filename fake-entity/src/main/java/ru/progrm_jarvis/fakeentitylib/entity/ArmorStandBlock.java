@@ -12,13 +12,14 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 import ru.progrm_jarvis.nmsutils.NmsUtil;
 import ru.progrm_jarvis.nmsutils.metadata.MetadataGenerator.ArmorStand.Flag;
-import ru.progrm_jarvis.playerutils.registry.PlayerRegistry;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static ru.progrm_jarvis.nmsutils.metadata.MetadataGenerator.ArmorStand.armorStandFlags;
@@ -43,14 +44,11 @@ public class ArmorStandBlock extends SimpleLivingFakeEntity {
      */
     WrapperPlayServerEntityEquipment equipmentPacket;
 
-    public ArmorStandBlock(final Plugin plugin,
-                           @Nullable final PlayerRegistry registry, final boolean registerInDefaultRegistry,
-                           @Nullable final UUID uuid,
+    public ArmorStandBlock(@Nullable final UUID uuid,
                            final Map<Player, Boolean> players, final boolean global,
                            final int viewDistance, final Location location,
                            final Vector3F rotation, final boolean small, @NonNull final ItemStack item) {
         super(
-                plugin, registry, registerInDefaultRegistry,
                 NmsUtil.nextEntityId(), uuid, EntityType.ARMOR_STAND,
                 players, global, viewDistance, location, 0, null, createMetadata(rotation, small)
         );
@@ -60,15 +58,14 @@ public class ArmorStandBlock extends SimpleLivingFakeEntity {
         equipmentPacket = new WrapperPlayServerEntityEquipment();
         equipmentPacket.setEntityID(id);
         equipmentPacket.setSlot(EnumWrappers.ItemSlot.HEAD);
-        equipmentPacket.setItem(item);
+        equipmentPacket.setItem(this.item = item);
     }
 
-    public static ArmorStandBlock create(final Plugin plugin, final boolean register,
-                                  final boolean concurrent, final boolean global, final int viewDistance,
-                                  final Location location,
-                                  final Vector3F rotation, final boolean small, @NonNull final ItemStack item) {
+    public static ArmorStandBlock create(final boolean concurrent, final boolean global, final int viewDistance,
+                                         final Location location,
+                                         final Vector3F rotation, final boolean small, @NonNull final ItemStack item) {
         return new ArmorStandBlock(
-                plugin, null, register, null, concurrent ? new ConcurrentHashMap<>() : new HashMap(),
+                null, concurrent ? new ConcurrentHashMap<>() : new HashMap(),
                 global, viewDistance, location, rotation, small, item
         );
     }
@@ -92,6 +89,15 @@ public class ArmorStandBlock extends SimpleLivingFakeEntity {
             spawnPacket.sendPacket(player);
             equipmentPacket.sendPacket(player);
         }
+    }
+
+    @Override
+    public void render(final Player player) {
+        actualizeSpawnPacket();
+        spawnPacket.sendPacket(player);
+        equipmentPacket.sendPacket(player);
+
+        players.put(player, true);
     }
 
     /**

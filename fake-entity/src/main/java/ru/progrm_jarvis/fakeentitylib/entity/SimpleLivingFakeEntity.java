@@ -11,10 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
-import ru.progrm_jarvis.playerutils.collection.PlayerContainers;
-import ru.progrm_jarvis.playerutils.registry.PlayerRegistry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -124,9 +121,7 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
     WrapperPlayServerEntityTeleport teleportPacket;
 
     @Builder
-    public SimpleLivingFakeEntity(@NonNull final Plugin plugin, @Nullable final PlayerRegistry registry,
-                                  final boolean registerInDefaultRegistry,
-                                  final int entityId, @Nullable final UUID uuid, @NonNull final EntityType type,
+    public SimpleLivingFakeEntity(final int entityId, @Nullable final UUID uuid, @NonNull final EntityType type,
                                   @NonNull final Map<Player, Boolean> players,
                                   final boolean global, final int viewDistance,
                                   @NonNull final Location location, float headPitch, @Nullable final Vector velocity,
@@ -155,12 +150,6 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
 
         despawnPacket = new WrapperPlayServerEntityDestroy();
         despawnPacket.setEntityIds(new int[]{id});
-
-        // register
-
-        if (registry == null) {
-            if (registerInDefaultRegistry) PlayerContainers.registerInDefaultRegistry(plugin, this);
-        } else registry.register(this);
     }
 
     protected void actualizeSpawnPacket() {
