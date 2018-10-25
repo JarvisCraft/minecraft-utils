@@ -13,7 +13,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import ru.progrm_jarvis.nmsutils.NmsUtil;
-import ru.progrm_jarvis.nmsutils.metadata.MetadataGenerator.ArmorStand.Flag;
+import ru.progrm_jarvis.nmsutils.metadata.MetadataGenerator;
+import ru.progrm_jarvis.nmsutils.metadata.MetadataGenerator.ArmorStand;
+import ru.progrm_jarvis.nmsutils.metadata.MetadataGenerator.Entity;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -24,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static ru.progrm_jarvis.nmsutils.metadata.MetadataGenerator.ArmorStand.armorStandFlags;
 import static ru.progrm_jarvis.nmsutils.metadata.MetadataGenerator.ArmorStand.headRotation;
-import static ru.progrm_jarvis.nmsutils.metadata.MetadataGenerator.Entity.invisible;
+import static ru.progrm_jarvis.nmsutils.metadata.MetadataGenerator.Entity.entityFlags;
 
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public class ArmorStandBlock extends SimpleLivingFakeEntity {
@@ -73,8 +75,10 @@ public class ArmorStandBlock extends SimpleLivingFakeEntity {
     public static WrappedDataWatcher createMetadata(final Vector3F headRotation,
                                                     final boolean small) {
         return new WrappedDataWatcher(Arrays.asList(
-                invisible(true),
-                armorStandFlags(small ? new Flag[]{Flag.SMALL, Flag.MARKER} : new Flag[]{Flag.MARKER}),
+                entityFlags(Entity.Flag.INVISIBLE),
+                armorStandFlags(small
+                        ? new ArmorStand.Flag[]{ArmorStand.Flag.SMALL, ArmorStand.Flag.MARKER}
+                        : new ArmorStand.Flag[]{MetadataGenerator.ArmorStand.Flag.MARKER}),
                 headRotation(headRotation)
         ));
     }

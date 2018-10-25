@@ -146,6 +146,7 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
 
         spawnPacket = new WrapperPlayServerSpawnEntityLiving();
         spawnPacket.setEntityID(id);
+        spawnPacket.setType(type);
         if (uuid != null) spawnPacket.setUniqueId(uuid);
 
         despawnPacket = new WrapperPlayServerEntityDestroy();
@@ -180,9 +181,8 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
 
     @Override
     public void addPlayer(final Player player) {
-        players.put(player, false);
-
-        attemptRerender(player);
+        if (canSeeIgnoreContainment(player)) render(player);
+        else players.put(player, false);
     }
 
     @Override

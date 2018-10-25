@@ -33,8 +33,8 @@ public class MetadataGenerator {
             return FACTORY.createWatchable(0, flagBytes);
         }
 
-        public static WrappedWatchableObject invisible(final boolean invisible) {
-            return FACTORY.createWatchable(1, invisible);
+        public static WrappedWatchableObject air(final boolean air) {
+            return FACTORY.createWatchable(1, air);
         }
 
         public static WrappedWatchableObject name(final WrappedChatComponent name) {
