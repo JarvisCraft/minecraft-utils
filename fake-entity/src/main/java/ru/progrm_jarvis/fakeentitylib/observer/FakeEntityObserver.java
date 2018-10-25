@@ -7,9 +7,9 @@ import ru.progrm_jarvis.fakeentitylib.entity.ObservableFakeEntity;
  */
 public interface FakeEntityObserver<E extends ObservableFakeEntity> {
 
-    void observe(E entity);
+    E observe(E entity);
 
-    void unobserve(E entity);
+    E unobserve(E entity);
 
     void shutdown();
 }
