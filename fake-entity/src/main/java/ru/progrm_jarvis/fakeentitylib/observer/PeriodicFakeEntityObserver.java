@@ -106,11 +106,9 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implemen
         lock.lock();
         try {
             val iterator = runnables.iterator();
-            while (iterator.hasNext()) {
-                val runnable = iterator.next();
-            }
             for (val task : runnables) if (task.removeEntity(entity)) {
                 if (task.entities.size() == 0) iterator.remove();
+
                 return;
             }
         } finally {
