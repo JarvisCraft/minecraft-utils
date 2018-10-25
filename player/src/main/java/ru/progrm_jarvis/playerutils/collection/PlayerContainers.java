@@ -18,12 +18,12 @@ import java.util.function.Function;
 public class PlayerContainers {
 
     private final Map<Plugin, PlayerRegistry> DEFAULT_REGISTRIES = new ConcurrentHashMap<>();
-    private static final long defaultCheckInterval = Long.parseLong(MoreObjects.firstNonNull(
-            System.getProperty(PlayerContainers.class.getTypeName()).concat(".defaultCheckInterval"), "5")
+    private static final long DEFAULT_CHECK_INTERVAL = Long.parseLong(MoreObjects.firstNonNull(
+            System.getProperty(PlayerContainers.class.getTypeName()).concat(".DEFAULT_CHECK_INTERVAL"), "5")
     );
 
     public PlayerRegistry defaultRegistry(@NonNull final Plugin plugin) {
-        return DEFAULT_REGISTRIES.computeIfAbsent(plugin, pl -> new DefaultPlayerRegistry(pl, defaultCheckInterval));
+        return DEFAULT_REGISTRIES.computeIfAbsent(plugin, pl -> new DefaultPlayerRegistry(pl, DEFAULT_CHECK_INTERVAL));
     }
 
     public PlayerContainer wrap(@NonNull final Collection<Player> collectionOfPlayers) {
