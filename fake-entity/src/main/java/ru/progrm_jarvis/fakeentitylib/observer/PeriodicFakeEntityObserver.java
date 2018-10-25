@@ -97,12 +97,12 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implemen
     }
 
     @Override
-    public void observe(final ObservableFakeEntity entity) {
+    public void observe(final E entity) {
         getRedrawEntitiesRunnable().addEntity(entity);
     }
 
     @Override
-    public void unobserve(final ObservableFakeEntity entity) {
+    public void unobserve(final E entity) {
         lock.lock();
         try {
             val iterator = runnables.iterator();
