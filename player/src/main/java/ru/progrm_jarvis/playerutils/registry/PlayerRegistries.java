@@ -19,7 +19,7 @@ public class PlayerRegistries {
     private final Map<Plugin, PlayerRegistry> DEFAULT_REGISTRIES = new ConcurrentHashMap<>();
 
     private static final long DEFAULT_CHECK_INTERVAL = Long.parseLong(MoreObjects.firstNonNull(
-            System.getProperty(PlayerContainers.class.getTypeName()).concat(".DEFAULT_CHECK_INTERVAL"), "5")
+            System.getProperty(PlayerContainers.class.getTypeName().concat(".DEFAULT_CHECK_INTERVAL")), "5")
     );
 
     public PlayerRegistry defaultRegistry(@NonNull final Plugin plugin) {
