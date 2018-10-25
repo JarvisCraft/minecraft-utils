@@ -1,9 +1,11 @@
 package ru.progrm_jarvis.playerutils.collection;
 
 import lombok.val;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * An object which may store players.
@@ -34,6 +36,10 @@ public interface PlayerContainer {
      */
     default void addPlayers(final Collection<Player> players) {
         for (val player : players) addPlayer(player);
+    }
+
+    default void addOnlinePlayers() {
+        addPlayers(Collections.unmodifiableCollection(Bukkit.getOnlinePlayers()));
     }
 
     /**
