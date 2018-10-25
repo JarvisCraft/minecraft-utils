@@ -1,30 +1,16 @@
 package ru.progrm_jarvis.playerutils.collection;
 
-import com.google.common.base.MoreObjects;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import ru.progrm_jarvis.playerutils.registry.DefaultPlayerRegistry;
-import ru.progrm_jarvis.playerutils.registry.PlayerRegistry;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 @UtilityClass
 public class PlayerContainers {
-
-    private final Map<Plugin, PlayerRegistry> DEFAULT_REGISTRIES = new ConcurrentHashMap<>();
-    private static final long DEFAULT_CHECK_INTERVAL = Long.parseLong(MoreObjects.firstNonNull(
-            System.getProperty(PlayerContainers.class.getTypeName()).concat(".DEFAULT_CHECK_INTERVAL"), "5")
-    );
-
-    public PlayerRegistry defaultRegistry(@NonNull final Plugin plugin) {
-        return DEFAULT_REGISTRIES.computeIfAbsent(plugin, pl -> new DefaultPlayerRegistry(pl, DEFAULT_CHECK_INTERVAL));
-    }
 
     public PlayerContainer wrap(@NonNull final Collection<Player> collectionOfPlayers) {
         return new PlayerContainerCollectionWrapper(collectionOfPlayers);
@@ -33,22 +19,6 @@ public class PlayerContainers {
     public <T> PlayerContainer wrap(@NonNull final Map<Player, T> mapOfPlayers,
                                     @NonNull final Function<Player, T> defaultValueSupplier) {
         return new PlayerContainerMapWrapper<>(mapOfPlayers, defaultValueSupplier);
-    }
-
-    public void registerInDefaultRegistry(@NonNull final Plugin plugin,
-                                          @NonNull final PlayerContainer playerContainer) {
-        defaultRegistry(plugin).register(playerContainer);
-    }
-
-    public void registerInDefaultRegistry(@NonNull final Plugin plugin,
-                                          @NonNull final Collection<Player> collectionOfPlayers) {
-        registerInDefaultRegistry(plugin, wrap(collectionOfPlayers));
-    }
-
-    public <T> void registerInDefaultRegistry(@NonNull final Plugin plugin,
-                                              @NonNull final Map<Player, T> mapOfPlayers,
-                                              @NonNull final Function<Player, T> defaultValueSupplier) {
-        registerInDefaultRegistry(plugin, wrap(mapOfPlayers, defaultValueSupplier));
     }
 
     @Value

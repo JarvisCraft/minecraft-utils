@@ -98,22 +98,26 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
     }
 
     @Override
-    public void register(@NonNull final PlayerContainer playerContainer) {
+    public <C extends PlayerContainer> C register(final C playerContainer) {
         playerContainersWriteLock.lock();
         try {
             playerContainers.add(playerContainer);
         } finally {
             playerContainersWriteLock.unlock();
         }
+
+        return playerContainer;
     }
 
     @Override
-    public void unregister(@NonNull final PlayerContainer playerContainer) {
+    public <C extends PlayerContainer> C unregister(final C playerContainer) {
         playerContainersWriteLock.lock();
         try {
             playerContainers.remove(playerContainer);
         } finally {
             playerContainersWriteLock.unlock();
         }
+
+        return playerContainer;
     }
 }

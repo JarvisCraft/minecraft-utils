@@ -12,9 +12,9 @@ import java.util.function.Function;
 
 public interface PlayerRegistry extends PlayerContainer {
 
-    void register(PlayerContainer playerContainer);
+    <C extends PlayerContainer> C register(C playerContainer);
 
-    void unregister(PlayerContainer playerContainer);
+    <C extends PlayerContainer> C unregister(C playerContainer);
 
     default PlayerContainer register(@NonNull final Collection<Player> playerCollection) {
         val playerContainer = PlayerContainers.wrap(playerCollection);
