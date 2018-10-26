@@ -215,7 +215,16 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
     // Movement
     ///////////////////////////////////////////////////////////////////////////
 
-
+    /**
+     * Performs the movement of this living fake entity by given deltas and yaw and pitch specified
+     * not performing any checks such as 8-block limit of deltas or angle minimization.
+     *
+     * @param dx delta on X-axis
+     * @param dy delta on Y-axis
+     * @param dz delta on Z-axis
+     * @param yaw new yaw
+     * @param pitch new pitch
+     */
     protected void performMove(final double dx, final double dy, final double dz, final float yaw, final float pitch) {
         if (pitch == 0 && yaw == 0) {
             if (movePacket == null) {
@@ -244,6 +253,16 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
         }
     }
 
+    /**
+     * Performs the teleportation of this living fake entity to given coordinates changing yaw and pitch
+     * not performing any checks such as using movement for less than 8-block deltas or angle minimization.
+     *
+     * @param x new location on X-axis
+     * @param y new location on Y-axis
+     * @param z new location on Z-axis
+     * @param yaw new yaw
+     * @param pitch new pitch
+     */
     protected void performTeleportation(final double x, final double y, final double z,
                                         final float yaw, final float pitch) {
         if (teleportPacket == null) {
