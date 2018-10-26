@@ -28,8 +28,12 @@ import static ru.progrm_jarvis.nmsutils.metadata.MetadataGenerator.ArmorStand.ar
 import static ru.progrm_jarvis.nmsutils.metadata.MetadataGenerator.ArmorStand.headRotation;
 import static ru.progrm_jarvis.nmsutils.metadata.MetadataGenerator.Entity.entityFlags;
 
+/**
+ * A fake small (or very small) movable block-item which can be normally rotated over all axises
+ * and have floating point coordinates. This block is displayed as an item on head of invisible armor stand.
+ */
 @FieldDefaults(level = AccessLevel.PROTECTED)
-public class ArmorStandBlock extends SimpleLivingFakeEntity {
+public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
 
     /**
      * Rotation of this block
@@ -46,13 +50,25 @@ public class ArmorStandBlock extends SimpleLivingFakeEntity {
      */
     WrapperPlayServerEntityEquipment equipmentPacket;
 
-    public ArmorStandBlock(@Nullable final UUID uuid,
-                           final Map<Player, Boolean> players, final boolean global,
-                           final int viewDistance, final Location location,
-                           final Vector3F rotation, final boolean small, @NonNull final ItemStack item) {
+    /**
+     * Initializes a newly created armor stand block-item from parameters given.
+     *
+     * @param uuid unique entity id of this block-item entity
+     * @param playersMap map to be used as backend for this block-item entity
+     * @param global whether this block-item is global (the value returned by {@link #isGlobal()})
+     * @param viewDistance view distance of this block-item
+     * @param location location of this block-item
+     * @param rotation rotation of this block item
+     * @param small whether this block-item is small
+     * @param item item to be displayed by this block-item
+     */
+    public ArmorStandBlockItem(@Nullable final UUID uuid,
+                               final Map<Player, Boolean> playersMap, final boolean global,
+                               final int viewDistance, final Location location,
+                               final Vector3F rotation, final boolean small, @NonNull final ItemStack item) {
         super(
                 NmsUtil.nextEntityId(), uuid, EntityType.ARMOR_STAND,
-                players, global, viewDistance, location, 0, null, createMetadata(rotation, small)
+                playersMap, global, viewDistance, location, 0, null, createMetadata(rotation, small)
         );
 
         this.rotation = rotation;
@@ -63,23 +79,43 @@ public class ArmorStandBlock extends SimpleLivingFakeEntity {
         equipmentPacket.setItem(this.item = item);
     }
 
-    public static ArmorStandBlock create(final boolean concurrent, final boolean global, final int viewDistance,
-                                         final Location location,
-                                         final Vector3F rotation, final boolean small, @NonNull final ItemStack item) {
-        return new ArmorStandBlock(
+    /**
+     * Creates new armor stand block-item by parameters specified.
+     *
+     * @param concurrent whether created block-item supports concurrent modification of players related to it
+     * @param global whether created block-item is global (the value returned by {@link #isGlobal()})
+     * @param viewDistance view distance of created block-item
+     * @param location location of created block-item
+     * @param rotation rotation of created block item
+     * @param small whether created block-item is small
+     * @param item item to be displayed by this block-item
+     * @return newly created armor stand block-item
+     */
+    public static ArmorStandBlockItem create(final boolean concurrent, final boolean global, final int viewDistance,
+                                             final Location location,
+                                             final Vector3F rotation, final boolean small,
+                                             @NonNull final ItemStack item) {
+        return new ArmorStandBlockItem(
                 null, concurrent ? new ConcurrentHashMap<>() : new HashMap(),
                 global, viewDistance, location, rotation, small, item
         );
     }
 
-    public static WrappedDataWatcher createMetadata(final Vector3F headRotation,
+    /**
+     * Creates valid metadata for armor stand block-item.
+     *
+     * @param rotation rotation of this block-item
+     * @param small whether this block-item is small
+     * @return created metadata object
+     */
+    public static WrappedDataWatcher createMetadata(final Vector3F rotation,
                                                     final boolean small) {
         return new WrappedDataWatcher(Arrays.asList(
                 entityFlags(Entity.Flag.INVISIBLE),
                 armorStandFlags(small
                         ? new ArmorStand.Flag[]{ArmorStand.Flag.SMALL, ArmorStand.Flag.MARKER}
                         : new ArmorStand.Flag[]{MetadataGenerator.ArmorStand.Flag.MARKER}),
-                headRotation(headRotation)
+                headRotation(rotation)
         ));
     }
 
