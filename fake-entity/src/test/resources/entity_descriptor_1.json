@@ -1,0 +1,216 @@
+{
+  "objects": [
+    {
+      "userData": {
+        "name": "Object 1",
+        "selected": false,
+        "rawid": "iron_block",
+        "blockid": "id:iron_block",
+        "customname": "9zBAt",
+        "isItem": false,
+        "enableRotCenter": true,
+        "size": "medium",
+        "isDynamic": true,
+        "visible": true,
+        "customnbt": "",
+        "translation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "justAdded": true,
+        "highlight": false
+      },
+      "uuid": "0C237280-38C7-4CD0-BF6C-7F0D7B98B6B5"
+    },
+    {
+      "userData": {
+        "name": "Object 1 (Copy 1)",
+        "selected": false,
+        "rawid": "iron_block",
+        "blockid": "id:iron_block",
+        "customname": "x2OHI",
+        "isItem": false,
+        "enableRotCenter": true,
+        "size": "medium",
+        "isDynamic": true,
+        "visible": true,
+        "customnbt": "",
+        "translation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "justAdded": true
+      },
+      "uuid": "775FABA6-C996-4FBD-A215-FFB1FF994B99"
+    }
+  ],
+  "keyframes": [
+    {
+      "ontick": 0,
+      "objects": [
+        {
+          "customname": "9zBAt",
+          "position": {
+            "x": 0,
+            "y": 0.65625,
+            "z": 0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "size": 0.4375,
+          "uuid": "0C237280-38C7-4CD0-BF6C-7F0D7B98B6B5",
+          "visible": true
+        },
+        {
+          "customname": "x2OHI",
+          "position": {
+            "x": 0,
+            "y": 1.09375,
+            "z": 0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "size": 0.4375,
+          "uuid": "775FABA6-C996-4FBD-A215-FFB1FF994B99",
+          "visible": true
+        },
+        {
+          "customname": "0hjs2",
+          "position": {
+            "x": 0,
+            "y": 0.03125,
+            "z": -0.21875
+          },
+          "rotation": {
+            "x": -0.7853981633974483,
+            "y": 0,
+            "z": 0
+          },
+          "size": 0.4375,
+          "uuid": "EC88157C-941B-4BFB-BD9C-A3643DEBF541",
+          "visible": true
+        },
+        {
+          "customname": "D_066",
+          "position": {
+            "x": 0.21875,
+            "y": 0.03125,
+            "z": 0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": -0.7853981633974483
+          },
+          "size": 0.4375,
+          "uuid": "1C091B1D-71E6-4507-AD91-855F54EFD5CE",
+          "visible": true
+        },
+        {
+          "customname": "0YpO6",
+          "position": {
+            "x": -0.21875,
+            "y": 0.03125,
+            "z": 0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0.7853981633974483
+          },
+          "size": 0.4375,
+          "uuid": "CBAB9131-4C43-48AC-AE9E-DA2F325EC41B",
+          "visible": true
+        },
+        {
+          "customname": "NTzk9",
+          "position": {
+            "x": 0,
+            "y": 0.03125,
+            "z": 0.25
+          },
+          "rotation": {
+            "x": 0.7853981633974483,
+            "y": 0,
+            "z": 0
+          },
+          "size": 0.4375,
+          "uuid": "270BFFAB-6E28-4824-BF07-4D2A58AEA557",
+          "visible": true
+        },
+        {
+          "customname": "dK9Sg",
+          "position": {
+            "x": 0,
+            "y": 0.21875,
+            "z": 0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "size": 0.4375,
+          "uuid": "CB5C9C06-BB9A-4A74-9468-E9B8A43DBF47",
+          "visible": true
+        }
+      ],
+      "scenerot": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "cc": []
+    }
+  ],
+  "tweening": [],
+  "settings": {
+    "options": {
+      "showaxis": false,
+      "showmovers": true,
+      "uniquestr": "AM_TGB5VJ",
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "offset": {
+        "abs": false,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "armswayX": "1",
+      "armswayY": "1",
+      "armswayZ": "1",
+      "armswayTicks": "40"
+    },
+    "generate": {
+      "placeat": "@e[type=Squid]",
+      "giveegg": true,
+      "attach": "",
+      "rawcmds": false
+    },
+    "animation": {
+      "enable": false,
+      "loop": true,
+      "interpolate": true,
+      "ticks": "20",
+      "strict": false,
+      "armsway": false,
+      "armswayX": "1",
+      "armswayY": "1",
+      "armswayZ": "1",
+      "armswayTicks": "40"
+    }
+  },
+  "blankarmorstands": []
+}
