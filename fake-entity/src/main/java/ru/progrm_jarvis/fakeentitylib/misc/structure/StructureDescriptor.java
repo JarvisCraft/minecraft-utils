@@ -7,7 +7,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.UUID;
 
-public class BlockItemStructureDescriptor {
+public class StructureDescriptor {
 
     @Data
     public static final class JsonRepresentation {

@@ -12,7 +12,7 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BlockItemStructureDescriptorTest {
+class StructureDescriptorTest {
 
     Gson gson;
 
@@ -23,11 +23,11 @@ class BlockItemStructureDescriptorTest {
 
     @Test
     void testGson() throws IOException {
-        final BlockItemStructureDescriptor.JsonRepresentation descriptor;
+        final StructureDescriptor.JsonRepresentation descriptor;
         try (val reader = new BufferedReader(
                 new FileReader(new File(getClass().getClass().getResource("/entity_descriptor_1.json").getFile()))
         )) {
-            descriptor = gson.fromJson(reader, BlockItemStructureDescriptor.JsonRepresentation.class);
+            descriptor = gson.fromJson(reader, StructureDescriptor.JsonRepresentation.class);
         }
 
         assertEquals(2, descriptor.getObjects().length);
