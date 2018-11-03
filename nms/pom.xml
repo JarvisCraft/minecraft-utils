@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>minecraft-utils</artifactId>
-        <groupId>ru.progrm-jarvis</groupId>
+        <groupId>ru.progrm-jarvis.minecraft</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>nms-utils</artifactId>
