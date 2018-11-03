@@ -1,4 +1,4 @@
-package ru.progrm_jarvis.fakeentitylib.misc;
+package ru.progrm_jarvis.fakeentitylib.misc.structure;
 
 import com.google.gson.Gson;
 import lombok.val;
