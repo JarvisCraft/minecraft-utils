@@ -1,8 +1,8 @@
 package ru.progrm_jarvis.fakeentitylib.misc;
 
 import com.google.gson.Gson;
+import junit.framework.TestCase;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -10,14 +10,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-class BlockItemStructureDescriptorTest {
+class BlockItemStructureDescriptorTest extends TestCase {
 
     Gson gson;
 
-    @BeforeEach
-    void setUp() {
+    @Override
+    protected void setUp() {
         gson = new Gson();
     }
 
