@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StructureDescriptorTest {
 
-    Gson gson;
+    private Gson gson;
 
     @BeforeEach
     void setUp() {
