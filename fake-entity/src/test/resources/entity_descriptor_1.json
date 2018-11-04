@@ -44,6 +44,120 @@
         "justAdded": true
       },
       "uuid": "775FABA6-C996-4FBD-A215-FFB1FF994B99"
+    },
+    {
+      "userData": {
+        "name": "Object 1 (Copy 1)",
+        "selected": false,
+        "rawid": "iron_block",
+        "blockid": "id:iron_block",
+        "customname": "0hjs2",
+        "isItem": false,
+        "enableRotCenter": true,
+        "size": "medium",
+        "isDynamic": true,
+        "visible": true,
+        "customnbt": "",
+        "translation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "justAdded": true
+      },
+      "uuid": "EC88157C-941B-4BFB-BD9C-A3643DEBF541"
+    },
+    {
+      "userData": {
+        "name": "Object 1 (Copy 1)",
+        "selected": false,
+        "rawid": "iron_block",
+        "blockid": "id:iron_block",
+        "customname": "D_066",
+        "isItem": false,
+        "enableRotCenter": true,
+        "size": "medium",
+        "isDynamic": true,
+        "visible": true,
+        "customnbt": "",
+        "translation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "justAdded": true,
+        "highlight": false
+      },
+      "uuid": "1C091B1D-71E6-4507-AD91-855F54EFD5CE"
+    },
+    {
+      "userData": {
+        "name": "Object 1 (Copy 1)",
+        "selected": false,
+        "rawid": "iron_block",
+        "blockid": "id:iron_block",
+        "customname": "0YpO6",
+        "isItem": false,
+        "enableRotCenter": true,
+        "size": "medium",
+        "isDynamic": true,
+        "visible": true,
+        "customnbt": "",
+        "translation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "justAdded": true,
+        "highlight": false
+      },
+      "uuid": "CBAB9131-4C43-48AC-AE9E-DA2F325EC41B"
+    },
+    {
+      "userData": {
+        "name": "Object 1 (Copy 1)",
+        "selected": false,
+        "rawid": "iron_block",
+        "blockid": "id:iron_block",
+        "customname": "NTzk9",
+        "isItem": false,
+        "enableRotCenter": true,
+        "size": "medium",
+        "isDynamic": true,
+        "visible": true,
+        "customnbt": "",
+        "translation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "justAdded": true,
+        "highlight": false
+      },
+      "uuid": "270BFFAB-6E28-4824-BF07-4D2A58AEA557"
+    },
+    {
+      "userData": {
+        "name": "Object 1 (Copy 1)",
+        "selected": false,
+        "rawid": "iron_block",
+        "blockid": "id:iron_block",
+        "customname": "dK9Sg",
+        "isItem": false,
+        "enableRotCenter": true,
+        "size": "medium",
+        "isDynamic": true,
+        "visible": true,
+        "customnbt": "",
+        "translation": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "justAdded": true,
+        "highlight": false
+      },
+      "uuid": "CB5C9C06-BB9A-4A74-9468-E9B8A43DBF47"
     }
   ],
   "keyframes": [
