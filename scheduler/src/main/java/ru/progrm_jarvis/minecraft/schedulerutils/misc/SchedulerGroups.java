@@ -4,7 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
-import org.bukkit.Utility;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -24,7 +23,7 @@ public class SchedulerGroups {
     public <K> KeyedSchedulerGroup<K> keyedSchedulerGroup(@NonNull final Plugin plugin,
                                                           final boolean async, final long delay, final long interval) {
         return new MapBasedKeyedSchedulerGroup<>(plugin, async, delay, interval, new HashMap<>());
-    }@Utility
+    }
 
     public <K> KeyedSchedulerGroup<K> concurrentKeyedSchedulerGroup(@NonNull final Plugin plugin,
                                                                     final boolean async, final long delay,
