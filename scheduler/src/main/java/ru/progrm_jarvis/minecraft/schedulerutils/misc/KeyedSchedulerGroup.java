@@ -2,14 +2,14 @@ package ru.progrm_jarvis.minecraft.schedulerutils.misc;
 
 import lombok.NonNull;
 
-public abstract class KeyedSchedulerGroup<K> extends SchedulerGroup {
+public abstract class KeyedSchedulerGroup<T extends Runnable, K> extends SchedulerGroup<T> {
 
-    public abstract void addTask(K key, @NonNull Runnable task);
+    public abstract void addTask(K key, @NonNull T task);
 
     @Override
-    public void addTask(@NonNull final Runnable task) {
+    public void addTask(@NonNull final T task) {
         addTask(null, task);
     }
 
-    public abstract void removeTask(K key);
+    public abstract T removeTask(K key);
 }
