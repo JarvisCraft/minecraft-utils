@@ -110,7 +110,7 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
                 .collect(Collectors.toCollection(ArrayList::new));
 
         tasks.addAll(syncWorker.clearTasks().stream()
-                .map(task -> task.task)// FIXME: 05.11.2018
+                .map(task -> task.task)
                 .collect(Collectors.toList()));
 
         return tasks;
