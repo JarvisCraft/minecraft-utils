@@ -10,6 +10,7 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -44,6 +45,11 @@ public class SchedulerGroups {
         final long delay, interval;
 
         final Map<K, Runnable> tasks;
+
+        @Override
+        public Collection<Runnable> getTasks() {
+            return tasks.values();
+        }
 
         public MapBasedKeyedSchedulerGroup(@NonNull final Plugin plugin, final boolean async, final long delay,
                                            final long interval,
