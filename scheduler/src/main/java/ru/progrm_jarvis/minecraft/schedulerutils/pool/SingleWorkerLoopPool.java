@@ -67,7 +67,10 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
     @Override
     public void removeTask(final Runnable task) {
         asyncWorker.removeTask(testedTask -> testedTask.task.equals(task));
+        checkAsync();
+
         syncWorker.removeTask(testedTask -> testedTask.task.equals(task));
+        checkSync();
     }
 
     @Override
@@ -76,16 +79,19 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
 
         var task = asyncWorker.removeTask(key);
         if (task != null) tasks.add(task);
+        checkAsync();
 
         task = syncWorker.removeTask(key);
         if (task != null) tasks.add(task);
+        checkSync();
 
         return tasks;
     }
 
     @Override
     public Runnable removeTask(final TaskOptions taskOptions, final K key) {
-        val tasks = (taskOptions.isAsync() ? asyncWorker.tasks() : syncWorker.tasks()).iterator();
+        val async = taskOptions.isAsync();
+        val tasks = (async ? asyncWorker.tasks() : syncWorker.tasks()).iterator();
         val interval = taskOptions.getInterval();
 
         while (tasks.hasNext()) {
@@ -93,14 +99,24 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
             if (task.interval == interval) return task.task;
         }
 
+        if (async) checkAsync();
+        else checkSync();
+
         return null;
     }
 
     @Override
     public Collection<Runnable> removeTasks(final TaskOptions taskOptions) {
-        return (taskOptions.isAsync() ? asyncWorker.clearTasks() : syncWorker.clearTasks()).stream()
+        val async = taskOptions.isAsync();
+
+        val removedTasks =  (async ? asyncWorker.clearTasks() : syncWorker.clearTasks()).stream()
                 .map(task -> task.task)
                 .collect(Collectors.toList());
+
+        if (async) checkAsync();
+        else checkSync();
+
+        return removedTasks;
     }
 
     @Override
@@ -108,12 +124,22 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
         val tasks = asyncWorker.clearTasks().stream()
                 .map(task -> task.task)
                 .collect(Collectors.toCollection(ArrayList::new));
+        asyncWorker.cancel();
 
         tasks.addAll(syncWorker.clearTasks().stream()
                 .map(task -> task.task)
                 .collect(Collectors.toList()));
+        syncWorker.cancel();
 
         return tasks;
+    }
+
+    protected void checkAsync() {
+        if (asyncWorker.size() == 0) asyncWorker.cancel();
+    }
+
+    protected void checkSync() {
+        if (syncWorker.size() == 0) syncWorker.cancel();
     }
 
     @Value
