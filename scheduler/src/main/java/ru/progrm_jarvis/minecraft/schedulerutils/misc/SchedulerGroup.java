@@ -9,6 +9,8 @@ import java.util.function.Predicate;
 
 public abstract class SchedulerGroup<T extends Runnable> extends BukkitRunnable {
 
+    public abstract int size();
+
     public abstract Collection<T> tasks();
 
     public abstract void addTask(@NonNull T task);

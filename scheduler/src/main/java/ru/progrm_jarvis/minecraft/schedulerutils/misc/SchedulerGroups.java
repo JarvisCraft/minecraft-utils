@@ -62,9 +62,20 @@ public class SchedulerGroups {
 
                 @EventHandler
                 public void onPluginDisable(final PluginDisableEvent event) {
-                    if (plugin == event.getPlugin()) shutdown();
+                    if (plugin == event.getPlugin()) cancel();
                 }
             }, plugin);
+        }
+
+        @Override // cancel should also set runnable to null
+        public synchronized void cancel() {
+            super.cancel();
+            runnable.set(null);
+        }
+
+        @Override
+        public int size() {
+            return tasks.size();
         }
 
         @Override
@@ -79,13 +90,6 @@ public class SchedulerGroups {
             tasks.clear();
 
             return tasks;
-        }
-
-        protected void shutdown() {
-            if (isCancelled()) throw new IllegalStateException(
-                    "Attempt to shutdown an already shut down MapBasedKeyedSchedulerGroup"
-            );
-            cancel();
         }
 
         @Override
@@ -126,6 +130,16 @@ public class SchedulerGroups {
                                                      final boolean async, final long delay, final long interval,
                                                      @NonNull final Map<K, T> tasks) {
             super(plugin, async, delay, interval, tasks);
+        }
+
+        @Override
+        public int size() {
+            readLock.lock();
+            try {
+                return super.size();
+            } finally {
+                readLock.unlock();
+            }
         }
 
         @Override
