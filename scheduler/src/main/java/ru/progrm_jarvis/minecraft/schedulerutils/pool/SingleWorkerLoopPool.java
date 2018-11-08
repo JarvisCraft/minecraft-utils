@@ -147,8 +147,8 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
     @FieldDefaults(level = AccessLevel.PRIVATE)
     private static class CountingTask implements Runnable {
 
-        Runnable task;
-        long interval;
+        final Runnable task;
+        final long interval;
         @NonFinal long counter;
 
         @Override

@@ -26,7 +26,7 @@ public interface LoopPool {
     Collection<Runnable> clearTasks();
 
     @Value
-    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @FieldDefaults(level = AccessLevel.PRIVATE)
     class TaskOptions {
 
