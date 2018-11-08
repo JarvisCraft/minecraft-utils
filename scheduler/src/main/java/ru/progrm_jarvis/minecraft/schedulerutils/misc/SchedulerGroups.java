@@ -87,7 +87,7 @@ public class SchedulerGroups {
         public Collection<T> clearTasks() {
             val tasks = new ArrayList<T>(this.tasks.values());
 
-            tasks.clear();
+            this.tasks.clear();
 
             return tasks;
         }
