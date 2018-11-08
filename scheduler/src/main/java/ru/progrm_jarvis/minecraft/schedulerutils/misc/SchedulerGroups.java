@@ -8,13 +8,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitTask;
+import ru.progrm_jarvis.minecraft.schedulerutils.task.initializer.BukkitTaskInitializer;
+import ru.progrm_jarvis.minecraft.schedulerutils.task.initializer.BukkitTaskInitializers;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -40,21 +40,17 @@ public class SchedulerGroups {
     @FieldDefaults(level = AccessLevel.PROTECTED)
     private static class MapBasedKeyedSchedulerGroup<T extends Runnable, K> extends KeyedSchedulerGroup<T, K> {
 
-        final AtomicReference<BukkitTask> runnable = new AtomicReference<>();
-
         @NonNull final Plugin plugin;
 
-        final boolean async;
-        final long delay, interval;
+        final BukkitTaskInitializer initializer;
 
         final Map<K, T> tasks;
 
         public MapBasedKeyedSchedulerGroup(@NonNull final Plugin plugin, final boolean async, final long delay,
                                            final long interval, @NonNull final Map<K, T> tasks) {
             this.plugin = plugin;
-            this.async = async;
-            this.delay = delay;
-            this.interval = interval;
+
+            initializer = BukkitTaskInitializers.createTimerTaskInitializer(plugin, async, delay, interval, this);
             this.tasks = tasks;
 
             // set up plugin disable hook
@@ -70,7 +66,7 @@ public class SchedulerGroups {
         @Override // cancel should also set runnable to null
         public synchronized void cancel() {
             super.cancel();
-            runnable.set(null);
+            initializer.shutdown();
         }
 
         @Override
@@ -99,8 +95,7 @@ public class SchedulerGroups {
 
         @Override
         public void addTask(final K key, @NonNull final T task) {
-            runnable.compareAndSet(null, async
-                    ? runTaskTimerAsynchronously(plugin, delay, interval) : runTaskTimer(plugin, delay, interval));
+            initializer.initialize();
 
             tasks.put(key, task);
         }
