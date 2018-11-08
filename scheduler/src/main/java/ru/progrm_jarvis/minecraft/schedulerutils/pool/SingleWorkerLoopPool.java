@@ -28,7 +28,7 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
 
     @Override
     public int tasksSize() {
-        return asyncWorker.size() + syncWorker.size();
+        return (asyncWorker == null ? 0 : asyncWorker.size()) + (syncWorker == null ? 0 : syncWorker.size());
     }
 
     protected void initAsyncWorker() {
