@@ -1,5 +1,8 @@
 package ru.progrm_jarvis.minecraft.schedulerutils.misc;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
@@ -13,8 +16,6 @@ import ru.progrm_jarvis.minecraft.schedulerutils.task.initializer.BukkitTaskInit
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -25,29 +26,32 @@ public class SchedulerGroups {
     public <T extends Runnable, K> KeyedSchedulerGroup<T, K> keyedSchedulerGroup(@NonNull final Plugin plugin,
                                                                                  final boolean async, final long delay,
                                                                                  final long interval) {
-        return new MapBasedKeyedSchedulerGroup<>(plugin, async, delay, interval, new HashMap<>());
+        return new MultimapBasedKeyedSchedulerGroup<>(plugin, async, delay, interval, ArrayListMultimap.create());
     }
 
     public <T extends Runnable, K> KeyedSchedulerGroup<T, K> concurrentKeyedSchedulerGroup(@NonNull final Plugin plugin,
                                                                                            final boolean async,
                                                                                            final long delay,
                                                                                            final long interval) {
-        return new ConcurrentMapBasedKeyedSchedulerGroup<>(plugin, async, delay, interval, new HashMap<>());
+        return new ConcurrentMultimapBasedKeyedSchedulerGroup<>(
+                plugin, async, delay, interval,
+                Multimaps.synchronizedMultimap(ArrayListMultimap.create())
+        );
     }
 
     @ToString
     @EqualsAndHashCode(callSuper = true)
     @FieldDefaults(level = AccessLevel.PROTECTED)
-    private static class MapBasedKeyedSchedulerGroup<T extends Runnable, K> extends KeyedSchedulerGroup<T, K> {
+    private static class MultimapBasedKeyedSchedulerGroup<T extends Runnable, K> extends KeyedSchedulerGroup<T, K> {
 
         @NonNull final Plugin plugin;
 
         final BukkitTaskInitializer initializer;
 
-        final Map<K, T> tasks;
+        final Multimap<K, T> tasks;
 
-        public MapBasedKeyedSchedulerGroup(@NonNull final Plugin plugin, final boolean async, final long delay,
-                                           final long interval, @NonNull final Map<K, T> tasks) {
+        public MultimapBasedKeyedSchedulerGroup(@NonNull final Plugin plugin, final boolean async, final long delay,
+                                                final long interval, @NonNull final Multimap<K, T> tasks) {
             this.plugin = plugin;
 
             initializer = BukkitTaskInitializers.createTimerTaskInitializer(plugin, async, delay, interval, this);
@@ -106,24 +110,24 @@ public class SchedulerGroups {
         }
 
         @Override
-        public T removeTask(final K key) {
-            return tasks.remove(key);
+        public Collection<T> removeTasks(final K key) {
+            return tasks.removeAll(key);
         }
     }
 
     @ToString
     @EqualsAndHashCode(callSuper = true)
     @FieldDefaults(level = AccessLevel.PROTECTED)
-    private static class ConcurrentMapBasedKeyedSchedulerGroup<T extends Runnable, K>
-            extends MapBasedKeyedSchedulerGroup<T, K> {
+    private static class ConcurrentMultimapBasedKeyedSchedulerGroup<T extends Runnable, K>
+            extends MultimapBasedKeyedSchedulerGroup<T, K> {
 
         ReadWriteLock lock = new ReentrantReadWriteLock();
         Lock readLock = lock.readLock();
         Lock writeLock = lock.writeLock();
 
-        public ConcurrentMapBasedKeyedSchedulerGroup(@NonNull final Plugin plugin,
-                                                     final boolean async, final long delay, final long interval,
-                                                     @NonNull final Map<K, T> tasks) {
+        public ConcurrentMultimapBasedKeyedSchedulerGroup(@NonNull final Plugin plugin,
+                                                          final boolean async, final long delay, final long interval,
+                                                          @NonNull final Multimap<K, T> tasks) {
             super(plugin, async, delay, interval, tasks);
         }
 
@@ -188,10 +192,10 @@ public class SchedulerGroups {
         }
 
         @Override
-        public T removeTask(final K key) {
+        public Collection<T> removeTasks(final K key) {
             writeLock.lock();
             try {
-                return super.removeTask(key);
+                return super.removeTasks(key);
             } finally {
                 writeLock.unlock();
             }

@@ -82,12 +82,12 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
     public Collection<Runnable> removeTasks(final K key) {
         val tasks = new ArrayList<Runnable>();
 
-        var task = asyncWorker.removeTask(key);
-        if (task != null) tasks.add(task);
+        var removedTasks = asyncWorker.removeTasks(key);
+        if (removedTasks != null) tasks.addAll(removedTasks);
         checkAsync();
 
-        task = syncWorker.removeTask(key);
-        if (task != null) tasks.add(task);
+        removedTasks = syncWorker.removeTasks(key);
+        if (removedTasks != null) tasks.addAll(removedTasks);
         checkSync();
 
         return tasks;

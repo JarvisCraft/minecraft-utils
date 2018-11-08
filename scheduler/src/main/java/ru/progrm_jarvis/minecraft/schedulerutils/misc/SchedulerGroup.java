@@ -15,6 +15,7 @@ public abstract class SchedulerGroup<T extends Runnable> extends BukkitRunnable 
 
     public abstract void addTask(@NonNull T task);
 
+    // should remove all occurrences of this task
     public abstract void removeTask(@NonNull T task);
 
     public abstract Collection<T> clearTasks();
