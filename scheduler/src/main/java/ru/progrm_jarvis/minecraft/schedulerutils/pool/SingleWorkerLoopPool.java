@@ -124,22 +124,22 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
         val tasks = asyncWorker.clearTasks().stream()
                 .map(task -> task.task)
                 .collect(Collectors.toCollection(ArrayList::new));
-        asyncWorker.cancel();
+        checkAsync();
 
         tasks.addAll(syncWorker.clearTasks().stream()
                 .map(task -> task.task)
                 .collect(Collectors.toList()));
-        syncWorker.cancel();
+        checkSync();
 
         return tasks;
     }
 
     protected void checkAsync() {
-        if (asyncWorker.size() == 0) asyncWorker.cancel();
+        if (asyncWorker.isCancelled()) asyncWorker = null;
     }
 
     protected void checkSync() {
-        if (syncWorker.size() == 0) syncWorker.cancel();
+        if (syncWorker.size() == 0) syncWorker = null;
     }
 
     @Value
