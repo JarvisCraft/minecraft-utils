@@ -17,6 +17,8 @@ public interface LoopPool {
 
     Plugin getPlugin();
 
+    int tasksSize();
+
     void addTask(@NonNull final TaskOptions taskOptions, @NonNull final Runnable task);
 
     void removeTask(@NonNull final Runnable task);

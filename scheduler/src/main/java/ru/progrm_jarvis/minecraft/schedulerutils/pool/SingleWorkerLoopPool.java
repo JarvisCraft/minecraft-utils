@@ -26,6 +26,11 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
     KeyedSchedulerGroup<CountingTask, K> asyncWorker;
     KeyedSchedulerGroup<CountingTask, K> syncWorker;
 
+    @Override
+    public int tasksSize() {
+        return asyncWorker.size() + syncWorker.size();
+    }
+
     protected void initAsyncWorker() {
         if (asyncWorker == null) asyncWorker = concurrent
                 ? SchedulerGroups.concurrentKeyedSchedulerGroup(plugin, true, 1, 1)
