@@ -19,13 +19,19 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PROTECTED)
-public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
+public class SingleWorkerLoopPool<T extends Runnable, K> implements KeyedLoopPool<T, K> {
 
     boolean concurrent;
 
     @NonNull @Getter Plugin plugin;
-    KeyedSchedulerGroup<CountingTask, K> asyncWorker;
-    KeyedSchedulerGroup<CountingTask, K> syncWorker;
+    KeyedSchedulerGroup<CountingTask<T>, K> asyncWorker;
+    KeyedSchedulerGroup<CountingTask<T>, K> syncWorker;
+
+    protected static <T extends Runnable> Collection<T> mapToTasks(final Collection<CountingTask<T>> tasks) {
+        return tasks.stream()
+                .map(task -> task.task)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public int tasksSize() {
@@ -45,34 +51,34 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
     }
 
     @Override
-    public void addTask(final TaskOptions taskOptions, final Runnable task) {
+    public void addTask(final TaskOptions taskOptions, final T task) {
         if (taskOptions.isAsync()) {
             initAsyncWorker();
 
-            asyncWorker.addTask(new CountingTask(task, taskOptions.getInterval()));
+            asyncWorker.addTask(new CountingTask<>(task, taskOptions.getInterval()));
         } else {
             initSyncWorker();
 
-            syncWorker.addTask(new CountingTask(task, taskOptions.getInterval()));
+            syncWorker.addTask(new CountingTask<>(task, taskOptions.getInterval()));
         }
     }
 
     @Override
-    public void addTask(final TaskOptions taskOptions, final K key, final Runnable task) {
+    public void addTask(final TaskOptions taskOptions, final K key, final T task) {
         if (taskOptions.isAsync()) {
             initAsyncWorker();
 
-            asyncWorker.addTask(key, new CountingTask(task, taskOptions.getInterval()));
+            asyncWorker.addTask(key, new CountingTask<>(task, taskOptions.getInterval()));
         } else {
             initSyncWorker();
 
-            syncWorker.addTask(key, new CountingTask(task, taskOptions.getInterval()));
+            syncWorker.addTask(key, new CountingTask<>(task, taskOptions.getInterval()));
         }
     }
 
     @Override
-    public Runnable removeTask(final Runnable task) {
-        final Predicate<CountingTask> predicate = testedTask -> testedTask.task.equals(task);
+    public T removeTask(final T task) {
+        final Predicate<CountingTask<T>> predicate = testedTask -> testedTask.task.equals(task);
 
         var removedTask = asyncWorker.removeTask(predicate);
         if (removedTask == null) {
@@ -81,27 +87,27 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
 
             checkAsync();
 
-            return removedTask;
+            return removedTask.task;
         }
 
         checkAsync();
-        return removedTask;
+        return removedTask.task;
     }
 
     @Override
-    public Collection<Runnable> removeTasks(final Runnable task) {
-        final Predicate<CountingTask> predicate = testedTask -> testedTask.task.equals(task);
-        var removedTasks = new ArrayList<Runnable>(asyncWorker.removeTasks(predicate));
+    public Collection<T> removeTasks(final T task) {
+        final Predicate<CountingTask<T>> predicate = testedTask -> testedTask.task.equals(task);
+        var removedTasks = new ArrayList<CountingTask<T>>(asyncWorker.removeTasks(predicate));
         checkAsync();
         removedTasks.addAll(syncWorker.removeTasks(predicate));
         checkSync();
 
-        return removedTasks;
+        return mapToTasks(removedTasks);
     }
 
     @Override
-    public Collection<Runnable> removeTasks(final K key) {
-        val tasks = new ArrayList<Runnable>();
+    public Collection<T> removeTasks(final K key) {
+        val tasks = new ArrayList<CountingTask<T>>();
 
         var removedTasks = asyncWorker.removeTasks(key);
         if (removedTasks != null) tasks.addAll(removedTasks);
@@ -111,11 +117,11 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
         if (removedTasks != null) tasks.addAll(removedTasks);
         checkSync();
 
-        return tasks;
+        return mapToTasks(tasks);
     }
 
     @Override
-    public Runnable removeTask(final TaskOptions taskOptions, final K key) {
+    public T removeTask(final TaskOptions taskOptions, final K key) {
         val async = taskOptions.isAsync();
         val tasks = (async ? asyncWorker.tasks() : syncWorker.tasks()).iterator();
         val interval = taskOptions.getInterval();
@@ -132,12 +138,12 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
     }
 
     @Override
-    public Collection<Runnable> removeTasks(final TaskOptions taskOptions) {
+    public Collection<T> removeTasks(final TaskOptions taskOptions) {
         val async = taskOptions.isAsync();
         val interval = taskOptions.getInterval();
 
         // remove all tasks
-        val removedTasks = new ArrayList<CountingTask>();
+        val removedTasks = new ArrayList<CountingTask<T>>();
         val tasks = (async ? asyncWorker : syncWorker).tasks().iterator();
         while (tasks.hasNext()) {
             val task = tasks.next();
@@ -150,24 +156,18 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
         if (async) checkAsync();
         else checkSync();
 
-        return removedTasks.stream()
-                .map(task -> task.task)
-                .collect(Collectors.toList());
+        return mapToTasks(removedTasks);
     }
 
     @Override
-    public Collection<Runnable> clearTasks() {
-        val tasks = asyncWorker.clearTasks().stream()
-                .map(task -> task.task)
-                .collect(Collectors.toCollection(ArrayList::new));
+    public Collection<T> clearTasks() {
+        val tasks = asyncWorker.clearTasks();
         checkAsync();
 
-        tasks.addAll(syncWorker.clearTasks().stream()
-                .map(task -> task.task)
-                .collect(Collectors.toList()));
+        tasks.addAll(syncWorker.clearTasks());
         checkSync();
 
-        return tasks;
+        return mapToTasks(tasks);
     }
 
     protected void checkAsync() {
@@ -181,9 +181,9 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
     @Value
     @RequiredArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
-    private static class CountingTask implements Runnable {
+    private static class CountingTask<T extends Runnable> implements Runnable {
 
-        final Runnable task;
+        final T task;
         final long interval;
         @NonFinal long counter;
 

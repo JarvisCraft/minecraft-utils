@@ -12,22 +12,24 @@ import java.util.Collection;
 /**
  * A pool of schedulers which groups tasks with similar parameters
  * (asynchrony and interval stored as {@link TaskOptions}}) into groups so that they are executed altogether.
+ *
+ * @param <T> supported task type
  */
-public interface LoopPool {
+public interface LoopPool<T extends Runnable> {
 
     Plugin getPlugin();
 
     int tasksSize();
 
-    void addTask(@NonNull final TaskOptions taskOptions, @NonNull final Runnable task);
+    void addTask(@NonNull final TaskOptions taskOptions, @NonNull final T task);
 
-    Runnable removeTask(@NonNull final Runnable task);
+    T removeTask(@NonNull final T task);
 
-    Collection<Runnable> removeTasks(@NonNull final Runnable task);
+    Collection<T> removeTasks(@NonNull final T task);
 
-    Collection<Runnable> removeTasks(@NonNull final TaskOptions taskOptions);
+    Collection<T> removeTasks(@NonNull final TaskOptions taskOptions);
 
-    Collection<Runnable> clearTasks();
+    Collection<T> clearTasks();
 
     @Value
     @AllArgsConstructor(access = AccessLevel.PROTECTED)

@@ -11,18 +11,18 @@ import java.util.Collection;
  * @param <K> type of key for identifying tasks
  * (may be unnecessary in some implementations so {@code null} may be used then)
  */
-public interface KeyedLoopPool<K> extends LoopPool {
+public interface KeyedLoopPool<T extends Runnable, K> extends LoopPool<T> {
 
     Plugin getPlugin();
 
-    void addTask(@NonNull final TaskOptions taskOptions, final K key, @NonNull final Runnable task);
+    void addTask(@NonNull final TaskOptions taskOptions, final K key, @NonNull final T task);
 
     @Override
-    default void addTask(final TaskOptions taskOptions, final Runnable task) {
+    default void addTask(final TaskOptions taskOptions, final T task) {
         addTask(taskOptions, null, task);
     }
 
-    Runnable removeTask(@NonNull final TaskOptions taskOptions, @NonNull final K key);
+    T removeTask(@NonNull final TaskOptions taskOptions, @NonNull final K key);
 
-    Collection<Runnable> removeTasks(@NonNull final K key);
+    Collection<T> removeTasks(@NonNull final K key);
 }
