@@ -1,6 +1,5 @@
 package ru.progrm_jarvis.minecraft.schedulerutils.pool;
 
-import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
@@ -21,6 +20,8 @@ import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class SingleWorkerLoopPoolTest {
+
+    private final Random RANDOM = new Random();
 
     @Mock private Plugin plugin;
     @InjectMocks private SingleWorkerLoopPool<String> loopPool;
@@ -54,13 +55,11 @@ class SingleWorkerLoopPoolTest {
 
     @Test
     void testClearTasks() {
-        val random = new Random();
-
-        final int syncTasks = 1 + random.nextInt(15), asyncTasks = 1 + random.nextInt(15);
+        final int syncTasks = 1 + RANDOM.nextInt(15), asyncTasks = 1 + RANDOM.nextInt(15);
         for (int i = 0; i < syncTasks; i++) loopPool
-                .addTask(TaskOptions.of(false, 1 + abs(random.nextLong())), () -> {});
+                .addTask(TaskOptions.of(false, 1 + abs(RANDOM.nextLong())), () -> {});
         for (int i = 0; i < asyncTasks; i++) loopPool
-                .addTask(TaskOptions.of(true, 1 + abs(random.nextLong())), () -> {});
+                .addTask(TaskOptions.of(true, 1 + abs(RANDOM.nextLong())), () -> {});
         assertEquals(syncTasks + asyncTasks, loopPool.tasksSize());
 
         loopPool.clearTasks();
