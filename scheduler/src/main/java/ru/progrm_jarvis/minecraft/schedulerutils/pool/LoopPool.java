@@ -21,7 +21,9 @@ public interface LoopPool {
 
     void addTask(@NonNull final TaskOptions taskOptions, @NonNull final Runnable task);
 
-    void removeTask(@NonNull final Runnable task);
+    Runnable removeTask(@NonNull final Runnable task);
+
+    Collection<Runnable> removeTasks(@NonNull final Runnable task);
 
     Collection<Runnable> removeTasks(@NonNull final TaskOptions taskOptions);
 

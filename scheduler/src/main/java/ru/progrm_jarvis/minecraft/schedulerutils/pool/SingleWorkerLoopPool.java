@@ -9,6 +9,7 @@ import ru.progrm_jarvis.minecraft.schedulerutils.misc.SchedulerGroups;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -70,12 +71,32 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
     }
 
     @Override
-    public void removeTask(final Runnable task) {
-        asyncWorker.removeTask(testedTask -> testedTask.task.equals(task));
-        checkAsync();
+    public Runnable removeTask(final Runnable task) {
+        final Predicate<CountingTask> predicate = testedTask -> testedTask.task.equals(task);
 
-        syncWorker.removeTask(testedTask -> testedTask.task.equals(task));
+        var removedTask = asyncWorker.removeTask(predicate);
+        if (removedTask == null) {
+            removedTask = syncWorker.removeTask(predicate);
+            if (removedTask == null) return null;
+
+            checkAsync();
+
+            return removedTask;
+        }
+
+        checkAsync();
+        return removedTask;
+    }
+
+    @Override
+    public Collection<Runnable> removeTasks(final Runnable task) {
+        final Predicate<CountingTask> predicate = testedTask -> testedTask.task.equals(task);
+        var removedTasks = new ArrayList<Runnable>(asyncWorker.removeTasks(predicate));
+        checkAsync();
+        removedTasks.addAll(syncWorker.removeTasks(predicate));
         checkSync();
+
+        return removedTasks;
     }
 
     @Override

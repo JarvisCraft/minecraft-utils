@@ -37,7 +37,7 @@ class SingleWorkerLoopPoolTest {
     }
 
     @Test
-    void removeTask() {
+    void removeTasks() {
     }
 
     @Test

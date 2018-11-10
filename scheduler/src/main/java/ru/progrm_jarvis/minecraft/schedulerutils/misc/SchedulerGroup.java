@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.val;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Predicate;
 
@@ -43,5 +44,14 @@ public abstract class SchedulerGroup<T extends Runnable> extends BukkitRunnable 
         }
 
         return null;
+    }
+
+    public Collection<T> removeTasks(@NonNull final Predicate<T> predicate) {
+        val tasks = tasks();
+        val removedTasks = new ArrayList<T>();
+        for (val task : tasks()) if (predicate.test(task)) removedTasks.add(task);
+        tasks.removeAll(removedTasks);
+
+        return removedTasks;
     }
 }
