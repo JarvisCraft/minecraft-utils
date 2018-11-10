@@ -24,7 +24,7 @@ class SingleWorkerLoopPoolTest {
     private final Random RANDOM = new Random();
 
     @Mock private Plugin plugin;
-    @InjectMocks private SingleWorkerLoopPool<String> loopPool;
+    @InjectMocks private SingleWorkerLoopPool<Runnable, String> loopPool;
 
     @BeforeAll
     static void setUp() {
