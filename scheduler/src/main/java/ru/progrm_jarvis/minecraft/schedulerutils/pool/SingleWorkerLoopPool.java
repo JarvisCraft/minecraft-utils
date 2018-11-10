@@ -128,11 +128,14 @@ public class SingleWorkerLoopPool<T extends Runnable, K> implements KeyedLoopPoo
 
         while (tasks.hasNext()) {
             val task = tasks.next();
-            if (task.interval == interval) return task.task;
+            if (task.interval == interval) {
+                if (async) checkAsync();
+                else checkSync();
+
+                return task.task;
+            }
         }
 
-        if (async) checkAsync();
-        else checkSync();
 
         return null;
     }
