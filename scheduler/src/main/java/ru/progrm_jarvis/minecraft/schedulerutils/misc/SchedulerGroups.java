@@ -105,8 +105,20 @@ public class SchedulerGroups {
         }
 
         @Override
-        public void removeTask(@NonNull final T task) {
-            tasks.values().remove(task);
+        public boolean removeTask(@NonNull final T task) {
+            return tasks.values().remove(task);
+        }
+
+        @Override
+        public int removeTasks(@NonNull final T task) {
+            val tasks = this.tasks.values();
+            boolean mayContain;
+            var removed = 0;
+            do {
+                if (mayContain = tasks.remove(task)) removed++;
+            } while (mayContain);
+
+            return removed;
         }
 
         @Override
@@ -182,10 +194,20 @@ public class SchedulerGroups {
         }
 
         @Override
-        public void removeTask(@NonNull final T task) {
+        public boolean removeTask(@NonNull final T task) {
             writeLock.lock();
             try {
-                super.removeTask(task);
+                return super.removeTask(task);
+            } finally {
+                writeLock.unlock();
+            }
+        }
+
+        @Override
+        public int removeTasks(@NonNull final T task) {
+            writeLock.lock();
+            try {
+                return super.removeTasks(task);
             } finally {
                 writeLock.unlock();
             }
