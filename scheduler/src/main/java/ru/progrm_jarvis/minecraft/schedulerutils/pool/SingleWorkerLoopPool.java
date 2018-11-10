@@ -113,15 +113,25 @@ public class SingleWorkerLoopPool<K> implements KeyedLoopPool<K> {
     @Override
     public Collection<Runnable> removeTasks(final TaskOptions taskOptions) {
         val async = taskOptions.isAsync();
+        val interval = taskOptions.getInterval();
 
-        val removedTasks = (async ? asyncWorker.clearTasks() : syncWorker.clearTasks()).stream()
-                .map(task -> task.task)
-                .collect(Collectors.toList());
+        // remove all tasks
+        val removedTasks = new ArrayList<CountingTask>();
+        val tasks = (async ? asyncWorker : syncWorker).tasks().iterator();
+        while (tasks.hasNext()) {
+            val task = tasks.next();
+            if (task.getInterval() == interval) {
+                tasks.remove();
+                removedTasks.add(task);
+            }
+        }
 
         if (async) checkAsync();
         else checkSync();
 
-        return removedTasks;
+        return removedTasks.stream()
+                .map(task -> task.task)
+                .collect(Collectors.toList());
     }
 
     @Override
