@@ -6,13 +6,13 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 /**
- * Base for most common implementations of {@link ObservableFakeEntity}.
+ * Base for most common implementations of {@link FakeEntity}.
  */
 @ToString
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @FieldDefaults(level = AccessLevel.PROTECTED)
-public abstract class AbstractFakeEntity implements ObservableFakeEntity {
+public abstract class AbstractFakeEntity implements FakeEntity {
 
     @NonNull @Getter Location location;
 
