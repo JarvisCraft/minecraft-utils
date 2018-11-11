@@ -134,7 +134,7 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
 
         this.players = players;
         this.global = global;
-        this.viewDistance = viewDistance;
+        this.viewDistance = Math.max(-1, viewDistance);
 
         this.location = location;
         this.headPitch = headPitch;
