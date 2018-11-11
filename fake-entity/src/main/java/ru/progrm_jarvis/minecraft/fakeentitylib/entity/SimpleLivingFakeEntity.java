@@ -2,32 +2,30 @@ package ru.progrm_jarvis.minecraft.fakeentitylib.entity;
 
 import com.comphenix.packetwrapper.*;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
-import com.google.common.base.Preconditions;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * A simple living entity self-sustained for direct usage.
  */
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PROTECTED)
-public class SimpleLivingFakeEntity implements BasicFakeEntity {
+public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
 
     ///////////////////////////////////////////////////////////////////////////
     // Basic entity data
     ///////////////////////////////////////////////////////////////////////////
+
     /**
      * Unique entity ID by which it should be identified in all packets.
      */
@@ -120,12 +118,42 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
      */
     WrapperPlayServerEntityTeleport teleportPacket;
 
+    /**
+     * Difference between the actual entity <i>x</i> and its visible value
+     */
+    double xDelta,
+    /**
+     * Difference between the actual entity <i>y</i> and its visible value
+     */
+    yDelta,
+    /**
+     * Difference between the actual entity <i>z</i> and its visible value
+     */
+    zDelta;
+
+    /**
+     * Difference between the actual entity <i>yaw</i> and its visible value
+     */
+    float yawDelta = 0,
+
+    /**
+     * Difference between the actual entity <i>pitch</i> and its visible value
+     */
+    pitchDelta = 0,
+
+    /**
+     * Difference between the actual entity <i>head pitch</i> and its visible value
+     */
+    headPitchDelta = 0;
+
     @Builder
     public SimpleLivingFakeEntity(final int entityId, @Nullable final UUID uuid, @NonNull final EntityType type,
                                   @NonNull final Map<Player, Boolean> players,
                                   final boolean global, final int viewDistance,
                                   @NonNull final Location location, float headPitch, @Nullable final Vector velocity,
                                   @Nullable final WrappedDataWatcher metadata) {
+        super(global, viewDistance, location, players, metadata);
+
         // setup fields
 
         this.id = entityId;
@@ -154,13 +182,13 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
     }
 
     protected void actualizeSpawnPacket() {
-        spawnPacket.setX(location.getX());
-        spawnPacket.setY(location.getY());
-        spawnPacket.setZ(location.getZ());
+        spawnPacket.setX(location.getX() + xDelta);
+        spawnPacket.setY(location.getY() + yDelta);
+        spawnPacket.setZ(location.getZ() + zDelta);
 
-        spawnPacket.setPitch(location.getPitch());
-        spawnPacket.setYaw(location.getYaw());
-        spawnPacket.setHeadPitch(headPitch);
+        spawnPacket.setPitch(location.getPitch() + pitchDelta);
+        spawnPacket.setYaw(location.getYaw() + yawDelta);
+        spawnPacket.setHeadPitch(headPitch + headPitchDelta);
 
         if (velocity != null) {
             spawnPacket.setVelocityX(velocity.getX());
@@ -173,26 +201,6 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
         }
 
         spawnPacket.setMetadata(metadata);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Player management
-    ///////////////////////////////////////////////////////////////////////////
-
-    @Override
-    public void addPlayer(final Player player) {
-        if (canSeeIgnoreContainment(player)) render(player);
-        else players.put(player, false);
-    }
-
-    @Override
-    public void removePlayer(final Player player) {
-        if (players.containsKey(player)) unrender(player);
-    }
-
-    @Override
-    public boolean containsPlayer(final Player player) {
-        return players.containsKey(player);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -225,6 +233,7 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
      * @param yaw new yaw
      * @param pitch new pitch
      */
+    @Override
     protected void performMove(final double dx, final double dy, final double dz, final float yaw, final float pitch) {
         if (pitch == 0 && yaw == 0) {
             if (movePacket == null) {
@@ -263,6 +272,7 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
      * @param yaw new yaw
      * @param pitch new pitch
      */
+    @Override
     protected void performTeleportation(final double x, final double y, final double z,
                                         final float yaw, final float pitch) {
         if (teleportPacket == null) {
@@ -270,30 +280,13 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
             teleportPacket.setEntityID(id);
         }
 
-        teleportPacket.setX(x);
-        teleportPacket.setY(y);
-        teleportPacket.setZ(z);
-        teleportPacket.setYaw(yaw);
-        teleportPacket.setPitch(pitch);
+        teleportPacket.setX(x + xDelta);
+        teleportPacket.setY(y + yDelta);
+        teleportPacket.setZ(z + zDelta);
+        teleportPacket.setYaw(yaw + yawDelta);
+        teleportPacket.setPitch(pitch + pitchDelta);
 
         for (val entry : players.entrySet()) if (entry.getValue()) teleportPacket.sendPacket(entry.getKey());
-    }
-
-    @Override
-    public void teleport(final double x, final double y, final double z, final float yaw, final float pitch) {
-        final double dx = x - location.getX(), dy = y - location.getY(), dz = z - location.getZ();
-
-        if (dx > 8 || dy > 8 || dz > 8) performMove(dx, dy, dz, yaw, pitch);
-        else performTeleportation(x, y, z, yaw, pitch);
-    }
-
-    @Override
-    public void move(final double dx, final double dy, final double dz, final float dYaw, final float dPitch) {
-        if (dx > 8 || dy > 8 || dz > 8) performMove(dx, dy, dz, location.getYaw() + dYaw, location.getPitch() + dPitch);
-        else performTeleportation(
-                location.getX() + dx, location.getY() + dy, location.getZ() + dz,
-                location.getYaw() + dYaw, location.getPitch() + dPitch
-        );
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -303,6 +296,7 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
     /**
      * Sends metadata to all players seeing this entity creating packet if it has not yet been initialized.
      */
+    @Override
     protected void sendMetadata() {
         if (metadata == null) return;
         if (metadataPacket == null) {
@@ -314,137 +308,18 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
         for (val entry : players.entrySet()) if (entry.getValue()) metadataPacket.sendPacket(entry.getKey());
     }
 
-    @Override
-    public void setMetadata(@NonNull final WrappedDataWatcher metadata) {
-        this.metadata = metadata.deepClone();
-
-        sendMetadata();
-    }
-
-    @Override
-    public void setMetadata(@NonNull final List<WrappedWatchableObject> metadata) {
-        this.metadata = new WrappedDataWatcher(metadata);
-
-        sendMetadata();
-    }
-
-    @Override
-    public void setMetadata(@Nonnull final Collection<WrappedWatchableObject> metadata) {
-        setMetadata(new ArrayList<>(metadata));
-
-        sendMetadata();
-    }
-
-    @Override
-    public void setMetadata(@Nonnull final WrappedWatchableObject... metadata) {
-        setMetadata(Arrays.asList(metadata));
-
-        sendMetadata();
-    }
-
-    @Override
-    public void addMetadata(final List<WrappedWatchableObject> metadata) {
-        if (this.metadata == null) this.metadata = new WrappedDataWatcher(metadata);
-        else for (val metadatum : metadata) this.metadata.setObject(metadatum.getIndex(), metadatum);
-
-        sendMetadata();
-    }
-
-    @Override
-    public void addMetadata(final Collection<WrappedWatchableObject> metadata) {
-        if (this.metadata == null) this.metadata = new WrappedDataWatcher(new ArrayList<>(metadata));
-        else for (val metadatum : metadata) this.metadata.setObject(metadatum.getIndex(), metadatum);
-
-        sendMetadata();
-    }
-
-    @Override
-    public void addMetadata(final WrappedWatchableObject... metadata) {
-        if (this.metadata == null) this.metadata = new WrappedDataWatcher(Arrays.asList(metadata));
-        else for (val metadatum : metadata) this.metadata.setObject(metadatum.getIndex(), metadatum);
-
-        sendMetadata();
-    }
-
-    @Override
-    public void removeMetadata(final Iterable<Integer> indexes) {
-        if (metadata == null) return;
-
-        for (val index : indexes) metadata.remove(index);
-
-        sendMetadata();
-    }
-
-    @Override
-    public void removeMetadata(final int... indexes) {
-        if (metadata == null) return;
-
-        for (val index : indexes) metadata.remove(index);
-
-        sendMetadata();
-    }
-
     ///////////////////////////////////////////////////////////////////////////
     // Rendering
     ///////////////////////////////////////////////////////////////////////////
-
-    protected boolean canSeeIgnoreContainment(final Player player) {
-        return player.getWorld() == location.getWorld() && player.getEyeLocation().distance(location) <= viewDistance;
-    }
-
-    @Override
-    public boolean isRendered(final Player player) {
-        return players.getOrDefault(player, false);
-    }
 
     @Override
     public void render(final Player player) {
         actualizeSpawnPacket();
         spawnPacket.sendPacket(player);
-
-        players.put(player, true);
     }
 
     @Override
     public void unrender(final Player player) {
         despawnPacket.sendPacket(player);
-
-        players.put(player, false);
-    }
-
-    @Override
-    public boolean canSee(final Player player) {
-        Preconditions.checkArgument(
-                players.containsKey(player), "Player attempting to rerender should be associated with this fake entity"
-        );
-
-        return canSeeIgnoreContainment(player);
-    }
-
-    @Override
-    public void attemptRerenderForAll() {
-        val world = location.getWorld();
-        for (val entry : players.entrySet()) {
-            val player = entry.getKey();
-            if (entry.getValue()) {
-                if (player.getWorld() != world
-                        || player.getEyeLocation().distance(location) > viewDistance) unrender(player);
-            } else if (player.getWorld() == world
-                    && player.getEyeLocation().distance(location) <= viewDistance) render(player);
-        }
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Simple accessors
-    ///////////////////////////////////////////////////////////////////////////
-
-    @Override
-    public World getWorld() {
-        return location.getWorld();
-    }
-
-    @Override
-    public Collection<Player> getPlayers() {
-        return players.keySet();
     }
 }

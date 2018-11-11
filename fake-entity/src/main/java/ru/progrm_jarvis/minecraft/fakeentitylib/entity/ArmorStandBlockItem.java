@@ -35,8 +35,6 @@ import static ru.progrm_jarvis.minecraft.nmsutils.metadata.MetadataGenerator.Ent
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
 
-    static double LOCATION_DELTA_Y = -1;
-
     /**
      * Rotation of this block
      */
@@ -79,6 +77,9 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
         equipmentPacket.setEntityID(id);
         equipmentPacket.setSlot(EnumWrappers.ItemSlot.HEAD);
         equipmentPacket.setItem(this.item = item);
+
+        // actual block-item position (head of armorstand) is one block higher than its coordinate so normalize it
+        yDelta = -1;
     }
 
     /**
@@ -101,39 +102,6 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
                 null, concurrent ? new ConcurrentHashMap<>() : new HashMap(),
                 global, viewDistance, location, rotation, small, item
         );
-    }
-
-    // Override teleportation to include position delta
-    // <super> is not called for performance reasons
-    @Override
-    @SuppressWarnings("Duplicates")
-    protected void actualizeSpawnPacket() {
-        spawnPacket.setX(location.getX());
-        spawnPacket.setY(location.getY() + LOCATION_DELTA_Y);
-        spawnPacket.setZ(location.getZ());
-
-        spawnPacket.setPitch(location.getPitch());
-        spawnPacket.setYaw(location.getYaw());
-        spawnPacket.setHeadPitch(headPitch);
-
-        if (velocity != null) {
-            spawnPacket.setVelocityX(velocity.getX());
-            spawnPacket.setVelocityY(velocity.getY());
-            spawnPacket.setVelocityZ(velocity.getZ());
-        } else {
-            spawnPacket.setVelocityX(0);
-            spawnPacket.setVelocityY(0);
-            spawnPacket.setVelocityZ(0);
-        }
-
-        spawnPacket.setMetadata(metadata);
-    }
-
-    // Override teleportation to include position delta
-    @Override
-    protected void performTeleportation(final double x, final double y, final double z, final float yaw,
-                                        final float pitch) {
-        super.performTeleportation(x, y + LOCATION_DELTA_Y, z, yaw, pitch);
     }
 
     /**

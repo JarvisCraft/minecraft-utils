@@ -41,46 +41,20 @@ public interface ObservableFakeEntity extends FakeEntity {
     boolean canSee(Player player);
 
     /**
-     * Renders the entity for player which will temporarily despawn the entity for him
-     * and normally prevent him from receiving any data related to this entity (except the one for rendering it back).
-     *
-     * @apiNote method does not check whether the player is managed by this entity
-     *
-     * @param player player for whom to unrender the entity
-     */
-    void render(Player player);
-
-    /**
-     * Unrenders the entity for player which means temporarily despawning the entity for him and <i>normally</i>
-     * preventing him from receiving any data related to this entity (except the one for rendering it back).
-     *
-     * @apiNote method does not check whether the player is managed by this entity
-     *
-     * @param player player for whom to unrender the entity
-     */
-    void unrender(Player player);
-
-    /**
      * Attempt to rerender this fake entity for player specified.
-     * Rerendering means calling {@link #render(Player)} if the player does not see the entity although he should
-     * or calling {@link #unrender(Player)} if the player sees the entity but should not.
-     *
-     * @implNote this implementation may be ineffective due to both
-     * {@link #containsPlayer(Player)} and {@link #isRendered(Player)} calls
-     * where they can be replaced with single map lookup in common implementations
+     * Rerendering means rendering if the player does not see the entity although he should
+     * or calling unrender if the player sees the entity but should not.
      *
      * @param player player for whom to attempt to rerender this entity
      */
-    default void attemptRerender(final Player player) {
-        if (containsPlayer(player)) if (isRendered(player)) {
-            if (!canSee(player)) unrender(player); // unrender for player if he sees but shouldn't
-        } else if (canSee(player)) render(player); // render for player if doesn't see but should
-    }
+    void attemptRerender(final Player player);
 
     /**
      * Attempts to rerender this fake entity for all players associated with it.
      * This logically means calling {@link #attemptRerender(Player)} on each player from {@link #getPlayers()}
      * although implementations are expected to provide some optimizations of this.
+     *
+     * @implNote may be ineffective as players may be stored in a map containing information on them being rendered
      */
     default void attemptRerenderForAll() {
         for (val player : getPlayers()) attemptRerender(player);
