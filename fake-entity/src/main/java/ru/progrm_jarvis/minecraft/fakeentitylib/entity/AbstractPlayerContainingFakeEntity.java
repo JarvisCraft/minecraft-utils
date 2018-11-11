@@ -8,6 +8,9 @@ import org.bukkit.entity.Player;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * Base for most common implementations of {@link ObservableFakeEntity} containing player logic base.
+ */
 @ToString
 @EqualsAndHashCode(callSuper = false)
 @FieldDefaults(level = AccessLevel.PROTECTED)

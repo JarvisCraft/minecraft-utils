@@ -10,6 +10,9 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nullable;
 import java.util.*;
 
+/**
+ * Base for most common implementations of {@link BasicFakeEntity} containing player logic base.
+ */
 @ToString
 @EqualsAndHashCode(callSuper = false)
 @FieldDefaults(level = AccessLevel.PROTECTED)
