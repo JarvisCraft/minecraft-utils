@@ -136,7 +136,6 @@ public class SingleWorkerLoopPool<T extends Runnable, K> implements KeyedLoopPoo
             }
         }
 
-
         return null;
     }
 
