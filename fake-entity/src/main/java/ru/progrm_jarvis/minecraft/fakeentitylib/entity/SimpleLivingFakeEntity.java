@@ -69,7 +69,7 @@ public class SimpleLivingFakeEntity implements BasicFakeEntity {
     /**
      * Location of this fake entity
      */
-    @Getter final Location location;
+    @NonNull @Getter final Location location;
 
     /**
      * Head pitch of this fake entity
