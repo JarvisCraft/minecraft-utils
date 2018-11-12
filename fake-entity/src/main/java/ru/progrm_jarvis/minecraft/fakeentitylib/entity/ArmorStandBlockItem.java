@@ -61,12 +61,13 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param item item to be displayed by this block-item
      */
     public ArmorStandBlockItem(@Nullable final UUID uuid,
-                               final Map<Player, Boolean> playersMap, final boolean global,
-                               final int viewDistance, final Location location,
-                               @Nullable final Vector3F rotation, final boolean small, @NonNull final ItemStack item) {
+                               final Map<Player, Boolean> playersMap,
+                               final boolean global, final int viewDistance, final boolean visible,
+                               final Location location, @Nullable final Vector3F rotation,
+                               final boolean small, @NonNull final ItemStack item) {
         super(
                 NmsUtil.nextEntityId(), uuid, EntityType.ARMOR_STAND,
-                playersMap, global, viewDistance, location, 0, null, createMetadata(rotation, small)
+                playersMap, global, viewDistance, visible, location, 0, null, createMetadata(rotation, small)
         );
 
         this.rotation = rotation;
@@ -92,13 +93,14 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param item item to be displayed by this block-item
      * @return newly created armor stand block-item
      */
-    public static ArmorStandBlockItem create(final boolean concurrent, final boolean global, final int viewDistance,
+    public static ArmorStandBlockItem create(final boolean concurrent,
+                                             final boolean global, final int viewDistance, final boolean visible,
                                              final Location location,
                                              final Vector3F rotation, final boolean small,
                                              @NonNull final ItemStack item) {
         return new ArmorStandBlockItem(
                 null, concurrent ? new ConcurrentHashMap<>() : new HashMap(),
-                global, viewDistance, location, rotation, small, item
+                global, viewDistance, visible, location, rotation, small, item
         );
     }
 

@@ -30,4 +30,18 @@ public interface FakeEntity extends PlayerContainer {
      * @return all players associated with this entity
      */
     Collection<Player> getPlayers();
+
+    /**
+     * Gets whether this fake entity is visible or not.
+     *
+     * @return {@code true} if this fake entity is visible or {@code false} otherwise
+     */
+    boolean isVisible();
+
+    /**
+     * Makes this fake entity visible or not invisible.
+     *
+     * @param visible {@code true} if this fake entity should be visible or {@code false} if it should be invisible
+     */
+    void setVisible(boolean visible);
 }

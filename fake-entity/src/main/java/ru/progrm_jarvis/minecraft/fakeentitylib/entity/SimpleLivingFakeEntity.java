@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import ru.progrm_jarvis.minecraft.fakeentitylib.entity.aspect.annotation.WhenVisible;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -59,6 +60,8 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
      * View distance for this entity or {@code -1} if none
      */
     @Getter int viewDistance;
+
+    @Getter private boolean visible;
 
     ///////////////////////////////////////////////////////////////////////////
     // Entity changing parameters
@@ -150,6 +153,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     public SimpleLivingFakeEntity(final int entityId, @Nullable final UUID uuid, @NonNull final EntityType type,
                                   @NonNull final Map<Player, Boolean> players,
                                   final boolean global, final int viewDistance,
+                                  boolean visible,
                                   @NonNull final Location location, float headPitch, @Nullable final Vector velocity,
                                   @Nullable final WrappedDataWatcher metadata) {
         super(global, viewDistance, location, players, metadata);
@@ -163,6 +167,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
         this.players = players;
         this.global = global;
         this.viewDistance = Math.max(-1, viewDistance);
+        this.visible = visible;
 
         this.location = location;
         this.headPitch = headPitch;
@@ -209,14 +214,17 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
 
     @Override
     public void spawn() {
-        actualizeSpawnPacket();
+        if (visible) {
+            actualizeSpawnPacket();
 
-        for (val entry : players.entrySet()) if (entry.getValue()) spawnPacket.sendPacket(entry.getKey());
+            for (val entry : players.entrySet()) if (entry.getValue()) spawnPacket.sendPacket(entry.getKey());
+        }
     }
 
     @Override
     public void despawn() {
-        for (val entry : players.entrySet()) if (entry.getValue()) despawnPacket.sendPacket(entry.getKey());
+        if (visible) for (val entry : players.entrySet()) if (entry.getValue()) despawnPacket
+                .sendPacket(entry.getKey());
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -234,6 +242,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
      * @param pitch new pitch
      */
     @Override
+    @WhenVisible
     protected void performMove(final double dx, final double dy, final double dz, final float yaw, final float pitch) {
         if (pitch == 0 && yaw == 0) {
             if (movePacket == null) {
@@ -273,6 +282,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
      * @param pitch new pitch
      */
     @Override
+    @WhenVisible
     protected void performTeleportation(final double x, final double y, final double z,
                                         final float yaw, final float pitch) {
         if (teleportPacket == null) {
@@ -297,6 +307,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
      * Sends metadata to all players seeing this entity creating packet if it has not yet been initialized.
      */
     @Override
+    @WhenVisible
     protected void sendMetadata() {
         if (metadata == null) return;
         if (metadataPacket == null) {
@@ -321,5 +332,15 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     @Override
     public void unrender(final Player player) {
         despawnPacket.sendPacket(player);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Visibility
+    ///////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void setVisible(final boolean visible) {
+        for (val entry : players.entrySet()) if (entry.getValue()) despawnPacket.sendPacket(entry.getKey());
+        this.visible = visible;
     }
 }
