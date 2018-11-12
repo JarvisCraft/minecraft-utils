@@ -4,6 +4,7 @@ import com.comphenix.packetwrapper.WrapperPlayServerEntityEquipment;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
@@ -18,10 +19,7 @@ import ru.progrm_jarvis.minecraft.nmsutils.metadata.MetadataGenerator.ArmorStand
 import ru.progrm_jarvis.minecraft.nmsutils.metadata.MetadataGenerator.Entity;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static ru.progrm_jarvis.minecraft.nmsutils.metadata.MetadataGenerator.ArmorStand.armorStandFlags;
@@ -38,12 +36,12 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
     /**
      * Rotation of this block
      */
-    Vector3F rotation;
+    @Nullable Vector3F rotation;
 
     /**
      * Item displayed by this block
      */
-    ItemStack item;
+    @NonNull ItemStack item;
 
     /**
      * Packet used for displaying this block's displayed item
@@ -65,7 +63,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
     public ArmorStandBlockItem(@Nullable final UUID uuid,
                                final Map<Player, Boolean> playersMap, final boolean global,
                                final int viewDistance, final Location location,
-                               final Vector3F rotation, final boolean small, @NonNull final ItemStack item) {
+                               @Nullable final Vector3F rotation, final boolean small, @NonNull final ItemStack item) {
         super(
                 NmsUtil.nextEntityId(), uuid, EntityType.ARMOR_STAND,
                 playersMap, global, viewDistance, location, 0, null, createMetadata(rotation, small)
@@ -111,15 +109,15 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param small whether this block-item is small
      * @return created metadata object
      */
-    public static WrappedDataWatcher createMetadata(final Vector3F rotation,
-                                                    final boolean small) {
-        return new WrappedDataWatcher(Arrays.asList(
-                entityFlags(Entity.Flag.INVISIBLE),
-                armorStandFlags(small
-                        ? new ArmorStand.Flag[]{ArmorStand.Flag.SMALL, ArmorStand.Flag.MARKER}
-                        : new ArmorStand.Flag[]{MetadataGenerator.ArmorStand.Flag.MARKER}),
-                headRotation(rotation)
-        ));
+    public static WrappedDataWatcher createMetadata(@Nullable final Vector3F rotation, final boolean small) {
+        val metadata = new ArrayList<WrappedWatchableObject>();
+        metadata.add(entityFlags(Entity.Flag.INVISIBLE));
+        metadata.add(armorStandFlags(small
+                ? new ArmorStand.Flag[]{ArmorStand.Flag.SMALL, ArmorStand.Flag.MARKER}
+                : new ArmorStand.Flag[]{MetadataGenerator.ArmorStand.Flag.MARKER}));
+        if (rotation != null) metadata.add(headRotation(rotation));
+
+        return new WrappedDataWatcher(metadata);
     }
 
     @Override
@@ -161,11 +159,14 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param delta delta of rotation
      */
     public void rotate(@NonNull final Vector3F delta) {
-        setRotation(new Vector3F(
-                minimizeAngle(rotation.getX() + delta.getX()),
-                minimizeAngle(rotation.getY() + delta.getY()),
-                minimizeAngle(rotation.getZ() + delta.getZ())
-        ));
+        setRotation(rotation == null
+                ? new Vector3F(delta.getX(), delta.getY(), delta.getZ())
+                : new Vector3F(
+                        minimizeAngle(rotation.getX() + delta.getX()),
+                        minimizeAngle(rotation.getY() + delta.getY()),
+                        minimizeAngle(rotation.getZ() + delta.getZ())
+                )
+        );
     }
 
     /**
