@@ -15,6 +15,7 @@ import org.bukkit.World;
 public abstract class AbstractFakeEntity implements FakeEntity {
 
     @NonNull @Getter Location location;
+    @Getter boolean visible = true; // setter should be created manually to perform visualisation logic
 
     @Override
     public World getWorld() {
