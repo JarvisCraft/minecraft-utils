@@ -22,6 +22,9 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <!-- AspectJ-->
+        <aspectj.source.version>${maven.compiler.target}</aspectj.source.version>
+        <aspectj.target.version>${maven.compiler.source}</aspectj.target.version>
+        <aspectj.compliance.version>${maven.compiler.target}</aspectj.compliance.version>
         <aspectj.version>1.9.2</aspectj.version>
         <!-- Local versions -->
         <version.nms-utils>1.0.0-SNAPSHOT</version.nms-utils>
@@ -45,7 +48,7 @@
     </repositories>
 
     <build>
-        <defaultGoal>verify</defaultGoal>
+        <defaultGoal>clean verify</defaultGoal>
 
         <pluginManagement>
             <plugins>
@@ -62,6 +65,47 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>aspectj-maven-plugin</artifactId>
                     <version>1.11</version>
+
+                    <configuration>
+                        <complianceLevel>${aspectj.compliance.version}</complianceLevel>
+                        <source>${aspectj.source.version}</source>
+                        <target>${aspectj.target.version}</target>
+                        <showWeaveInfo>true</showWeaveInfo>
+                        <verbose>true</verbose>
+                        <Xlint>ignore</Xlint>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <excludes>
+                            <exclude>**/*.java</exclude>
+                        </excludes>
+                        <forceAjcCompile>true</forceAjcCompile>
+                        <sources/>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>default-compile</id>
+                            <phase>process-classes</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                            <configuration>
+                                <weaveDirectories>
+                                    <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
+                                </weaveDirectories>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>default-testCompile</id>
+                            <phase>process-test-classes</phase>
+                            <goals>
+                                <goal>test-compile</goal>
+                            </goals>
+                            <configuration>
+                                <weaveDirectories>
+                                    <weaveDirectory>${project.build.directory}/test-classes</weaveDirectory>
+                                </weaveDirectories>
+                            </configuration>
+                        </execution>
+                    </executions>
                     <dependencies>
                         <dependency>
                             <groupId>org.aspectj</groupId>
@@ -69,14 +113,6 @@
                             <version>${aspectj.version}</version>
                         </dependency>
                     </dependencies>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>compile</goal>
-                                <goal>test-compile</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
