@@ -6,7 +6,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import ru.progrm_jarvis.minecraft.fakeentitylib.entity.aspect.annotation.WhenVisible;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -40,7 +39,6 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
     /**
      * Sends metadata to all players seeing this entity creating packet if it has not yet been initialized.
      */
-    @WhenVisible
     protected abstract void sendMetadata();
 
     @Override
@@ -126,7 +124,6 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
      * @param yaw new yaw
      * @param pitch new pitch
      */
-    @WhenVisible
     protected abstract void performMove(final double dx, final double dy, final double dz,
                                         final float yaw, final float pitch);
 
@@ -140,7 +137,6 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
      * @param yaw new yaw
      * @param pitch new pitch
      */
-    @WhenVisible
     protected abstract void performTeleportation(final double x, final double y, final double z,
                                                  final float yaw, final float pitch);
 
