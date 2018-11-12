@@ -24,8 +24,7 @@ public @interface WhenVisible {
 
         @Around("@annotation(WhenVisible)")
         public Object around(final ProceedingJoinPoint joinPoint) throws Throwable {
-            if (((FakeEntity) joinPoint.getTarget()).isVisible()) return joinPoint.proceed();
-            return null;
+            return ((FakeEntity) joinPoint.getTarget()).isVisible() ? joinPoint.proceed() : null;
         }
     }
 }
