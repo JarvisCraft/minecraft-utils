@@ -301,7 +301,7 @@ public class MetadataGenerator {
         public enum HandState {
             HAND_ACTIVE((byte) 0x01),
             OFFHAND((byte) 0x02),
-            RIPTIDE_SPIN_ATTACJ((byte) 0x04);
+            RIPTIDE_SPIN_ATTACK((byte) 0x04);
 
             private final byte value;
         }
