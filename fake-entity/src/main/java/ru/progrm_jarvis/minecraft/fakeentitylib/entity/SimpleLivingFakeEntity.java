@@ -184,6 +184,26 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
         despawnPacket.setEntityIds(new int[]{id});
     }
 
+    /**
+     * Spawns the entity for player without performing any checks
+     * such as player containment checks or spawn packet actualization.
+     *
+     * @param player player to whom to spawn this entity
+     */
+    protected void performSpawnNoChecks(final Player player) {
+        spawnPacket.sendPacket(player);
+    }
+
+    /**
+     * Despawns the entity for player without performing any checks
+     * such as player containment checks or spawn packet actualization.
+     *
+     * @param player player to whom to despawn this entity
+     */
+    protected void performDespawnNoChecks(final Player player) {
+        despawnPacket.sendPacket(player);
+    }
+
     protected void actualizeSpawnPacket() {
         spawnPacket.setX(location.getX() + xDelta);
         spawnPacket.setY(location.getY() + yDelta);
@@ -211,18 +231,17 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     ///////////////////////////////////////////////////////////////////////////
 
     @Override
+    @WhenVisible
     public void spawn() {
-        if (visible) {
-            actualizeSpawnPacket();
+        actualizeSpawnPacket();
 
-            for (val entry : players.entrySet()) if (entry.getValue()) spawnPacket.sendPacket(entry.getKey());
-        }
+        for (val entry : players.entrySet()) if (entry.getValue()) performSpawnNoChecks(entry.getKey());
     }
 
     @Override
+    @WhenVisible
     public void despawn() {
-        if (visible) for (val entry : players.entrySet()) if (entry.getValue()) despawnPacket
-                .sendPacket(entry.getKey());
+        for (val entry : players.entrySet()) if (entry.getValue()) performDespawnNoChecks(entry.getKey());
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -324,12 +343,12 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     @Override
     public void render(final Player player) {
         actualizeSpawnPacket();
-        spawnPacket.sendPacket(player);
+        performSpawnNoChecks(player);
     }
 
     @Override
     public void unrender(final Player player) {
-        despawnPacket.sendPacket(player);
+        performDespawnNoChecks(player);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -338,7 +357,11 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
 
     @Override
     public void setVisible(final boolean visible) {
-        for (val entry : players.entrySet()) if (entry.getValue()) despawnPacket.sendPacket(entry.getKey());
+        if (this.visible == visible) return;
+
         this.visible = visible;
+
+        if (visible) spawn();
+        else despawn();
     }
 }
