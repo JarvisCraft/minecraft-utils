@@ -22,7 +22,7 @@ public @interface WhenVisible {
     @Aspect
     class AspectJ {
 
-        @Around("execution(* *(..) && @annotation(WhenVisible)")
+        @Around("execution(* *(..)) && @annotation(WhenVisible)")
         public Object around(final ProceedingJoinPoint joinPoint) throws Throwable {
             return ((FakeEntity) joinPoint.getTarget()).isVisible() ? joinPoint.proceed() : null;
         }
