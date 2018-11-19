@@ -3,7 +3,7 @@ package ru.progrm_jarvis.minecraft.fakeentitylib.observer;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.ObservableFakeEntity;
 
 /**
- * An object responsible
+ * An object responsible for entity observation.
  */
 public interface FakeEntityObserver<E extends ObservableFakeEntity> {
 
