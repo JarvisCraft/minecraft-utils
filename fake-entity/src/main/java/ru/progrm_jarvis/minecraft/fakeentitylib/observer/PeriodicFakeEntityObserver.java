@@ -120,7 +120,12 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implemen
 
     @Override
     public void shutdown() {
-        for (val task : tasks) task.cancel();
+        lock.lock();
+        try {
+            for (val task : tasks) task.cancel();
+        } finally {
+            lock.unlock();
+        }
     }
 
     protected class RedrawEntitiesRunnable extends BukkitRunnable {
