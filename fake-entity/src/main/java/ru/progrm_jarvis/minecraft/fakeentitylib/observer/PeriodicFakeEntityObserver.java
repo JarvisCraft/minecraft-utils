@@ -21,7 +21,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @EqualsAndHashCode
 public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implements FakeEntityObserver<E> {
 
-    protected final Set<RedrawEntitiesRunnable> runnables = new HashSet<>();
+    protected final Set<RedrawEntitiesRunnable> tasks = new HashSet<>();
     private final Lock lock = new ReentrantLock();
 
     @NonNull private final Plugin plugin;
@@ -60,11 +60,11 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implemen
     protected RedrawEntitiesRunnable getRedrawEntitiesRunnable() {
         lock.lock();
         try {
-            if (runnables.isEmpty()) return newRedrawEntitiesRunnable();
+            if (tasks.isEmpty()) return newRedrawEntitiesRunnable();
             else {
                 RedrawEntitiesRunnable minRunnable = null;
                 Integer minEntitiesInRunnable = null;
-                for (val task : runnables) {
+                for (val task : tasks) {
                     val taskEntitiesSize = task.entities.size();
 
                     // if task has no even reached its entity minimum then use it
@@ -77,7 +77,7 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implemen
                 }
 
                 // add new thread if there is yet space for it or the minimal if not
-                return runnables.size() < maxThreads ? newRedrawEntitiesRunnable() : minRunnable;
+                return tasks.size() < maxThreads ? newRedrawEntitiesRunnable() : minRunnable;
             }
         } finally {
             lock.unlock();
@@ -89,7 +89,7 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implemen
         if (async) runnable.runTaskTimerAsynchronously(plugin, interval, interval);
         else runnable.runTaskTimer(plugin, interval, interval);
 
-        runnables.add(runnable);
+        tasks.add(runnable);
 
         return runnable;
     }
@@ -105,8 +105,8 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implemen
     public E unobserve(final E entity) {
         lock.lock();
         try {
-            val iterator = runnables.iterator();
-            for (val task : runnables) if (task.removeEntity(entity)) {
+            val iterator = tasks.iterator();
+            for (val task : tasks) if (task.removeEntity(entity)) {
                 if (task.entities.size() == 0) iterator.remove();
 
                 break;
@@ -120,7 +120,7 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implemen
 
     @Override
     public void shutdown() {
-        for (val task : runnables) task.cancel();
+        for (val task : tasks) task.cancel();
     }
 
     protected class RedrawEntitiesRunnable extends BukkitRunnable {
