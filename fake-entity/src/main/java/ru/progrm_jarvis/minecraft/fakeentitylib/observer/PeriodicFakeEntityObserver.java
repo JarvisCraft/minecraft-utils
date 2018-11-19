@@ -10,9 +10,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.ObservableFakeEntity;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -127,7 +125,7 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implemen
 
     protected class RedrawEntitiesRunnable extends BukkitRunnable {
 
-        protected final Collection<ObservableFakeEntity> entities = new HashSet<>();
+        protected final Collection<ObservableFakeEntity> entities = Collections.newSetFromMap(new WeakHashMap<>());
         private final ReadWriteLock lock  = new ReentrantReadWriteLock();
 
         public int size() {
