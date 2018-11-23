@@ -31,7 +31,7 @@ public class PacketListeners {
                                                  @NonNull final Consumer<PacketEvent> callback,
                                                  @NonNull final PacketCategory... packetCategories) {
         return callbackPacketListener(plugin, callback, Arrays.stream(packetCategories)
-                .map(packetCategory -> packetCategory.packetTypes)
+                .flatMap(packetCategory -> Arrays.stream(packetCategory.packetTypes))
                 .toArray(PacketType[]::new)
         );
     }
@@ -40,7 +40,7 @@ public class PacketListeners {
                                                  @NonNull final Consumer<PacketEvent> callback,
                                                  @NonNull final Collection<PacketCategory> packetCategories) {
         return callbackPacketListener(plugin, callback, packetCategories.stream()
-                .map(packetCategory -> packetCategory.packetTypes)
+                .flatMap(packetCategory -> Arrays.stream(packetCategory.packetTypes))
                 .toArray(PacketType[]::new)
         );
     }
