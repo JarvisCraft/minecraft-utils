@@ -104,6 +104,11 @@ public class PacketListeners {
         public void onPacketSending(final PacketEvent event) {
             callback.accept(event);
         }
+
+        @Override
+        public void onPacketReceiving(final PacketEvent event) {
+            callback.accept(event);
+        }
     }
 
 }
