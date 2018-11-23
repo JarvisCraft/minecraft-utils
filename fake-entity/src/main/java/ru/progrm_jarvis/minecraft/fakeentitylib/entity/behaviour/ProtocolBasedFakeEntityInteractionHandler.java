@@ -2,6 +2,7 @@ package ru.progrm_jarvis.minecraft.fakeentitylib.entity.behaviour;
 
 import com.comphenix.packetwrapper.WrapperPlayClientUseEntity;
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
@@ -21,6 +22,8 @@ public class ProtocolBasedFakeEntityInteractionHandler extends PacketAdapter imp
 
     public ProtocolBasedFakeEntityInteractionHandler(@NonNull final Plugin plugin) {
         super(plugin, PacketType.Play.Client.USE_ENTITY);
+
+        ProtocolLibrary.getProtocolManager().addPacketListener(this);
     }
 
     protected Hand hand(final WrapperPlayClientUseEntity packet) {
