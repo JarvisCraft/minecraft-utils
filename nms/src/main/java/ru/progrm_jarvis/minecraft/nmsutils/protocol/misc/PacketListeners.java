@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.function.Consumer;
 
 @UtilityClass
-public class PacketHandlers {
+public class PacketListeners {
 
     public PacketListener callbackPacketListener(@NonNull final Plugin plugin,
                                                  @NonNull final Consumer<PacketEvent> callback,
