@@ -223,7 +223,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
             spawnPacket.setVelocityZ(0);
         }
 
-        spawnPacket.setMetadata(metadata);
+        if (metadata != null) spawnPacket.setMetadata(metadata);
     }
 
     ///////////////////////////////////////////////////////////////////////////
