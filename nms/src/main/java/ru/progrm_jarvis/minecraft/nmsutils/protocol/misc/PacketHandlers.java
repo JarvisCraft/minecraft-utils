@@ -5,12 +5,14 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 import lombok.*;
+import lombok.experimental.UtilityClass;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Consumer;
 
+@UtilityClass
 public class PacketHandlers {
 
     public PacketListener callbackPacketListener(@NonNull final Plugin plugin,
