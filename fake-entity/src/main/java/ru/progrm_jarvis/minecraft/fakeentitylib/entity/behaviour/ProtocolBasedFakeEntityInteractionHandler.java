@@ -6,7 +6,9 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import lombok.ToString;
 import lombok.val;
 import org.bukkit.plugin.Plugin;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.behaviour.FakeEntityInteraction.Hand;
@@ -15,6 +17,8 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+@ToString
+@EqualsAndHashCode(callSuper = true)
 public class ProtocolBasedFakeEntityInteractionHandler extends PacketAdapter implements FakeEntityInteractionHandler {
 
     private Set<InteractableFakeEntity> entities = Collections
