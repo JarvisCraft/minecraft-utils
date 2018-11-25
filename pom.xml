@@ -28,6 +28,7 @@
         <aspectj.compliance.version>${maven.compiler.target}</aspectj.compliance.version>
         <aspectj.version>1.9.2</aspectj.version>
         <!-- Local versions -->
+        <version.minecraft-commons>1.0.0-SNAPSHOT</version.minecraft-commons>
         <version.nms-utils>1.0.0-SNAPSHOT</version.nms-utils>
         <version.scheduler-utils>1.0.0-SNAPSHOT</version.scheduler-utils>
         <version.player-utils>1.0.0-SNAPSHOT</version.player-utils>
@@ -122,6 +123,11 @@
     <dependencyManagement>
         <dependencies>
             <!-- Local elements -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>minecraft-commons</artifactId>
+                <version>${version.minecraft-commons}</version>
+            </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>nms-utils</artifactId>
