@@ -11,7 +11,8 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Base for all concurrent wrappers
+ * Base for all concurrent wrappers.
+ *
  * @param <T> type of wrapped value
  */
 @RequiredArgsConstructor
