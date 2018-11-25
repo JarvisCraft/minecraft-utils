@@ -7,6 +7,7 @@
     <artifactId>minecraft-utils</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
+        <module>commons</module>
         <module>nms</module>
         <module>scheduler</module>
         <module>player</module>
