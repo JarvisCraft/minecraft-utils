@@ -6,31 +6,43 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.ToString;
-import lombok.val;
+import com.google.common.base.Preconditions;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.bukkit.plugin.Plugin;
-import ru.progrm_jarvis.minecraft.fakeentitylib.entity.management.FakeEntityManager;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.behaviour.FakeEntityInteraction.Hand;
+import ru.progrm_jarvis.minecraft.fakeentitylib.entity.management.FakeEntityManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
+import static ru.progrm_jarvis.minecraft.commons.util.hack.PreSuperCheck.beforeSuper;
+
 @ToString
 @EqualsAndHashCode(callSuper = true)
-public class ProtocolBasedFakeEntityInteractionHandler<E extends InteractableFakeEntity>
-        extends PacketAdapter implements FakeEntityInteractionHandler<E> {
+@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
+public class ProtocolBasedFakeEntityInteractionHandler<P extends Plugin, E extends InteractableFakeEntity>
+        extends PacketAdapter implements FakeEntityInteractionHandler<P, E> {
 
-    private Set<E> entities;
+    P plugin;
+    Set<E> entities;
 
-    public ProtocolBasedFakeEntityInteractionHandler(@NonNull final Plugin plugin, final boolean concurrent) {
-        super(plugin, PacketType.Play.Client.USE_ENTITY);
+    public ProtocolBasedFakeEntityInteractionHandler(@NonNull final P plugin, final boolean concurrent) {
+        super(
+                beforeSuper(plugin, () -> Preconditions.checkNotNull(plugin, "plugin should not be null")),
+                PacketType.Play.Client.USE_ENTITY
+        );
+
+        this.plugin = plugin;
+        entities = concurrent ? FakeEntityManager.concurrentWeakEntitySet() : FakeEntityManager.weakEntitySet();
 
         ProtocolLibrary.getProtocolManager().addPacketListener(this);
+    }
 
-        entities = concurrent ? FakeEntityManager.concurrentWeakEntitySet() : FakeEntityManager.weakEntitySet();
+    @Override
+    public P getBukkitPlugin() {
+        return plugin;
     }
 
     protected Hand hand(final WrapperPlayClientUseEntity packet) {
