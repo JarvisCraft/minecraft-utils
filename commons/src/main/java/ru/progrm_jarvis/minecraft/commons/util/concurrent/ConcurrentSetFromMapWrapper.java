@@ -11,22 +11,22 @@ import java.util.stream.Stream;
 
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
-        extends ConcurrentWrapper<T> implements Set<E> {
+        extends ConcurrentWrapper<Set<E>> implements Set<E> {
 
-    // maps key-set for fast access
-    Set<E> keySet;
+    // map used as set backend
+    T map;
 
     public ConcurrentSetFromMapWrapper(@NonNull final T wrapped) {
-        super(wrapped);
+        super(wrapped.keySet());
 
-        keySet = wrapped.keySet();
+         this.map = wrapped;
     }
 
     @Override
     public int size() {
         readLock.lock();
         try {
-            return wrapped.size();
+            return map.size();
         } finally {
             readLock.unlock();
         }
@@ -36,7 +36,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
     public boolean isEmpty() {
         readLock.lock();
         try {
-            return wrapped.isEmpty();
+            return map.isEmpty();
         } finally {
             readLock.unlock();
         }
@@ -47,7 +47,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
         readLock.lock();
         try {
             //noinspection SuspiciousMethodCalls
-            return wrapped.containsKey(o);
+            return map.containsKey(o);
         } finally {
             readLock.unlock();
         }
@@ -58,7 +58,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
     public Iterator<E> iterator() {
         readLock.lock();
         try {
-            return keySet.iterator();
+            return wrapped.iterator();
         } finally {
             readLock.unlock();
         }
@@ -68,7 +68,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
     public void forEach(@NonNull final Consumer<? super E> action) {
         readLock.lock();
         try {
-            keySet.forEach(action);
+            wrapped.forEach(action);
         } finally {
             readLock.unlock();
         }
@@ -78,7 +78,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
     @Nonnull public Object[] toArray() {
         readLock.lock();
         try {
-            return keySet.toArray();
+            return wrapped.toArray();
         } finally {
             readLock.unlock();
         }
@@ -89,7 +89,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
         readLock.lock();
         try {
             //noinspection SuspiciousToArrayCall
-            return keySet.toArray(a);
+            return wrapped.toArray(a);
         } finally {
             readLock.unlock();
         }
@@ -99,7 +99,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
     public boolean add(final E e) {
         writeLock.lock();
         try {
-            return wrapped.put(e, true) == null;
+            return map.put(e, true) == null;
         } finally {
             writeLock.unlock();
         }
@@ -109,7 +109,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
     public boolean remove(final Object o) {
         writeLock.lock();
         try {
-            return wrapped.remove(o) != null;
+            return map.remove(o) != null;
         } finally {
             writeLock.unlock();
         }
@@ -119,7 +119,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
     public boolean containsAll(@NonNull final Collection<?> c) {
         readLock.lock();
         try {
-            return keySet.containsAll(c);
+            return wrapped.containsAll(c);
         } finally {
             readLock.unlock();
         }
@@ -129,7 +129,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
     public boolean addAll(@NonNull final Collection<? extends E> c) {
         writeLock.lock();
         try {
-            return keySet.addAll(c);
+            return wrapped.addAll(c);
         } finally {
             writeLock.unlock();
         }
@@ -139,7 +139,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
     public boolean retainAll(@NonNull final Collection<?> c) {
         writeLock.lock();
         try {
-            return keySet.retainAll(c);
+            return wrapped.retainAll(c);
         } finally {
             writeLock.unlock();
         }
@@ -149,7 +149,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
     public boolean removeAll(@NonNull final Collection<?> c) {
         writeLock.lock();
         try {
-            return keySet.removeAll(c);
+            return wrapped.removeAll(c);
         } finally {
             writeLock.unlock();
         }
@@ -159,7 +159,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
     public boolean removeIf(@NonNull final Predicate<? super E> filter) {
         writeLock.lock();
         try {
-            return keySet.removeIf(filter);
+            return wrapped.removeIf(filter);
         } finally {
             writeLock.unlock();
         }
@@ -169,7 +169,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
     public void clear() {
         writeLock.lock();
         try {
-            wrapped.clear();
+            map.clear();
         } finally {
             writeLock.unlock();
         }
@@ -179,7 +179,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
     public Spliterator<E> spliterator() {
         readLock.lock();
         try {
-            return keySet.spliterator();
+            return wrapped.spliterator();
         } finally {
             readLock.unlock();
         }
@@ -189,7 +189,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
     public Stream<E> stream() {
         readLock.lock();
         try {
-            return keySet.stream();
+            return wrapped.stream();
         } finally {
             readLock.unlock();
         }
@@ -199,7 +199,7 @@ public class ConcurrentSetFromMapWrapper<E, T extends Map<E, Boolean>>
     public Stream<E> parallelStream() {
         readLock.lock();
         try {
-            return keySet.parallelStream();
+            return wrapped.parallelStream();
         } finally {
             readLock.unlock();
         }
