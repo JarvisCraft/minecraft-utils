@@ -23,6 +23,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>ru.progrm-jarvis.minecraft</groupId>
+            <artifactId>minecraft-commons</artifactId>
+        </dependency>
+        <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>nms-utils</artifactId>
         </dependency>
