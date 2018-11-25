@@ -2,6 +2,7 @@ package ru.progrm_jarvis.minecraft.commons.util;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,5 +52,53 @@ class ObjectUtilTest {
         assertThrows(NullPointerException.class, () -> ObjectUtil.nonNullOrThrow((Object) null));
         assertThrows(NullPointerException.class, () -> ObjectUtil.nonNullOrThrow(null, null));
         assertThrows(NullPointerException.class, () -> ObjectUtil.nonNullOrThrow(null, null, null));
+    }
+
+    @Test
+    void testMapNonNull() {
+        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), "foo"));
+        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), "foo"));
+        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), "foo", null));
+        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), null, "foo", null));
+        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), null, "foo"));
+        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), "foo", "bar"));
+        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), "foo", null, "bar"));
+        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), null, "foo", null, "bar"));
+        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), null, "foo", "bar"));
+        assertEquals("+", ObjectUtil.mapNonNull(t -> t == null ? "+" : "-", (String) null));
+        assertEquals("+", ObjectUtil.mapNonNull(t -> t == null ? "+" : "-", null, null));
+        assertEquals("+", ObjectUtil.mapNonNull(t -> t == null ? "+" : "-", null, null, null));
+    }
+
+    @Test
+    void testMapOnlyNonNull() {
+        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), "foo"));
+        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), "foo"));
+        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), "foo", null));
+        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), null, "foo", null));
+        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), null, "foo"));
+        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), "foo", "bar"));
+        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), "foo", null, "bar"));
+        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), null, "foo", null, "bar"));
+        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), null, "foo", "bar"));
+        assertNull(ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), (String) null));
+        assertNull(ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), (String) null, null));
+        assertNull(ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), (String) null, null, null));
+    }
+
+    @Test
+    void testMapNonNullOrThrow() {
+        assertEquals("f", ObjectUtil.mapNonNullOrThrow(t -> t.substring(0, 1), "foo"));
+        assertEquals("f", ObjectUtil.mapNonNullOrThrow(t -> t.substring(0, 1), "foo", null));
+        assertEquals("f", ObjectUtil.mapNonNullOrThrow(t -> t.substring(0, 1), null, "foo", null));
+        assertEquals("f", ObjectUtil.mapNonNullOrThrow(t -> t.substring(0, 1), null, "foo"));
+        assertEquals("f", ObjectUtil.mapNonNullOrThrow(t -> t.substring(0, 1), "foo", "bar"));
+        assertEquals("f", ObjectUtil.mapNonNullOrThrow(t -> t.substring(0, 1), "foo", null, "bar"));
+        assertEquals("f", ObjectUtil.mapNonNullOrThrow(t -> t.substring(0, 1), null, "foo", null, "bar"));
+        assertEquals("f", ObjectUtil.mapNonNullOrThrow(t -> t.substring(0, 1), null, "foo", "bar"));
+        // mapping function should not be called so the one which allows nulls is used
+        assertThrows(NullPointerException.class, () -> ObjectUtil.mapNonNullOrThrow(Objects::isNull, (Object) null));
+        assertThrows(NullPointerException.class, () -> ObjectUtil.mapNonNullOrThrow(Objects::isNull, null, null));
+        assertThrows(NullPointerException.class, () -> ObjectUtil.mapNonNullOrThrow(Objects::isNull, null, null, null));
     }
 }
