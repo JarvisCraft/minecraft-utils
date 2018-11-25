@@ -2,6 +2,7 @@ package ru.progrm_jarvis.minecraft.commons.util;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -52,6 +53,23 @@ class ObjectUtilTest {
         assertThrows(NullPointerException.class, () -> ObjectUtil.nonNullOrThrow((Object) null));
         assertThrows(NullPointerException.class, () -> ObjectUtil.nonNullOrThrow(null, null));
         assertThrows(NullPointerException.class, () -> ObjectUtil.nonNullOrThrow(null, null, null));
+    }
+
+    @Test
+    void testMap() {
+        assertEquals("f", ObjectUtil.map("foo", t -> t.substring(0, 1)));
+        assertEquals("1", ObjectUtil.map(1, t -> Integer.toString(t)));
+        assertNull(ObjectUtil.map(123, t -> null));
+        assertThrows(NullPointerException.class, () -> ObjectUtil.map(null, t -> {
+            if (t == null) throw new NullPointerException();
+            return "nonnull";
+        }));
+        assertThrows(NullPointerException.class, () -> ObjectUtil.map(null, t -> {
+            throw new NullPointerException();
+        }));
+        assertThrows(IOException.class, () -> ObjectUtil.map(null, t -> {
+            throw new IOException();
+        }));
     }
 
     @Test
