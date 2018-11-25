@@ -24,6 +24,7 @@ public abstract class AbstractSetBasedEntityManager<E extends FakeEntity> implem
 
     /**
      * Constructs a new AbstractSetBasedEntityManager based on weak set with optional concurrency
+     *
      * @param concurrent whether or not this map should be thread-safe
      */
     public AbstractSetBasedEntityManager(final boolean concurrent) {
