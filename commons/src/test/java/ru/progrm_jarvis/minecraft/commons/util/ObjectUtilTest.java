@@ -40,7 +40,7 @@ class ObjectUtilTest {
     }
 
     @Test
-    void testOnlyNonNull() {
+    void testNonNullOrThrow() {
         assertEquals("foo", ObjectUtil.nonNullOrThrow("foo"));
         assertEquals("foo", ObjectUtil.nonNullOrThrow("foo", null));
         assertEquals("foo", ObjectUtil.nonNullOrThrow(null, "foo", null));
