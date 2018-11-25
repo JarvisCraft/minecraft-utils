@@ -27,6 +27,10 @@ public class ConcurrentCollections {
         return new ConcurrentSetWrapper<>(set);
     }
 
+    public <E> Set<E> concurrentSetFromMap(@NonNull final Map<E, Boolean> map) {
+        return new ConcurrentSetFromMapWrapper<>(map);
+    }
+
     public <E> Queue<E> concurrentQueue(@NonNull final Queue<E> set) {
         return new ConcurrentQueueWrapper<>(set);
     }
