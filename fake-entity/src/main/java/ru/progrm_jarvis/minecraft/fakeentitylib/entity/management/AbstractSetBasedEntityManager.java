@@ -20,14 +20,14 @@ import java.util.Set;
 @RequiredArgsConstructor
 public abstract class AbstractSetBasedEntityManager<E extends FakeEntity> implements FakeEntityManager<E> {
 
-    protected Set<E> entities;
+    protected final Set<E> entities;
 
     /**
      * Constructs a new AbstractSetBasedEntityManager based on weak set with optional concurrency
      * @param concurrent whether or not this map should be thread-safe
      */
     public AbstractSetBasedEntityManager(final boolean concurrent) {
-        entities = concurrent ? FakeEntityManager.concurrentWeakEntitySet() : FakeEntityManager.weakEntitySet();
+        this(concurrent ? FakeEntityManager.concurrentWeakEntitySet() : FakeEntityManager.weakEntitySet());
     }
 
     @Override
