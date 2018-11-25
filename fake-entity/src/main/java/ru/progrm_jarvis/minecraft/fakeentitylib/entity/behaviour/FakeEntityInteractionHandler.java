@@ -1,10 +1,6 @@
 package ru.progrm_jarvis.minecraft.fakeentitylib.entity.behaviour;
 
-import lombok.NonNull;
+import ru.progrm_jarvis.minecraft.fakeentitylib.entity.management.FakeEntityManager;
 
-public interface FakeEntityInteractionHandler {
-
-    void register(@NonNull InteractableFakeEntity entity);
-
-    void unregister(@NonNull InteractableFakeEntity entity);
+public interface FakeEntityInteractionHandler<E extends InteractableFakeEntity> extends FakeEntityManager<E> {
 }

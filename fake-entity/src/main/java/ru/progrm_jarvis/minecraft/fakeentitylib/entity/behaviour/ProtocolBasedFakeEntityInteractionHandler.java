@@ -11,23 +11,26 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.val;
 import org.bukkit.plugin.Plugin;
+import ru.progrm_jarvis.minecraft.fakeentitylib.entity.management.FakeEntityManager;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.behaviour.FakeEntityInteraction.Hand;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 @ToString
 @EqualsAndHashCode(callSuper = true)
-public class ProtocolBasedFakeEntityInteractionHandler extends PacketAdapter implements FakeEntityInteractionHandler {
+public class ProtocolBasedFakeEntityInteractionHandler<E extends InteractableFakeEntity>
+        extends PacketAdapter implements FakeEntityInteractionHandler<E> {
 
-    private Set<InteractableFakeEntity> entities = Collections
-            .synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
+    private Set<E> entities;
 
-    public ProtocolBasedFakeEntityInteractionHandler(@NonNull final Plugin plugin) {
+    public ProtocolBasedFakeEntityInteractionHandler(@NonNull final Plugin plugin, final boolean concurrent) {
         super(plugin, PacketType.Play.Client.USE_ENTITY);
 
         ProtocolLibrary.getProtocolManager().addPacketListener(this);
+
+        entities = concurrent ? FakeEntityManager.concurrentWeakEntitySet() : FakeEntityManager.weakEntitySet();
     }
 
     protected Hand hand(final WrapperPlayClientUseEntity packet) {
@@ -65,12 +68,27 @@ public class ProtocolBasedFakeEntityInteractionHandler extends PacketAdapter imp
     }
 
     @Override
-    public void register(@NonNull final InteractableFakeEntity entity) {
+    public int managedEntitiesSize() {
+        return entities.size();
+    }
+
+    @Override
+    public Collection<E> getManagedEntities() {
+        return entities;
+    }
+
+    @Override
+    public Collection<E> getManagedEntitiesCollection() {
+        return new ArrayList<>(entities);
+    }
+
+    @Override
+    public void manageEntity(@NonNull E entity) {
         entities.add(entity);
     }
 
     @Override
-    public void unregister(@NonNull final InteractableFakeEntity entity) {
+    public void unmanageEntity(@NonNull E entity) {
         entities.remove(entity);
     }
 }
