@@ -11,10 +11,10 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class ConcurrentCollectionWrapper<E, C extends Collection<E>>
-        extends ConcurrentWrapper<C> implements Collection<E> {
+public class ConcurrentCollectionWrapper<E, T extends Collection<E>>
+        extends ConcurrentWrapper<T> implements Collection<E> {
 
-    public ConcurrentCollectionWrapper(@NonNull final C wrapped) {
+    public ConcurrentCollectionWrapper(@NonNull final T wrapped) {
         super(wrapped);
     }
 
@@ -80,7 +80,7 @@ public class ConcurrentCollectionWrapper<E, C extends Collection<E>>
     }
 
     @Override
-    @Nonnull public <T> T[] toArray(@NonNull final T[] a) {
+    @Nonnull public <R> R[] toArray(@NonNull final R[] a) {
         readLock.lock();
         try {
             //noinspection SuspiciousToArrayCall
