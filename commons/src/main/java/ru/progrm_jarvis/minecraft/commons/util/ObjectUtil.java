@@ -5,6 +5,8 @@ import lombok.experimental.UtilityClass;
 import lombok.val;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedFunction;
 
+import java.util.Optional;
+
 /**
  * Utilities for common object operations.
  */
@@ -23,6 +25,20 @@ public class ObjectUtil {
         for (val variant : variants) if (variant != null) return variant;
 
         return null;
+    }
+
+    /**
+     * Returns the first nonnull value of specified variants wrapped in {@link Optional} or empty if none found.
+     *
+     * @param variants variants of which one may be nonnull
+     * @param <T> type of value
+     * @return {@link Optional} containing first nonnull value found or empty if none
+     */
+    @SafeVarargs
+    public <T> Optional<T> optionalNonNull(final T... variants) {
+        for (val variant : variants) if (variant != null) return Optional.of(variant);
+
+        return Optional.empty();
     }
 
     /**
