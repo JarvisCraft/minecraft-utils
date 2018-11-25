@@ -40,16 +40,16 @@ class ObjectUtilTest {
 
     @Test
     void testOnlyNonNull() {
-        assertEquals("foo", ObjectUtil.onlyNonNull("foo"));
-        assertEquals("foo", ObjectUtil.onlyNonNull("foo", null));
-        assertEquals("foo", ObjectUtil.onlyNonNull(null, "foo", null));
-        assertEquals("foo", ObjectUtil.onlyNonNull(null, "foo"));
-        assertEquals("foo", ObjectUtil.onlyNonNull("foo", "bar"));
-        assertEquals("foo", ObjectUtil.onlyNonNull("foo", null, "bar"));
-        assertEquals("foo", ObjectUtil.onlyNonNull(null, "foo", null, "bar"));
-        assertEquals("foo", ObjectUtil.onlyNonNull(null, "foo", "bar"));
-        assertThrows(NullPointerException.class, () -> ObjectUtil.onlyNonNull((Object) null));
-        assertThrows(NullPointerException.class, () -> ObjectUtil.onlyNonNull(null, null));
-        assertThrows(NullPointerException.class, () -> ObjectUtil.onlyNonNull(null, null, null));
+        assertEquals("foo", ObjectUtil.nonNullOrThrow("foo"));
+        assertEquals("foo", ObjectUtil.nonNullOrThrow("foo", null));
+        assertEquals("foo", ObjectUtil.nonNullOrThrow(null, "foo", null));
+        assertEquals("foo", ObjectUtil.nonNullOrThrow(null, "foo"));
+        assertEquals("foo", ObjectUtil.nonNullOrThrow("foo", "bar"));
+        assertEquals("foo", ObjectUtil.nonNullOrThrow("foo", null, "bar"));
+        assertEquals("foo", ObjectUtil.nonNullOrThrow(null, "foo", null, "bar"));
+        assertEquals("foo", ObjectUtil.nonNullOrThrow(null, "foo", "bar"));
+        assertThrows(NullPointerException.class, () -> ObjectUtil.nonNullOrThrow((Object) null));
+        assertThrows(NullPointerException.class, () -> ObjectUtil.nonNullOrThrow(null, null));
+        assertThrows(NullPointerException.class, () -> ObjectUtil.nonNullOrThrow(null, null, null));
     }
 }
