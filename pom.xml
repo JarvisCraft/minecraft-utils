@@ -7,7 +7,6 @@
     <artifactId>minecraft-utils</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>transactions</module>
         <module>commons</module>
         <module>nms</module>
         <module>scheduler</module>
@@ -29,7 +28,6 @@
         <aspectj.compliance.version>${maven.compiler.target}</aspectj.compliance.version>
         <aspectj.version>1.9.2</aspectj.version>
         <!-- Local versions -->
-        <version.object-transactions>1.0.0-SNAPSHOT</version.object-transactions>
         <version.minecraft-commons>1.0.0-SNAPSHOT</version.minecraft-commons>
         <version.nms-utils>1.0.0-SNAPSHOT</version.nms-utils>
         <version.scheduler-utils>1.0.0-SNAPSHOT</version.scheduler-utils>
@@ -130,11 +128,6 @@
     <dependencyManagement>
         <dependencies>
             <!-- Local elements -->
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>object-transactions</artifactId>
-                <version>${version.object-transactions}</version>
-            </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>minecraft-commons</artifactId>
