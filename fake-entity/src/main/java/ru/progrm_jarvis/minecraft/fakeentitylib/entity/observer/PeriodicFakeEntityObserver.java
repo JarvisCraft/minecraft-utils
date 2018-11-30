@@ -132,7 +132,7 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
     protected class RedrawEntitiesRunnable extends BukkitRunnable {
 
         protected final Collection<ObservableFakeEntity> entities = Collections.newSetFromMap(new WeakHashMap<>());
-        private final ReadWriteLock lock  = new ReentrantReadWriteLock();
+        private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
         public int size() {
             return entities.size();
