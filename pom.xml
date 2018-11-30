@@ -42,10 +42,8 @@
             </roles>
             <timezone>3</timezone>
             <properties>
-                <social>
-                    <vk>PROgrm_JARvis</vk>
-                    <twitter>PROgrm_JARvis</twitter>
-                </social>
+                <social.vk>PROgrm_JARvis</social.vk>
+                <social.twitter>PROgrm_JARvis</social.twitter>
             </properties>
         </developer>
     </developers>
