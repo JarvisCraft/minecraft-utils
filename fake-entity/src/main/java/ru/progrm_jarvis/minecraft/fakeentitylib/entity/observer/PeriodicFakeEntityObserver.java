@@ -127,6 +127,8 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
         }
     }
 
+    @ToString
+    @EqualsAndHashCode(callSuper = true)
     protected class RedrawEntitiesRunnable extends BukkitRunnable {
 
         protected final Collection<ObservableFakeEntity> entities = Collections.newSetFromMap(new WeakHashMap<>());
