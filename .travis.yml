@@ -1,0 +1,11 @@
+# Programming language
+language: java
+
+# Maven build script
+install: mvn clean install-DskipTests=true -Dmaven.javadoc.skip=true -B -V
+script: mvn test -P !build-extras -B -V
+
+# Cached directories
+cache:
+  directories:
+  - ~/.m2/repository
