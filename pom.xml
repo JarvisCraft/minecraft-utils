@@ -16,8 +16,40 @@
     <packaging>pom</packaging>
 
     <name>Minecraft Utils</name>
+    <description>An utility for various minecraft-related developer features</description>
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
-    <description>An utility class for various minecraft-related developer features</description>
+    <scm>
+        <url>https://github.com/JarvisCraft/minecraft-utils</url>
+        <connection>scm:git:git://github.com:JarvisCraft/minecraft-utils.git</connection>
+        <developerConnection>scm:git:git@github.com:JarvisCraft/minecraft-utils.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>progrm-jarvis</id>
+            <name>JARvis (Peter P.) PROgrammer</name>
+            <email>mrjarviscraft@gmail.com</email>
+            <url>https://github.com/JarvisCraft</url>
+            <roles>
+                <role>Lead developer</role>
+            </roles>
+            <timezone>3</timezone>
+            <properties>
+                <social>
+                    <vk>PROgrm_JARvis</vk>
+                    <twitter>PROgrm_JARvis</twitter>
+                </social>
+            </properties>
+        </developer>
+    </developers>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -34,7 +66,6 @@
         <version.player-utils>1.0.0-SNAPSHOT</version.player-utils>
         <version.fake-entity-lib>1.0.0-SNAPSHOT</version.fake-entity-lib>
     </properties>
-    <url>https://questc.ru/</url>
 
     <repositories>
         <!-- Sonatype Repository of Snapshots-->
