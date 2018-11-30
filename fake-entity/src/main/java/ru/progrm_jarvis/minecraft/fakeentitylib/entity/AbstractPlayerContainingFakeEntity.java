@@ -60,7 +60,7 @@ public abstract class AbstractPlayerContainingFakeEntity extends AbstractObserva
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // Rerendering
+    // Rendering
     ///////////////////////////////////////////////////////////////////////////
 
     /**
@@ -79,12 +79,12 @@ public abstract class AbstractPlayerContainingFakeEntity extends AbstractObserva
 
     @Override
     public void attemptRerender(final Player player) {
-        val canSee = players.get(player);
-        if (canSee == null) return;
+        val sees = players.get(player);
+        if (sees == null) return;
 
-        if (canSee) {
-            if (!isRendered(player)) render(player);
-        } else if (isRendered(player)) unrender(player);
+        if (sees) {
+            if (!canSee(player)) render(player);
+        } else if (canSee(player)) unrender(player);
     }
 
 
@@ -93,9 +93,9 @@ public abstract class AbstractPlayerContainingFakeEntity extends AbstractObserva
         for (val entry : players.entrySet()) {
             val player = entry.getKey();
 
-            if (entry.getValue()) {
-                if (!isRendered(player)) render(player);
-            } else if (isRendered(player)) unrender(player);
+            if (entry.getValue()) { // sees
+                if (!canSee(player)) unrender(player);
+            } else if (canSee(player)) render(player);
         }
     }
 }
