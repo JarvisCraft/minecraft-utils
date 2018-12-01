@@ -1,11 +1,20 @@
 # Programming language
 language: java
 
-# Maven build script
+### Maven basic build ###
+# Build project, installing to local repo (skip testing and javadoc generation (if those exist))
 install: mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-script: mvn test -P !build-extras -B -V
+# Test project
+script: mvn test -B -V
 
 # Cached directories
 cache:
   directories:
   - ~/.m2/repository
+
+# After success scripts
+after_success:
+# Give required permissions to deploy.sh
+- chmod +x ./.travis/deploy.sh
+# Deploy to OSSRH repository if possible
+- ./.travis/deploy.sh
