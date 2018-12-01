@@ -1,7 +1,7 @@
-package ru.progrm_jarvis.minecraft.fakeentitylib.observer;
+package ru.progrm_jarvis.minecraft.fakeentitylib.entity.observer;
 
-import com.google.common.base.Preconditions;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,42 +9,44 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.ObservableFakeEntity;
+import ru.progrm_jarvis.minecraft.fakeentitylib.entity.management.AbstractSetBasedEntityManager;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import javax.annotation.Nonnull;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-@Builder
+import static com.google.common.base.Preconditions.checkArgument;
+import static ru.progrm_jarvis.minecraft.commons.util.hack.PreSuperCheck.beforeSuper;
+
 @ToString
-@EqualsAndHashCode
-public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implements FakeEntityObserver<E> {
+@EqualsAndHashCode(callSuper = true)
+@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
+public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFakeEntity>
+        extends AbstractSetBasedEntityManager<P, E> implements FakeEntityObserver<P, E> {
 
-    protected final Set<RedrawEntitiesRunnable> runnables = new HashSet<>();
-    private final Lock lock = new ReentrantLock();
+    Set<RedrawEntitiesRunnable> tasks = new HashSet<>();
+    Lock lock = new ReentrantLock();
 
-    @NonNull private final Plugin plugin;
+    @NonNull Plugin plugin;
 
-    private final int maxDistance;
-
-    protected final long interval;
-    protected final boolean async;
-    protected final int minEntitiesForNewThread;
-    protected final int maxThreads;
+    long interval;
+    boolean async;
+    int minEntitiesForNewThread;
+    int maxThreads;
 
     @Builder
-    public PeriodicFakeEntityObserver(@NonNull final Plugin plugin, final int maxDistance,
+    public PeriodicFakeEntityObserver(@Nonnull final P plugin, final boolean concurrent,
                                       final long interval, final boolean async,
                                       final int minEntitiesForNewThread, final int maxThreads) {
-        Preconditions.checkArgument(maxDistance > 0, "maxDistance should be positive");
-        Preconditions.checkArgument(interval > 0, "interval should be positive");
-        Preconditions.checkArgument(minEntitiesForNewThread > 0, "minEntitiesForNewThread should be positive");
-        Preconditions.checkArgument(maxThreads > 0, "maxThreads should be positive");
+        super(plugin, beforeSuper(concurrent,
+                () -> checkArgument(interval > 0, "interval should be positive"),
+                () -> checkArgument(minEntitiesForNewThread > 0, "minEntitiesForNewThread should be positive"),
+                () -> checkArgument(maxThreads > 0, "maxThreads should be positive")
+        ));
 
-        this.maxDistance = maxDistance;
         this.plugin = plugin;
         this.interval = interval;
         this.async = async;
@@ -62,11 +64,11 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implemen
     protected RedrawEntitiesRunnable getRedrawEntitiesRunnable() {
         lock.lock();
         try {
-            if (runnables.isEmpty()) return newRedrawEntitiesRunnable();
+            if (tasks.isEmpty()) return newRedrawEntitiesRunnable();
             else {
                 RedrawEntitiesRunnable minRunnable = null;
                 Integer minEntitiesInRunnable = null;
-                for (val task : runnables) {
+                for (val task : tasks) {
                     val taskEntitiesSize = task.entities.size();
 
                     // if task has no even reached its entity minimum then use it
@@ -79,7 +81,7 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implemen
                 }
 
                 // add new thread if there is yet space for it or the minimal if not
-                return runnables.size() < maxThreads ? newRedrawEntitiesRunnable() : minRunnable;
+                return tasks.size() < maxThreads ? newRedrawEntitiesRunnable() : minRunnable;
             }
         } finally {
             lock.unlock();
@@ -91,24 +93,22 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implemen
         if (async) runnable.runTaskTimerAsynchronously(plugin, interval, interval);
         else runnable.runTaskTimer(plugin, interval, interval);
 
-        runnables.add(runnable);
+        tasks.add(runnable);
 
         return runnable;
     }
 
     @Override
-    public E observe(final E entity) {
+    public void manageEntity(@NonNull final E entity) {
         getRedrawEntitiesRunnable().addEntity(entity);
-
-        return entity;
     }
 
     @Override
-    public E unobserve(final E entity) {
+    public void unmanageEntity(@NonNull final E entity) {
         lock.lock();
         try {
-            val iterator = runnables.iterator();
-            for (val task : runnables) if (task.removeEntity(entity)) {
+            val iterator = tasks.iterator();
+            for (val task : tasks) if (task.removeEntity(entity)) {
                 if (task.entities.size() == 0) iterator.remove();
 
                 break;
@@ -116,19 +116,23 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity> implemen
         } finally {
             lock.unlock();
         }
-
-        return entity;
     }
 
-    @Override
-    public void shutdown() {
-        for (val task : runnables) task.cancel();
+    protected void shutdown() {
+        lock.lock();
+        try {
+            for (val task : tasks) task.cancel();
+        } finally {
+            lock.unlock();
+        }
     }
 
+    @ToString
+    @EqualsAndHashCode(callSuper = true)
     protected class RedrawEntitiesRunnable extends BukkitRunnable {
 
-        protected final Collection<ObservableFakeEntity> entities = new HashSet<>();
-        private final ReadWriteLock lock  = new ReentrantReadWriteLock();
+        protected final Collection<ObservableFakeEntity> entities = Collections.newSetFromMap(new WeakHashMap<>());
+        private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
         public int size() {
             return entities.size();

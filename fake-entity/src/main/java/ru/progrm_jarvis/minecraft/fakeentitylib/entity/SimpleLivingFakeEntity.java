@@ -223,7 +223,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
             spawnPacket.setVelocityZ(0);
         }
 
-        spawnPacket.setMetadata(metadata);
+        if (metadata != null) spawnPacket.setMetadata(metadata);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -344,11 +344,15 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     public void render(final Player player) {
         actualizeSpawnPacket();
         performSpawnNoChecks(player);
+
+        players.put(player, true);
     }
 
     @Override
     public void unrender(final Player player) {
         performDespawnNoChecks(player);
+
+        players.put(player, false);
     }
 
     ///////////////////////////////////////////////////////////////////////////
