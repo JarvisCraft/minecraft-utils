@@ -15,7 +15,7 @@
 
     <profiles>
         <profile>
-            <id>ossrh</id>
+            <id>ossrh-env-credentials</id>
             <properties>
                 <gpg.executable>gpg</gpg.executable>
                 <gpg.keyname>${env.GPG_KEY_NAME}</gpg.keyname>
