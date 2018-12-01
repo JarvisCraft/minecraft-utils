@@ -2,7 +2,7 @@
 echo "Executing before-deployment.sh"
 
 echo "Branch: $TRAVIS_BRANCH"
-echo "Branch: $TRAVIS_PULL_REQUEST"
+echo "Pull-request: $TRAVIS_PULL_REQUEST"
 
 # Deployment happens only for `releases` branch excluding pull requests to it
 if [ "$TRAVIS_BRANCH" = 'releases' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ]; then
