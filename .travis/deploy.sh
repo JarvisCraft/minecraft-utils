@@ -17,6 +17,6 @@ if [ "$TRAVIS_BRANCH" = 'releases' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ]; t
 
     echo "Deploying to maven central"
     # Generate source and javadocs, sign binaries, deploy to Sonatype using credentials from env.
-    mvn deploy -P build-extras,sign,ossrh-env-credentials,ossrh-deploy --settings .travis/gpg/mvnsettings.xml
+    mvn deploy -P build-extras,sign,ossrh-env-credentials,ossrh-deploy --settings .travis/gpg/settings.xml
     echo "Deployed"
 fi
