@@ -12,11 +12,11 @@ if [ "$TRAVIS_BRANCH" = 'releases' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ]; t
     echo "Decrypted"
 
     echo "Importing encryption key"
-    gpg --fast-import .travis/.mvn/codesigning.asc
+    gpg --fast-import .travis/gpg/codesigning.asc
     echo"Imported"
 
     echo "Deploying to maven central"
     # Generate source and javadocs, sign binaries, deploy to Sonatype using credentials from env.
-    mvn deploy -P build-extras,sign,ossrh-env-credentials,ossrh-deploy --settings .travis/gpg/settings.xml
+    mvn deploy -P build-extras,sign,ossrh-env-credentials,ossrh-deploy --settings .travis/.mvn/settings.xml
     echo "Deployed"
 fi
