@@ -12,7 +12,7 @@ if [ "$TRAVIS_BRANCH" = 'releases' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ]; t
     echo "Decrypted"
 
     echo "Importing encryption key"
-    gpg --fast-import .travis/.mvn/codesigning.asc
+    gpg --fast-import .travis/gpg/codesigning.asc
     echo"Imported"
 
     echo "Deploying to maven central"
