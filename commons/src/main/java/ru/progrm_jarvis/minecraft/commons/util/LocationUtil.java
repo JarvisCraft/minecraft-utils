@@ -1,7 +1,9 @@
 package ru.progrm_jarvis.minecraft.commons.util;
 
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Location;
+import org.bukkit.block.BlockFace;
 
 @UtilityClass
 public class LocationUtil {
@@ -21,5 +23,9 @@ public class LocationUtil {
                 location2.getY() - location1.getY(),
                 location2.getZ() - location1.getZ()
         );
+    }
+
+    public Location nearestLocation(@NonNull final Location location, @NonNull final BlockFace blockFace) {
+        return location.add(blockFace.getModX(), blockFace.getModY(), blockFace.getModZ());
     }
 }
