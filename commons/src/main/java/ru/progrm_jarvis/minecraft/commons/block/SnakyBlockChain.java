@@ -18,29 +18,29 @@ public abstract class SnakyBlockChain<P extends Plugin> implements BlocksChain<P
     @NonNull final @Getter Block initialBlock;
 
     /**
-     * The current layer of blocks to visit
+     * The current layer of blocks to handle
      */
     @NonNull Queue<Block> blocks;
 
     /**
-     * The next layer of blocks to visit
+     * The next layer of blocks to handle
      */
     @NonNull Queue<Block> nextBlocks;
 
     /**
-     * Locations of those blocks that have been handled (visited).
+     * Blocks that have been handled
      */
-    @NonNull final Set<Block> blocksHandled;
+    @NonNull final Set<Block> handledBlocks;
 
     protected SnakyBlockChain(@NonNull final P plugin, final @NonNull Block initialBlock,
                               @NonNull final Queue<Block> blocks, final @NonNull Queue<Block> nextBlocks,
-                              @NonNull final Set<Block> blocksHandled) {
+                              @NonNull final Set<Block> handledBlocks) {
         this.plugin = plugin;
         this.world = initialBlock.getWorld();
         this.initialBlock = initialBlock;
         this.blocks = blocks;
         this.nextBlocks = nextBlocks;
-        this.blocksHandled = blocksHandled;
+        this.handledBlocks = handledBlocks;
 
         blocks.add(initialBlock);
     }
@@ -82,24 +82,21 @@ public abstract class SnakyBlockChain<P extends Plugin> implements BlocksChain<P
         // take tke next block queued and handle it
         val block = blocks.remove();
         // clear duplicate occurrences of this block in blocks and nextBlocks
-        // TODO optimize
-        while (true) {
-            if (blocks.remove(block)) continue;
-            break;
-        }
-        while (true) {
-            if (nextBlocks.remove(block)) continue;
-            break;
-        }
 
         // get all blocks returned by this block's handling;
         // remove the block from nextBlocks too if it is present there
         val blocksToHandle = handle(block);
         // mark this block as handled
-        blocksHandled.add(block);
-        // mark all of the blocks returned as next to visit if they haven't been handled yet
-        for (val blockToHandle : blocksToHandle) if (!blocksHandled.contains(blockToHandle)) nextBlocks
-                .add(blockToHandle);
+        handledBlocks.add(block);
+        // mark all of the blocks returned as next to handle if they haven't been handled yet and are not in the queue
+        for (val blockToHandle : blocksToHandle) {
+            //  block should not be the handled (now or before)
+            if (blocksToHandle.equals(block)|| handledBlocks.contains(blockToHandle)
+                    // block should not be in the queue already
+                    || blocks.contains(block) || nextBlocks.contains(block)) continue;
+
+            nextBlocks.add(blockToHandle);
+        }
 
         return block;
     }
