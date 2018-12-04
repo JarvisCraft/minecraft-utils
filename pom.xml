@@ -11,6 +11,7 @@
         <module>nms</module>
         <module>scheduler</module>
         <module>player</module>
+        <module>config</module>
         <module>fake-entity</module>
     </modules>
     <packaging>pom</packaging>
@@ -62,6 +63,7 @@
         <version.nms-utils>1.0.0-SNAPSHOT</version.nms-utils>
         <version.scheduler-utils>1.0.0-SNAPSHOT</version.scheduler-utils>
         <version.player-utils>1.0.0-SNAPSHOT</version.player-utils>
+        <version.ez-cfg>1.0.0-SNAPSHOT</version.ez-cfg>
         <version.fake-entity-lib>1.0.0-SNAPSHOT</version.fake-entity-lib>
     </properties>
 
@@ -213,6 +215,11 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>player-utils</artifactId>
                 <version>${version.player-utils}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ez-cfg</artifactId>
+                <version>${version.ez-cfg}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
