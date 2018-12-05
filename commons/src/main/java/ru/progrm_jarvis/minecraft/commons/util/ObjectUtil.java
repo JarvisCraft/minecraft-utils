@@ -6,6 +6,7 @@ import lombok.val;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedFunction;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * Utilities for common object operations.
@@ -28,6 +29,23 @@ public class ObjectUtil {
     }
 
     /**
+     * Returns the first nonnull value of specified variants or {@code null} if none found.
+     *
+     * @param variants variant suppliers of which one may be nonnull
+     * @param <T> type of value
+     * @return first nonnull value found or {@code null} if none
+     */
+    @SafeVarargs
+    public <T> T nonNull(final Supplier<T>... variants) {
+        for (val variant : variants) {
+            val value = variant.get();
+            if (value != null) return value;
+        }
+
+        return null;
+    }
+
+    /**
      * Returns the first nonnull value of specified variants wrapped in {@link Optional} or empty if none found.
      *
      * @param variants variants of which one may be nonnull
@@ -36,6 +54,20 @@ public class ObjectUtil {
      */
     @SafeVarargs
     public <T> Optional<T> optionalNonNull(final T... variants) {
+        for (val variant : variants) if (variant != null) return Optional.of(variant);
+
+        return Optional.empty();
+    }
+
+    /**
+     * Returns the first nonnull value of specified variants wrapped in {@link Optional} or empty if none found.
+     *
+     * @param variants variant suupliers of which one may be nonnull
+     * @param <T> type of value
+     * @return {@link Optional} containing first nonnull value found or empty if none
+     */
+    @SafeVarargs
+    public <T> Optional<T> optionalNonNull(final Supplier<T>... variants) {
         for (val variant : variants) if (variant != null) return Optional.of(variant);
 
         return Optional.empty();
