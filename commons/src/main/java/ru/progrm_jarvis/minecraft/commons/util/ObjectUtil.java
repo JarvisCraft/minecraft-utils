@@ -214,7 +214,7 @@ public class ObjectUtil {
      */
     @SafeVarargs
     public <T, R> R mapNonNullOrThrow(@NonNull final UncheckedFunction<T, R> mappingFunction,
-                                   final T... variants) throws NullPointerException {
+                                      final T... variants) throws NullPointerException {
         for (val variant : variants) if (variant != null) return mappingFunction.apply(variant);
 
         throw new NullPointerException("No nonnull value found among variants");
