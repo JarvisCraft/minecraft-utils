@@ -17,7 +17,7 @@ public class ObjectUtil {
     /**
      * Returns the first nonnull value of specified variants or {@code null} if none found.
      *
-     * @param variants variants of which one may be nonnull
+     * @param variants variants which may be nonnull
      * @param <T> type of value
      * @return first nonnull value found or {@code null} if none
      */
@@ -48,7 +48,7 @@ public class ObjectUtil {
     /**
      * Returns the first nonnull value of specified variants wrapped in {@link Optional} or empty if none found.
      *
-     * @param variants variants of which one may be nonnull
+     * @param variants variants which may be nonnull
      * @param <T> type of value
      * @return {@link Optional} containing first nonnull value found or empty if none
      */
@@ -79,7 +79,7 @@ public class ObjectUtil {
     /**
      * Returns the first nonnull value of specified variants or throws {@link NullPointerException} if none found.
      *
-     * @param variants variants of which one may be nonnull
+     * @param variants variants which may be nonnull
      * @param <T> type of value
      * @return first nonnull value found
      * @throws NullPointerException if none of the variants specified is nonnull
@@ -128,7 +128,7 @@ public class ObjectUtil {
      * mapped using function specified.
      *
      * @param mappingFunction function to map the value to the required type
-     * @param variants variants of which one may be nonnull
+     * @param variants variants which may be nonnull
      * @param <T> type of source value
      * @param <R> type of resulting value
      * @return first nonnull value found or {@code null} if none found mapped using mapping function
@@ -167,7 +167,7 @@ public class ObjectUtil {
      * or {@code null} if none found.
      *
      * @param mappingFunction function to map the value to the required type
-     * @param variants variants of which one may be nonnull
+     * @param variants variants which may be nonnull
      * @param <T> type of source value
      * @param <R> type of resulting value
      * @return first nonnull value found mapped using mapping function or {@code null} if none found
@@ -206,7 +206,7 @@ public class ObjectUtil {
      * or throws {@link NullPointerException} if none found.
      *
      * @param mappingFunction function to map the value to the required type
-     * @param variants variants of which one may be nonnull
+     * @param variants variants which may be nonnull
      * @param <T> type of source value
      * @param <R> type of resulting value
      * @return first nonnull value found mapped using mapping function
