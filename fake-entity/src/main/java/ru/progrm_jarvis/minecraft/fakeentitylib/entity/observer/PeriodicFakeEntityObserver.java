@@ -30,8 +30,6 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
     Set<RedrawEntitiesRunnable> tasks = new HashSet<>();
     Lock lock = new ReentrantLock();
 
-    @NonNull Plugin plugin;
-
     long interval;
     boolean async;
     int minEntitiesForNewThread;
@@ -47,7 +45,6 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
                 () -> checkArgument(maxThreads > 0, "maxThreads should be positive")
         ));
 
-        this.plugin = plugin;
         this.interval = interval;
         this.async = async;
         this.minEntitiesForNewThread = minEntitiesForNewThread;
