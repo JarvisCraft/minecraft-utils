@@ -103,11 +103,13 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
 
     @Override
     public void manageEntity(@NonNull final E entity) {
+        super.manageEntity(entity);
         getRedrawEntitiesRunnable().addEntity(entity);
     }
 
     @Override
     public void unmanageEntity(@NonNull final E entity) {
+        super.unmanageEntity(entity);
         lock.lock();
         try {
             val iterator = tasks.iterator();
