@@ -54,6 +54,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param uuid unique entity id of this block-item entity
      * @param playersMap map to be used as backend for this block-item entity
      * @param global whether this block-item is global (the value returned by {@link #isGlobal()})
+     * @param visible whether this block-item is initially be visible
      * @param viewDistance view distance of this block-item
      * @param location location of this block-item
      * @param rotation rotation of this block item
