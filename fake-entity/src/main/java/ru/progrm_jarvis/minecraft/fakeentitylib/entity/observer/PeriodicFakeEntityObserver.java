@@ -17,6 +17,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static ru.progrm_jarvis.minecraft.commons.util.hack.PreSuperCheck.beforeSuper;
@@ -35,10 +36,13 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
     int minEntitiesForNewThread;
     int maxThreads;
 
+    Supplier<Set<E>> entitiesSetSupplier;
+
     @Builder
     public PeriodicFakeEntityObserver(@Nonnull final P plugin, final boolean concurrent,
                                       final long interval, final boolean async,
-                                      final int minEntitiesForNewThread, final int maxThreads) {
+                                      final int minEntitiesForNewThread, final int maxThreads,
+                                      @NonNull final Supplier<Set<E>> entitiesSetSupplier) {
         super(plugin, beforeSuper(concurrent,
                 () -> checkArgument(interval > 0, "interval should be positive"),
                 () -> checkArgument(minEntitiesForNewThread > 0, "minEntitiesForNewThread should be positive"),
@@ -49,6 +53,8 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
         this.async = async;
         this.minEntitiesForNewThread = minEntitiesForNewThread;
         this.maxThreads = maxThreads;
+
+        this.entitiesSetSupplier = entitiesSetSupplier;
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
@@ -128,14 +134,14 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
     @EqualsAndHashCode(callSuper = true)
     protected class RedrawEntitiesRunnable extends BukkitRunnable {
 
-        protected final Collection<ObservableFakeEntity> entities = Collections.newSetFromMap(new WeakHashMap<>());
+        protected final Collection<E> entities = entitiesSetSupplier.get();
         private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
         public int size() {
             return entities.size();
         }
 
-        public void addEntity(final ObservableFakeEntity entity) {
+        public void addEntity(final E entity) {
             lock.writeLock().lock();
             try {
                 entities.add(entity);
@@ -144,7 +150,7 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
             }
         }
 
-        public boolean removeEntity(final ObservableFakeEntity entity) {
+        public boolean removeEntity(final E entity) {
             lock.writeLock().lock();
             try {
                 return entities.remove(entity);
