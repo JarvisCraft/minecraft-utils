@@ -202,6 +202,7 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>mc-unit</artifactId>
                 <version>${version.mc-unit}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
