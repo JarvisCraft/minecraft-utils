@@ -7,6 +7,7 @@
     <artifactId>minecraft-utils</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <modules>
+        <module>mc-unit</module>
         <module>commons</module>
         <module>nms</module>
         <module>scheduler</module>
@@ -59,6 +60,7 @@
         <aspectj.compliance.version>${maven.compiler.target}</aspectj.compliance.version>
         <aspectj.version>1.9.2</aspectj.version>
         <!-- Local versions -->
+        <version.mc-unit>1.0.0-SNAPSHOT</version.mc-unit>
         <version.minecraft-commons>1.0.0-SNAPSHOT</version.minecraft-commons>
         <version.nms-utils>1.0.0-SNAPSHOT</version.nms-utils>
         <version.scheduler-utils>1.0.0-SNAPSHOT</version.scheduler-utils>
@@ -196,6 +198,11 @@
     <dependencyManagement>
         <dependencies>
             <!-- Local elements -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>mc-unit</artifactId>
+                <version>${version.mc-unit}</version>
+            </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>minecraft-commons</artifactId>
