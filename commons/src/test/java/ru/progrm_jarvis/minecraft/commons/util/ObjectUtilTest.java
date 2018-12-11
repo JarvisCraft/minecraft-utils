@@ -22,8 +22,8 @@ class ObjectUtilTest {
         assertEquals("foo", nonNull(null, "foo", null, "bar"));
         assertEquals("foo", nonNull(null, "foo", "bar"));
         assertNull(nonNull((Object) null));
-        assertNull(nonNull(null, null));
-        assertNull(nonNull(null, null, null));
+        assertNull(nonNull((Object) null, null));
+        assertNull(nonNull((Object) null, null, null));
     }
 
     @Test
@@ -37,8 +37,8 @@ class ObjectUtilTest {
         assertEquals(Optional.of("foo"), optionalNonNull(null, "foo", null, "bar"));
         assertEquals(Optional.of("foo"), optionalNonNull(null, "foo", "bar"));
         assertEquals(Optional.empty(), optionalNonNull((Object) null));
-        assertEquals(Optional.empty(), optionalNonNull(null, null));
-        assertEquals(Optional.empty(), optionalNonNull(null, null, null));
+        assertEquals(Optional.empty(), optionalNonNull((Object) null, null));
+        assertEquals(Optional.empty(), optionalNonNull((Object) null, null, null));
     }
 
     @Test
@@ -52,8 +52,8 @@ class ObjectUtilTest {
         assertEquals("foo", nonNullOrThrow(null, "foo", null, "bar"));
         assertEquals("foo", nonNullOrThrow(null, "foo", "bar"));
         assertThrows(NullPointerException.class, () -> nonNullOrThrow((Object) null));
-        assertThrows(NullPointerException.class, () -> nonNullOrThrow(null, null));
-        assertThrows(NullPointerException.class, () -> nonNullOrThrow(null, null, null));
+        assertThrows(NullPointerException.class, () -> nonNullOrThrow((Object) null, null));
+        assertThrows(NullPointerException.class, () -> nonNullOrThrow((Object) null, null, null));
     }
 
     @Test
@@ -84,7 +84,7 @@ class ObjectUtilTest {
         assertEquals("f", mapNonNull(t -> t.substring(0, 1), "foo", null, "bar"));
         assertEquals("f", mapNonNull(t -> t.substring(0, 1), null, "foo", null, "bar"));
         assertEquals("f", mapNonNull(t -> t.substring(0, 1), null, "foo", "bar"));
-        assertEquals("+", mapNonNull(t -> t == null ? "+" : "-", (String) null));
+        assertEquals("+", mapNonNull(t -> t == null ? "+" : "-", (Object) null));
         assertEquals("+", mapNonNull(t -> t == null ? "+" : "-", (Object) null, null));
         assertEquals("+", mapNonNull(t -> t == null ? "+" : "-", (Object) null, null, null));
     }
