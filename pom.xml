@@ -12,7 +12,6 @@
         <module>nms</module>
         <module>scheduler</module>
         <module>player</module>
-        <module>config</module>
         <module>fake-entity</module>
     </modules>
     <packaging>pom</packaging>
