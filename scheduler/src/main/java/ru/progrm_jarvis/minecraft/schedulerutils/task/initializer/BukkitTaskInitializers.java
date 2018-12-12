@@ -14,18 +14,18 @@ import org.bukkit.scheduler.BukkitTask;
 @UtilityClass
 public class BukkitTaskInitializers {
 
-        public BukkitTaskInitializer createTaskInitializer(@NonNull final Plugin plugin, final boolean async,
-                                                           @NonNull final Runnable runnable) {
-            return new AbstractBukkitTaskInitializer() {
+    public BukkitTaskInitializer createTaskInitializer(@NonNull final Plugin plugin, final boolean async,
+                                                       @NonNull final Runnable runnable) {
+        return new AbstractBukkitTaskInitializer() {
 
-                @Override
-                public BukkitTask init() {
-                    return async
-                            ? Bukkit.getScheduler().runTaskAsynchronously(plugin, runnable)
-                            : Bukkit.getScheduler().runTask(plugin, runnable);
-                }
-            };
-        }
+            @Override
+            public BukkitTask init() {
+                return async
+                        ? Bukkit.getScheduler().runTaskAsynchronously(plugin, runnable)
+                        : Bukkit.getScheduler().runTask(plugin, runnable);
+            }
+        };
+    }
 
     public BukkitTaskInitializer createTaskInitializer(@NonNull final Plugin plugin, final boolean async,
                                                        @NonNull final BukkitRunnable runnable) {
