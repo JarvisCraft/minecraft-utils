@@ -7,6 +7,8 @@ echo "Branch: $TRAVIS_BRANCH"
 if [[ -z ${TRAVIS_BRANCH} ]]; then # Exit if $TRAVIS_BRANCH is unset
     echo 'Not Travis or branch undetected, exiting'
     exit -1
+else
+    echo 'Valid branch'
 fi
 
 # Verify pull-request status (should be false)
@@ -14,6 +16,8 @@ echo "Pull-request status: $TRAVIS_PULL_REQUEST"
 if [[ ${TRAVIS_PULL_REQUEST} != 'false' ]]; then # Exit if TRAVIS_PULL_REQUEST is not 'false'
     echo "Pull-request status should be 'false'"
     exit -1
+else
+    echo 'Valid pull-request status'
 fi
 
 # Verify that JAVA_HOME is set
@@ -32,6 +36,8 @@ if [[ ${project_version} == *-SNAPSHOT ]]; then # Try to deploy snapshot if vers
     if [[ "$TRAVIS_BRANCH" = 'development' ]]; then
         echo "Deploying ${project_version} to Sonatype repository"
         ./.travis/deploy.sh
+    else
+        echo 'Not deploying as branch is not `development`'
     fi
 else # Try to deploy release if version doesn't end with '-SNAPSHOT'
     echo 'Release version'
@@ -39,5 +45,7 @@ else # Try to deploy release if version doesn't end with '-SNAPSHOT'
     if [[ "$TRAVIS_BRANCH" = 'releases' ]]; then
         echo "Deploying ${project_version} to Maven Central"
         ./.travis/deploy.sh
+    else
+        echo 'Not deploying as branch is not `releases`'
     fi
 fi
