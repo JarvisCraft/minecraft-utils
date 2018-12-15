@@ -8,7 +8,6 @@
         <version>0.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>mc-unit</artifactId>
-    <version>${version.mc-unit}</version>
 
     <description>
         Utilities useful for JUnit testing minecraft-related functionality
