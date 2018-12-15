@@ -14,7 +14,8 @@ cache:
 
 # After success scripts
 after_success:
-# Give required permissions to deploy.sh
+# Give required permissions to deploy.sh and travis/deploy.sh
 - chmod +x ./deploy.sh
+- chmod +x ./travis/deploy.sh
 # Deploy to OSSRH repository if possible
 - ./deploy.sh
