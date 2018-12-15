@@ -5,6 +5,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.FakeEntity;
 
+import javax.annotation.Nullable;
 import java.lang.annotation.*;
 
 /**
@@ -23,7 +24,7 @@ public @interface WhenVisible {
     class AspectJ {
 
         @Around("execution(* *(..)) && @annotation(WhenVisible)")
-        public Object around(final ProceedingJoinPoint joinPoint) throws Throwable {
+        @Nullable public Object around(final ProceedingJoinPoint joinPoint) throws Throwable {
             return ((FakeEntity) joinPoint.getTarget()).isVisible() ? joinPoint.proceed() : null;
         }
     }
