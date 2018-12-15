@@ -7,6 +7,7 @@ import org.bukkit.plugin.Plugin;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.FakeEntity;
 
 import javax.annotation.Nonnull;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
@@ -63,11 +64,13 @@ public abstract class AbstractSetBasedEntityManager<P extends Plugin, E extends 
     }
 
     @Override
+    @OverridingMethodsMustInvokeSuper
     public void manageEntity(@NonNull final E entity) {
         entities.add(entity);
     }
 
     @Override
+    @OverridingMethodsMustInvokeSuper
     public void unmanageEntity(@NonNull final E entity) {
         entities.remove(entity);
     }

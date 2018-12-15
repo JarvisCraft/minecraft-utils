@@ -54,6 +54,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param uuid unique entity id of this block-item entity
      * @param playersMap map to be used as backend for this block-item entity
      * @param global whether this block-item is global (the value returned by {@link #isGlobal()})
+     * @param visible whether this block-item is initially be visible
      * @param viewDistance view distance of this block-item
      * @param location location of this block-item
      * @param rotation rotation of this block item
@@ -99,7 +100,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
                                              final Vector3F rotation, final boolean small,
                                              @NonNull final ItemStack item) {
         return new ArmorStandBlockItem(
-                null, concurrent ? new ConcurrentHashMap<>() : new HashMap(),
+                null, concurrent ? new ConcurrentHashMap<>() : new HashMap<>(),
                 global, viewDistance, visible, location, rotation, small, item
         );
     }
@@ -111,7 +112,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param small whether this block-item is small
      * @return created metadata object
      */
-    public static WrappedDataWatcher createMetadata(@Nullable final Vector3F rotation, final boolean small) {
+    protected static WrappedDataWatcher createMetadata(@Nullable final Vector3F rotation, final boolean small) {
         val metadata = new ArrayList<WrappedWatchableObject>();
         metadata.add(entityFlags(Entity.Flag.INVISIBLE));
         metadata.add(armorStandFlags(small

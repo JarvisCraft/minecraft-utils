@@ -64,6 +64,6 @@ class StructureDescriptorTest {
     }
 
     private File getFile(@NonNull final String fileName) {
-        return new File(getClass().getClass().getResource(fileName).getFile());
+        return new File(getClass().getResource(fileName).getFile());
     }
 }

@@ -1,4 +1,4 @@
-package ru.progrm_jarvis.minecraft.commons.util.plugin;
+package ru.progrm_jarvis.minecraft.commons.plugin;
 
 import org.bukkit.plugin.Plugin;
 
