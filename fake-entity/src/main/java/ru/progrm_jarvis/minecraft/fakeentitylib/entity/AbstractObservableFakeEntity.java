@@ -16,6 +16,7 @@ public abstract class AbstractObservableFakeEntity extends AbstractFakeEntity im
 
     @Getter final boolean global;
     @Getter final int viewDistance;
+    @Getter final int viewDistanceSquared;
 
     public AbstractObservableFakeEntity(final boolean global, final int viewDistance,
                                         @NonNull final Location location) {
@@ -23,10 +24,12 @@ public abstract class AbstractObservableFakeEntity extends AbstractFakeEntity im
 
         this.global = global;
         this.viewDistance = viewDistance;
+        this.viewDistanceSquared = viewDistance * viewDistance;
     }
 
     @Override
     public boolean canSee(final Player player) {
-        return player.getWorld() == location.getWorld() && player.getEyeLocation().distance(location) <= viewDistance;
+        return player.getWorld() == location.getWorld()
+                && player.getEyeLocation().distanceSquared(location) <= viewDistanceSquared;
     }
 }

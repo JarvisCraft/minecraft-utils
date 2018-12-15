@@ -7,52 +7,53 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.progrm_jarvis.minecraft.commons.util.ObjectUtil.*;
 
 class ObjectUtilTest {
 
     @Test
     void testNonNull() {
-        assertEquals("foo", ObjectUtil.nonNull("foo"));
-        assertEquals("foo", ObjectUtil.nonNull("foo", null));
-        assertEquals("foo", ObjectUtil.nonNull(null, "foo", null));
-        assertEquals("foo", ObjectUtil.nonNull(null, "foo"));
-        assertEquals("foo", ObjectUtil.nonNull("foo", "bar"));
-        assertEquals("foo", ObjectUtil.nonNull("foo", null, "bar"));
-        assertEquals("foo", ObjectUtil.nonNull(null, "foo", null, "bar"));
-        assertEquals("foo", ObjectUtil.nonNull(null, "foo", "bar"));
-        assertNull(ObjectUtil.nonNull((Object) null));
-        assertNull(ObjectUtil.nonNull(null, null));
-        assertNull(ObjectUtil.nonNull(null, null, null));
+        assertEquals("foo", nonNull("foo"));
+        assertEquals("foo", nonNull("foo", null));
+        assertEquals("foo", nonNull(null, "foo", null));
+        assertEquals("foo", nonNull(null, "foo"));
+        assertEquals("foo", nonNull("foo", "bar"));
+        assertEquals("foo", nonNull("foo", null, "bar"));
+        assertEquals("foo", nonNull(null, "foo", null, "bar"));
+        assertEquals("foo", nonNull(null, "foo", "bar"));
+        assertNull(nonNull((Object) null));
+        assertNull(nonNull((Object) null, null));
+        assertNull(nonNull((Object) null, null, null));
     }
 
     @Test
     void testOptionalNonNull() {
-        assertEquals(Optional.of("foo"), ObjectUtil.optionalNonNull("foo"));
-        assertEquals(Optional.of("foo"), ObjectUtil.optionalNonNull("foo", null));
-        assertEquals(Optional.of("foo"), ObjectUtil.optionalNonNull(null, "foo", null));
-        assertEquals(Optional.of("foo"), ObjectUtil.optionalNonNull(null, "foo"));
-        assertEquals(Optional.of("foo"), ObjectUtil.optionalNonNull("foo", "bar"));
-        assertEquals(Optional.of("foo"), ObjectUtil.optionalNonNull("foo", null, "bar"));
-        assertEquals(Optional.of("foo"), ObjectUtil.optionalNonNull(null, "foo", null, "bar"));
-        assertEquals(Optional.of("foo"), ObjectUtil.optionalNonNull(null, "foo", "bar"));
-        assertEquals(Optional.empty(), ObjectUtil.optionalNonNull((Object) null));
-        assertEquals(Optional.empty(), ObjectUtil.optionalNonNull(null, null));
-        assertEquals(Optional.empty(), ObjectUtil.optionalNonNull(null, null, null));
+        assertEquals(Optional.of("foo"), optionalNonNull("foo"));
+        assertEquals(Optional.of("foo"), optionalNonNull("foo", null));
+        assertEquals(Optional.of("foo"), optionalNonNull(null, "foo", null));
+        assertEquals(Optional.of("foo"), optionalNonNull(null, "foo"));
+        assertEquals(Optional.of("foo"), optionalNonNull("foo", "bar"));
+        assertEquals(Optional.of("foo"), optionalNonNull("foo", null, "bar"));
+        assertEquals(Optional.of("foo"), optionalNonNull(null, "foo", null, "bar"));
+        assertEquals(Optional.of("foo"), optionalNonNull(null, "foo", "bar"));
+        assertEquals(Optional.empty(), optionalNonNull((Object) null));
+        assertEquals(Optional.empty(), optionalNonNull((Object) null, null));
+        assertEquals(Optional.empty(), optionalNonNull((Object) null, null, null));
     }
 
     @Test
     void testNonNullOrThrow() {
-        assertEquals("foo", ObjectUtil.nonNullOrThrow("foo"));
-        assertEquals("foo", ObjectUtil.nonNullOrThrow("foo", null));
-        assertEquals("foo", ObjectUtil.nonNullOrThrow(null, "foo", null));
-        assertEquals("foo", ObjectUtil.nonNullOrThrow(null, "foo"));
-        assertEquals("foo", ObjectUtil.nonNullOrThrow("foo", "bar"));
-        assertEquals("foo", ObjectUtil.nonNullOrThrow("foo", null, "bar"));
-        assertEquals("foo", ObjectUtil.nonNullOrThrow(null, "foo", null, "bar"));
-        assertEquals("foo", ObjectUtil.nonNullOrThrow(null, "foo", "bar"));
-        assertThrows(NullPointerException.class, () -> ObjectUtil.nonNullOrThrow((Object) null));
-        assertThrows(NullPointerException.class, () -> ObjectUtil.nonNullOrThrow(null, null));
-        assertThrows(NullPointerException.class, () -> ObjectUtil.nonNullOrThrow(null, null, null));
+        assertEquals("foo", nonNullOrThrow("foo"));
+        assertEquals("foo", nonNullOrThrow("foo", null));
+        assertEquals("foo", nonNullOrThrow(null, "foo", null));
+        assertEquals("foo", nonNullOrThrow(null, "foo"));
+        assertEquals("foo", nonNullOrThrow("foo", "bar"));
+        assertEquals("foo", nonNullOrThrow("foo", null, "bar"));
+        assertEquals("foo", nonNullOrThrow(null, "foo", null, "bar"));
+        assertEquals("foo", nonNullOrThrow(null, "foo", "bar"));
+        assertThrows(NullPointerException.class, () -> nonNullOrThrow((Object) null));
+        assertThrows(NullPointerException.class, () -> nonNullOrThrow((Object) null, null));
+        assertThrows(NullPointerException.class, () -> nonNullOrThrow((Object) null, null, null));
     }
 
     @Test
@@ -74,49 +75,49 @@ class ObjectUtilTest {
 
     @Test
     void testMapNonNull() {
-        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), "foo"));
-        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), "foo"));
-        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), "foo", null));
-        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), null, "foo", null));
-        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), null, "foo"));
-        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), "foo", "bar"));
-        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), "foo", null, "bar"));
-        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), null, "foo", null, "bar"));
-        assertEquals("f", ObjectUtil.mapNonNull(t -> t.substring(0, 1), null, "foo", "bar"));
-        assertEquals("+", ObjectUtil.mapNonNull(t -> t == null ? "+" : "-", (String) null));
-        assertEquals("+", ObjectUtil.mapNonNull(t -> t == null ? "+" : "-", null, null));
-        assertEquals("+", ObjectUtil.mapNonNull(t -> t == null ? "+" : "-", null, null, null));
+        assertEquals("f", mapNonNull(t -> t.substring(0, 1), "foo"));
+        assertEquals("f", mapNonNull(t -> t.substring(0, 1), "foo"));
+        assertEquals("f", mapNonNull(t -> t.substring(0, 1), "foo", null));
+        assertEquals("f", mapNonNull(t -> t.substring(0, 1), null, "foo", null));
+        assertEquals("f", mapNonNull(t -> t.substring(0, 1), null, "foo"));
+        assertEquals("f", mapNonNull(t -> t.substring(0, 1), "foo", "bar"));
+        assertEquals("f", mapNonNull(t -> t.substring(0, 1), "foo", null, "bar"));
+        assertEquals("f", mapNonNull(t -> t.substring(0, 1), null, "foo", null, "bar"));
+        assertEquals("f", mapNonNull(t -> t.substring(0, 1), null, "foo", "bar"));
+        assertEquals("+", mapNonNull(t -> t == null ? "+" : "-", (Object) null));
+        assertEquals("+", mapNonNull(t -> t == null ? "+" : "-", (Object) null, null));
+        assertEquals("+", mapNonNull(t -> t == null ? "+" : "-", (Object) null, null, null));
     }
 
     @Test
     void testMapOnlyNonNull() {
-        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), "foo"));
-        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), "foo"));
-        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), "foo", null));
-        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), null, "foo", null));
-        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), null, "foo"));
-        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), "foo", "bar"));
-        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), "foo", null, "bar"));
-        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), null, "foo", null, "bar"));
-        assertEquals("f", ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), null, "foo", "bar"));
-        assertNull(ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), (String) null));
-        assertNull(ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), (String) null, null));
-        assertNull(ObjectUtil.mapOnlyNonNull(t -> t.substring(0, 1), (String) null, null, null));
+        assertEquals("f", mapOnlyNonNull(t -> t.substring(0, 1), "foo"));
+        assertEquals("f", mapOnlyNonNull(t -> t.substring(0, 1), "foo"));
+        assertEquals("f", mapOnlyNonNull(t -> t.substring(0, 1), "foo", null));
+        assertEquals("f", mapOnlyNonNull(t -> t.substring(0, 1), null, "foo", null));
+        assertEquals("f", mapOnlyNonNull(t -> t.substring(0, 1), null, "foo"));
+        assertEquals("f", mapOnlyNonNull(t -> t.substring(0, 1), "foo", "bar"));
+        assertEquals("f", mapOnlyNonNull(t -> t.substring(0, 1), "foo", null, "bar"));
+        assertEquals("f", mapOnlyNonNull(t -> t.substring(0, 1), null, "foo", null, "bar"));
+        assertEquals("f", mapOnlyNonNull(t -> t.substring(0, 1), null, "foo", "bar"));
+        assertNull(mapOnlyNonNull(t -> t.substring(0, 1), (String) null));
+        assertNull(mapOnlyNonNull(t -> t.substring(0, 1), (String) null, null));
+        assertNull(mapOnlyNonNull(t -> t.substring(0, 1), (String) null, null, null));
     }
 
     @Test
     void testMapNonNullOrThrow() {
-        assertEquals("f", ObjectUtil.mapNonNullOrThrow(t -> t.substring(0, 1), "foo"));
-        assertEquals("f", ObjectUtil.mapNonNullOrThrow(t -> t.substring(0, 1), "foo", null));
-        assertEquals("f", ObjectUtil.mapNonNullOrThrow(t -> t.substring(0, 1), null, "foo", null));
-        assertEquals("f", ObjectUtil.mapNonNullOrThrow(t -> t.substring(0, 1), null, "foo"));
-        assertEquals("f", ObjectUtil.mapNonNullOrThrow(t -> t.substring(0, 1), "foo", "bar"));
-        assertEquals("f", ObjectUtil.mapNonNullOrThrow(t -> t.substring(0, 1), "foo", null, "bar"));
-        assertEquals("f", ObjectUtil.mapNonNullOrThrow(t -> t.substring(0, 1), null, "foo", null, "bar"));
-        assertEquals("f", ObjectUtil.mapNonNullOrThrow(t -> t.substring(0, 1), null, "foo", "bar"));
+        assertEquals("f", mapNonNullOrThrow(t -> t.substring(0, 1), "foo"));
+        assertEquals("f", mapNonNullOrThrow(t -> t.substring(0, 1), "foo", null));
+        assertEquals("f", mapNonNullOrThrow(t -> t.substring(0, 1), null, "foo", null));
+        assertEquals("f", mapNonNullOrThrow(t -> t.substring(0, 1), null, "foo"));
+        assertEquals("f", mapNonNullOrThrow(t -> t.substring(0, 1), "foo", "bar"));
+        assertEquals("f", mapNonNullOrThrow(t -> t.substring(0, 1), "foo", null, "bar"));
+        assertEquals("f", mapNonNullOrThrow(t -> t.substring(0, 1), null, "foo", null, "bar"));
+        assertEquals("f", mapNonNullOrThrow(t -> t.substring(0, 1), null, "foo", "bar"));
         // mapping function should not be called so the one which allows nulls is used
-        assertThrows(NullPointerException.class, () -> ObjectUtil.mapNonNullOrThrow(Objects::isNull, (Object) null));
-        assertThrows(NullPointerException.class, () -> ObjectUtil.mapNonNullOrThrow(Objects::isNull, null, null));
-        assertThrows(NullPointerException.class, () -> ObjectUtil.mapNonNullOrThrow(Objects::isNull, null, null, null));
+        assertThrows(NullPointerException.class, () -> mapNonNullOrThrow(Objects::isNull, (Object) null));
+        assertThrows(NullPointerException.class, () -> mapNonNullOrThrow(Objects::isNull, (Object) null, null));
+        assertThrows(NullPointerException.class, () -> mapNonNullOrThrow(Objects::isNull, (Object) null, null, null));
     }
 }

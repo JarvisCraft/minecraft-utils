@@ -6,7 +6,7 @@ import lombok.SneakyThrows;
 import java.util.function.Function;
 
 /**
- * Function which allows having checked exceptions in its body.
+ * Function which allows having checked exceptions in its method body.
  *
  * @param <T> {@inheritDoc}
  * @param <R> {@inheritDoc}

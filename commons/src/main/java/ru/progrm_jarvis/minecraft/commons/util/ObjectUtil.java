@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedFunction;
+import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedSupplier;
 
 import java.util.Optional;
 
@@ -16,7 +17,7 @@ public class ObjectUtil {
     /**
      * Returns the first nonnull value of specified variants or {@code null} if none found.
      *
-     * @param variants variants of which one may be nonnull
+     * @param variants variants which may be nonnull
      * @param <T> type of value
      * @return first nonnull value found or {@code null} if none
      */
@@ -28,9 +29,26 @@ public class ObjectUtil {
     }
 
     /**
+     * Returns the first nonnull value of specified variants or {@code null} if none found.
+     *
+     * @param variants variant suppliers whose values may be null
+     * @param <T> type of value
+     * @return first nonnull value found or {@code null} if none
+     */
+    @SafeVarargs
+    public <T> T nonNull(final UncheckedSupplier<T>... variants) {
+        for (val variant : variants) {
+            val value = variant.get();
+            if (value != null) return value;
+        }
+
+        return null;
+    }
+
+    /**
      * Returns the first nonnull value of specified variants wrapped in {@link Optional} or empty if none found.
      *
-     * @param variants variants of which one may be nonnull
+     * @param variants variants which may be nonnull
      * @param <T> type of value
      * @return {@link Optional} containing first nonnull value found or empty if none
      */
@@ -42,9 +60,26 @@ public class ObjectUtil {
     }
 
     /**
+     * Returns the first nonnull value of specified variants wrapped in {@link Optional} or empty if none found.
+     *
+     * @param variants variant suppliers whose values may be null
+     * @param <T> type of value
+     * @return {@link Optional} containing first nonnull value found or empty if none
+     */
+    @SafeVarargs
+    public <T> Optional<T> optionalNonNull(final UncheckedSupplier<T>... variants) {
+        for (val variant : variants) {
+            val value = variant.get();
+            if (value != null) return Optional.of(value);
+        }
+
+        return Optional.empty();
+    }
+
+    /**
      * Returns the first nonnull value of specified variants or throws {@link NullPointerException} if none found.
      *
-     * @param variants variants of which one may be nonnull
+     * @param variants variants which may be nonnull
      * @param <T> type of value
      * @return first nonnull value found
      * @throws NullPointerException if none of the variants specified is nonnull
@@ -52,6 +87,24 @@ public class ObjectUtil {
     @SafeVarargs
     public <T> T nonNullOrThrow(final T... variants) throws NullPointerException {
         for (val variant : variants) if (variant != null) return variant;
+
+        throw new NullPointerException("No nonnull value found among variants");
+    }
+
+    /**
+     * Returns the first nonnull value of specified variants or throws {@link NullPointerException} if none found.
+     *
+     * @param variants variant suppliers whose values may be null
+     * @param <T> type of value
+     * @return first nonnull value found
+     * @throws NullPointerException if none of the variants specified is nonnull
+     */
+    @SafeVarargs
+    public <T> T nonNullOrThrow(final UncheckedSupplier<T>... variants) throws NullPointerException {
+        for (val variant : variants) {
+            val value = variant.get();
+            if (value != null) return value;
+        }
 
         throw new NullPointerException("No nonnull value found among variants");
     }
@@ -75,7 +128,7 @@ public class ObjectUtil {
      * mapped using function specified.
      *
      * @param mappingFunction function to map the value to the required type
-     * @param variants variants of which one may be nonnull
+     * @param variants variants which may be nonnull
      * @param <T> type of source value
      * @param <R> type of resulting value
      * @return first nonnull value found or {@code null} if none found mapped using mapping function
@@ -89,11 +142,32 @@ public class ObjectUtil {
     }
 
     /**
+     * Returns the first nonnull value of specified variants or {@code null} if none found
+     * mapped using function specified.
+     *
+     * @param mappingFunction function to map the value to the required type
+     * @param variants variant suppliers whose values may be null
+     * @param <T> type of source value
+     * @param <R> type of resulting value
+     * @return first nonnull value found or {@code null} if none found mapped using mapping function
+     */
+    @SafeVarargs
+    public <T, R> R mapNonNull(@NonNull final UncheckedFunction<T, R> mappingFunction,
+                               final UncheckedSupplier<T>... variants) {
+        for (val variant : variants) {
+            val value = variant.get();
+            if (value != null) return mappingFunction.apply(value);
+        }
+
+        return mappingFunction.apply(null);
+    }
+
+    /**
      * Returns the first nonnull value of specified variants mapped using function specified
      * or {@code null} if none found.
      *
      * @param mappingFunction function to map the value to the required type
-     * @param variants variants of which one may be nonnull
+     * @param variants variants which may be nonnull
      * @param <T> type of source value
      * @param <R> type of resulting value
      * @return first nonnull value found mapped using mapping function or {@code null} if none found
@@ -108,10 +182,31 @@ public class ObjectUtil {
 
     /**
      * Returns the first nonnull value of specified variants mapped using function specified
+     * or {@code null} if none found.
+     *
+     * @param mappingFunction function to map the value to the required type
+     * @param variants variant suppliers whose values may be null
+     * @param <T> type of source value
+     * @param <R> type of resulting value
+     * @return first nonnull value found mapped using mapping function or {@code null} if none found
+     */
+    @SafeVarargs
+    public <T, R> R mapOnlyNonNull(@NonNull final UncheckedFunction<T, R> mappingFunction,
+                                   final UncheckedSupplier<T>... variants) {
+        for (val variant : variants) {
+            val value = variant.get();
+            if (value != null) return mappingFunction.apply(value);
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the first nonnull value of specified variants mapped using function specified
      * or throws {@link NullPointerException} if none found.
      *
      * @param mappingFunction function to map the value to the required type
-     * @param variants variants of which one may be nonnull
+     * @param variants variants which may be nonnull
      * @param <T> type of source value
      * @param <R> type of resulting value
      * @return first nonnull value found mapped using mapping function
@@ -119,8 +214,30 @@ public class ObjectUtil {
      */
     @SafeVarargs
     public <T, R> R mapNonNullOrThrow(@NonNull final UncheckedFunction<T, R> mappingFunction,
-                                   final T... variants) throws NullPointerException {
+                                      final T... variants) throws NullPointerException {
         for (val variant : variants) if (variant != null) return mappingFunction.apply(variant);
+
+        throw new NullPointerException("No nonnull value found among variants");
+    }
+
+    /**
+     * Returns the first nonnull value of specified variants mapped using function specified
+     * or throws {@link NullPointerException} if none found.
+     *
+     * @param mappingFunction function to map the value to the required type
+     * @param variants variant suppliers whose values may be null
+     * @param <T> type of source value
+     * @param <R> type of resulting value
+     * @return first nonnull value found mapped using mapping function
+     * @throws NullPointerException if none of the variants specified is nonnull
+     */
+    @SafeVarargs
+    public <T, R> R mapNonNullOrThrow(@NonNull final UncheckedFunction<T, R> mappingFunction,
+                                      final UncheckedSupplier<T>... variants) throws NullPointerException {
+        for (val variant : variants) {
+            val value = variant.get();
+            if (value != null) return mappingFunction.apply(value);
+        }
 
         throw new NullPointerException("No nonnull value found among variants");
     }
