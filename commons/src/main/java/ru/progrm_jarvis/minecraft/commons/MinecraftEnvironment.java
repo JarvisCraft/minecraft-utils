@@ -14,6 +14,7 @@ public enum MinecraftEnvironment {
     BUKKIT_API("org.bukkit.Bukkit"),
     SPIGOT_API("org.spigotmc.CustomTimingsHandler"),
     NMS(new String[0], "net.minecraft.server"),
+    CRAFTBUKKIT(new String[0], "org.bukkit.craftbukkit"),
     BUNGEE_API("net.md_5.bungee.api.ProxyServer"),
     BUNGEECORD("net.md_5.bungee.BungeeCord");
 
