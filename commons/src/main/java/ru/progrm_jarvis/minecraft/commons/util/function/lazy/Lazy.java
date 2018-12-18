@@ -1,6 +1,5 @@
 package ru.progrm_jarvis.minecraft.commons.util.function.lazy;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -12,7 +11,7 @@ import java.util.function.Supplier;
 public interface Lazy<T> extends Supplier<T> {
 
     @Override
-    @Nullable T get();
+    T get();
 
     /**
      * Retrieves whether or not this Lazy was initialized ({@link #get()} was called).
