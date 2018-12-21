@@ -81,6 +81,10 @@
             <id>sonatype-snapshot-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
+        <repository>
+            <id>minecraft-repo</id>
+            <url>https://libraries.minecraft.net/</url>
+        </repository>
         <!-- Spigot repository -->
         <repository>
             <id>spigotmc-repo</id>
