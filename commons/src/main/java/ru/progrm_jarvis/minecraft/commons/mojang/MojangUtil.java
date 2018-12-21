@@ -1,5 +1,6 @@
 package ru.progrm_jarvis.minecraft.commons.mojang;
 
+import com.mojang.authlib.GameProfile;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -41,5 +42,17 @@ public class MojangUtil {
                 + stringUuid.substring(14, 18)
                 + stringUuid.substring(19, 23)
                 + stringUuid.substring(24, 36);
+    }
+
+    /**
+     * Checks whether the specified profile has all properties signed.
+     *
+     * @param profile profile to check
+     * @return {@code true} if the specified profile has all its properties signed
+     * or {@code false} if any of those is unsigned
+     */
+    public boolean isSigned(@NonNull final GameProfile profile) {
+        for (val entry : profile.getProperties().entries()) if (!entry.getValue().hasSignature()) return false;
+        return true;
     }
 }
