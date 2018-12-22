@@ -122,6 +122,22 @@ public class MapUtil {
     }
 
     /**
+     * Fills the map specified with the values specified keeping order.
+     *
+     * @param map map to fill with the values
+     * @param entries entries to fill the map with
+     * @param <K> type of keys
+     * @param <V> type of values
+     * @param <M> map type
+     * @return the map passed filled with key-value pairs specified
+     */
+    public <K, V, M extends Map<K, V>> M fillMapOrdered(@NonNull final M map, final Stream<Pair<K, V>> entries) {
+        entries.forEachOrdered(entry -> map.put(entry.getKey(), entry.getValue()));
+
+        return map;
+    }
+
+    /**
      * Creates new {@link MapFiller} from the map specified.
      *
      * @param map map for which to create the filler
@@ -219,6 +235,18 @@ public class MapUtil {
          */
         public MapFiller<K, V> fill(final Stream<Pair<K, V>> entries) {
             entries.forEach(entry -> map.put(entry.getKey(), entry.getValue()));
+
+            return this;
+        }
+
+        /**
+         * Fills the map based on the specified {@link Stream} keeping order.
+         *
+         * @param entries stream of the entries whose elements will be put to the map
+         * @return this map filler for chaining
+         */
+        public MapFiller<K, V> fillOrdered(final Stream<Pair<K, V>> entries) {
+            entries.forEachOrdered(entry -> map.put(entry.getKey(), entry.getValue()));
 
             return this;
         }
