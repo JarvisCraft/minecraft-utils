@@ -63,6 +63,12 @@ public class MapUtil {
         return map;
     }
 
+    /**
+     * Fills the map not performing any checks.
+     *
+     * @param map map to fill
+     * @param keyValuePairs key-value pairs to put to the map ordered as <i>key1, value1, key2, value2...</i>
+     */
     @SuppressWarnings("unchecked")
     private void fillMapNoChecks(final Map map, final Object... keyValuePairs) {
         var value = true; // will get reverted for the first value
