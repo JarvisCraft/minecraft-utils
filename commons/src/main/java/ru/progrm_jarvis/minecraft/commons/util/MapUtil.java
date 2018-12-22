@@ -41,9 +41,9 @@ public class MapUtil {
      * Fills the map specified with the values specified.
      *
      * @param map map to fill with the values
-     * @param keyValuePairs pairs of keys and values in order <i>key1, value1, key2, value2, key3, value3...</i>
      * @param firstValueKey the key of first value
      * @param firstValue first value to be put to the map
+     * @param keyValuePairs pairs of keys and values in order <i>key1, value1, key2, value2, key3, value3...</i>
      * @param <K> type of keys
      * @param <V> type of values
      * @param <M> map type
