@@ -73,6 +73,55 @@ public class MapUtil {
     }
 
     /**
+     * Fills the map specified with the values specified.
+     *
+     * @param map map to fill with the values
+     * @param entries entries to fill the map with
+     * @param <K> type of keys
+     * @param <V> type of values
+     * @param <M> map type
+     * @return the map passed filled with key-value pairs specified
+     */
+    public <K, V, M extends Map<K, V>> M fillMap(@NonNull final M map, final Iterator<Pair<K, V>> entries) {
+        while (entries.hasNext()) {
+            val entry = entries.next();
+            map.put(entry.getKey(), entry.getValue());
+        }
+
+        return map;
+    }
+
+    /**
+     * Fills the map specified with the values specified.
+     *
+     * @param map map to fill with the values
+     * @param entries entries to fill the map with
+     * @param <K> type of keys
+     * @param <V> type of values
+     * @param <M> map type
+     * @return the map passed filled with key-value pairs specified
+     */
+    public <K, V, M extends Map<K, V>> M fillMap(@NonNull final M map, final Iterable<Pair<K, V>> entries) {
+        return fillMap(map, entries.iterator());
+    }
+
+    /**
+     * Fills the map specified with the values specified.
+     *
+     * @param map map to fill with the values
+     * @param entries entries to fill the map with
+     * @param <K> type of keys
+     * @param <V> type of values
+     * @param <M> map type
+     * @return the map passed filled with key-value pairs specified
+     */
+    public <K, V, M extends Map<K, V>> M fillMap(@NonNull final M map, final Stream<Pair<K, V>> entries) {
+        entries.forEach(entry -> map.put(entry.getKey(), entry.getValue()));
+
+        return map;
+    }
+
+    /**
      * Creates new {@link MapFiller} from the map specified.
      *
      * @param map map for which to create the filler
