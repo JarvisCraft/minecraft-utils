@@ -217,7 +217,7 @@ public class MapUtil {
          * @param value value to put by the key
          * @return this map filler for chaining
          */
-        public MapFiller<K, V> put(final K key, final V value) {
+        public final MapFiller<K, V> put(final K key, final V value) {
             map.put(key, value);
 
             return this;
@@ -229,7 +229,8 @@ public class MapUtil {
          * @param entries entries which will be put to the map
          * @return this map filler for chaining
          */
-        public MapFiller<K, V> fill(final Pair<K, V>... entries) {
+        @SafeVarargs
+        public final MapFiller<K, V> fill(final Pair<K, V>... entries) {
             for (val entry : entries) map.put(entry.getKey(), entry.getValue());
 
             return this;
@@ -241,7 +242,7 @@ public class MapUtil {
          * @param entries iterator of the entries whose elements will be put to the map
          * @return this map filler for chaining
          */
-        public MapFiller<K, V> fill(final Iterator<Pair<K, V>> entries) {
+        public final MapFiller<K, V> fill(final Iterator<Pair<K, V>> entries) {
             while (entries.hasNext()) {
                 val entry = entries.next();
                 map.put(entry.getKey(), entry.getValue());
@@ -256,7 +257,7 @@ public class MapUtil {
          * @param entries entries which will be put to the map
          * @return this map filler for chaining
          */
-        public MapFiller<K, V> fill(final Iterable<Pair<K, V>> entries) {
+        public final MapFiller<K, V> fill(final Iterable<Pair<K, V>> entries) {
             for (val entry : entries) map.put(entry.getKey(), entry.getValue());
 
             return this;
@@ -268,7 +269,7 @@ public class MapUtil {
          * @param entries stream of the entries whose elements will be put to the map
          * @return this map filler for chaining
          */
-        public MapFiller<K, V> fill(final Stream<Pair<K, V>> entries) {
+        public final MapFiller<K, V> fill(final Stream<Pair<K, V>> entries) {
             entries.forEach(entry -> map.put(entry.getKey(), entry.getValue()));
 
             return this;
@@ -280,7 +281,7 @@ public class MapUtil {
          * @param entries stream of the entries whose elements will be put to the map
          * @return this map filler for chaining
          */
-        public MapFiller<K, V> fillOrdered(final Stream<Pair<K, V>> entries) {
+        public final MapFiller<K, V> fillOrdered(final Stream<Pair<K, V>> entries) {
             entries.forEachOrdered(entry -> map.put(entry.getKey(), entry.getValue()));
 
             return this;
