@@ -88,6 +88,23 @@ public class MapUtil {
      * @param <M> map type
      * @return the map passed filled with key-value pairs specified
      */
+    @SafeVarargs
+    public <K, V, M extends Map<K, V>> M fillMap(@NonNull final M map, final Pair<K, V>... entries) {
+        for (val entry : entries) map.put(entry.getKey(), entry.getValue());
+
+        return map;
+    }
+
+    /**
+     * Fills the map specified with the values specified.
+     *
+     * @param map map to fill with the values
+     * @param entries entries to fill the map with
+     * @param <K> type of keys
+     * @param <V> type of values
+     * @param <M> map type
+     * @return the map passed filled with key-value pairs specified
+     */
     public <K, V, M extends Map<K, V>> M fillMap(@NonNull final M map, final Iterator<Pair<K, V>> entries) {
         while (entries.hasNext()) {
             val entry = entries.next();
@@ -202,6 +219,18 @@ public class MapUtil {
          */
         public MapFiller<K, V> put(final K key, final V value) {
             map.put(key, value);
+
+            return this;
+        }
+
+        /**
+         * Fills the map with the values of specified array.
+         *
+         * @param entries entries which will be put to the map
+         * @return this map filler for chaining
+         */
+        public MapFiller<K, V> fill(final Pair<K, V>... entries) {
+            for (val entry : entries) map.put(entry.getKey(), entry.getValue());
 
             return this;
         }

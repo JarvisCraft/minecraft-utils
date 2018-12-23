@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static com.google.common.collect.Maps.immutableEntry;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MapUtilTest {
 
     @Test
-    void testFillMapFromArray() {
+    void testFillMapFromArrayOfUncheckedPairs() {
         assertEquals(new HashMap<>(), MapUtil.fillMap(new HashMap<>()));
 
         assertEquals(
@@ -37,6 +38,28 @@ class MapUtilTest {
         assertThrows(IllegalArgumentException.class, () -> MapUtil.fillMap(new HashMap<>(), 1));
 
         assertThrows(IllegalArgumentException.class, () -> MapUtil.fillMap(new HashMap<>(), 1, 3, "String"));
+    }
+
+    @Test
+    void testFillMapFromArray() {
+        assertEquals(new HashMap<>(), MapUtil.fillMap(new HashMap<>()));
+
+        assertEquals(
+                new HashMap<Integer, String>() {{
+                    put(1, "Hello");
+                    put(2, "world");
+                }},
+                MapUtil.<Integer, String, Map<Integer, String>>fillMap(
+                        new HashMap<>(), Pair.of(1, "Hello"), Pair.of(2, "world")
+                )
+        );
+
+        assertNotEquals(
+                new HashMap<Integer, String>() {{
+                    put(1, "Hello");
+                }},
+                MapUtil.fillMap(new HashMap<>(), Arrays.asList(Pair.of(1, "Hello"), Pair.of(2, "world")))
+        );
     }
 
     @Test
@@ -120,6 +143,19 @@ class MapUtilTest {
         val entries = MapUtil.mapFiller(new HashMap<String, Integer>())
                 .put("one", 1)
                 .put("two", 2)
+                .map()
+                .entrySet();
+
+        assertThat(entries, hasSize(2));
+
+        assertThat(entries, hasItems(immutableEntry("one", 1), immutableEntry("two", 2)));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked") // Hamcrest, R U fine?
+    void testMapFillerFillArray() {
+        val entries = MapUtil.mapFiller(new HashMap<String, Integer>())
+                .fill(Pair.of("one", 1), Pair.of("two", 2))
                 .map()
                 .entrySet();
 
