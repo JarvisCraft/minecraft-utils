@@ -20,7 +20,9 @@ import java.util.Map;
 @SuppressWarnings("deprecation")
 public class LegacySupport {
 
-    private static final boolean LEGACY_MATERIALS = NmsUtil.getVersion().getGeneration() < 13;
+    private static final int NMS_VERSION_GENERATION = NmsUtil.getVersion().getGeneration();
+
+    private static final boolean LEGACY_MATERIALS = NMS_VERSION_GENERATION < 13;
 
     private static final Map<String, LegacyItem> legacyItems = MapUtil.mapFiller(new HashMap<String, LegacyItem>())
             // TODO or find better solution .put("CAVE_AIR", new LegacyItem("CAVE_AIR", "AIR"))
