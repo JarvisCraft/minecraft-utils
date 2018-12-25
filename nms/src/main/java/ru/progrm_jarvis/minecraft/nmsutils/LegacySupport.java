@@ -9,10 +9,8 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.Material;
 import ru.progrm_jarvis.minecraft.commons.util.MapUtil;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Various utilities used for supporting older versions of Minecraft-related environment,
@@ -27,10 +25,6 @@ public class LegacySupport {
             // TODO or find better solution .put("CAVE_AIR", new LegacyItem("CAVE_AIR", "AIR"))
             // .put("VOID_AIR", new LegacyItem("VOID_AIR", "AIR"))
             .map();
-
-    static {
-        System.out.println(Arrays.stream(Material.values()).filter(Material::isLegacy).collect(Collectors.toSet()));
-    }
 
     private static LegacyItem legacyItem(@NonNull final Material material, final int legacyData) {
         return new LegacyItem(material, (byte) legacyData);
