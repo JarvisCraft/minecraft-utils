@@ -6,7 +6,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.material.MaterialData;
 import ru.progrm_jarvis.minecraft.commons.util.MapUtil;
 
 import java.util.HashMap;
@@ -23,11 +27,40 @@ public class LegacySupport {
     private static final int NMS_VERSION_GENERATION = NmsUtil.getVersion().getGeneration();
 
     private static final boolean LEGACY_MATERIALS = NMS_VERSION_GENERATION < 13;
+    private static final boolean LEGACY_BLOCK_FALLING = NMS_VERSION_GENERATION < 13;
 
     private static final Map<String, LegacyItem> legacyItems = MapUtil.mapFiller(new HashMap<String, LegacyItem>())
             // TODO or find better solution .put("CAVE_AIR", new LegacyItem("CAVE_AIR", "AIR"))
             // .put("VOID_AIR", new LegacyItem("VOID_AIR", "AIR"))
             .map();
+
+    /**
+     * Spawns a falling block at specified location.
+     *
+     * @param location location at which to spawn the block
+     * @param block block from which to create the falling one
+     * @return spawned falling block
+     */
+    public FallingBlock spawnFallingBlock(@NonNull final Location location, @NonNull final Block block) {
+        if (LEGACY_BLOCK_FALLING) return location.getWorld()
+                .spawnFallingBlock(location, block.getType(), block.getData());
+        return location.getWorld().spawnFallingBlock(location, block.getBlockData());
+    }
+
+    /**
+     * Spawns a falling block at specified location.
+     *
+     * @param location location at which to spawn the block
+     * @param material material of the block
+     * @param materialData legacy material data
+     * @return spawned falling block
+     */
+    public FallingBlock spawnFallingBlock(@NonNull final Location location,
+                                          @NonNull final Material material, final byte materialData) {
+        if (LEGACY_BLOCK_FALLING) return location.getWorld()
+                .spawnFallingBlock(location, material, materialData);
+        return location.getWorld().spawnFallingBlock(location, new MaterialData(material, materialData));
+    }
 
     private static LegacyItem legacyItem(@NonNull final Material material, final int legacyData) {
         return new LegacyItem(material, (byte) legacyData);
