@@ -17,6 +17,7 @@ import java.util.Map;
  * such as changed enum names and updated method signatures.
  */
 @UtilityClass
+@SuppressWarnings("deprecation")
 public class LegacySupport {
 
     private static final boolean LEGACY_MATERIALS = NmsUtil.getVersion().getGeneration() < 13;
