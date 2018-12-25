@@ -17,6 +17,10 @@
             <artifactId>spigot-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>minecraft-commons</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib-API</artifactId>
         </dependency>
