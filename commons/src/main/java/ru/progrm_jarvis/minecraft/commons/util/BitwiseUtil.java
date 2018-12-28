@@ -173,4 +173,24 @@ public class BitwiseUtil {
 
         return num1;
     }
+
+    /**
+     * Converts the unsigned {@link int} to a 8-bit ({@link byte}) representation.
+     *
+     * @param unsignedInt integer whose least significant 8 bits are to be stored in a byte
+     * @return unsigned integer's least significant 8 bits in a single byte
+     */
+    public byte unsignedIntToByte(final int unsignedInt) {
+        return (byte) unsignedInt;
+    }
+
+    /**
+     * Converts the 8-bit ({@link byte}) value to an unsigned int representation.
+     *
+     * @param byteValue byte value whose bits will be used as the trailing bits of the resulting integer
+     * @return an integer value consisting of 24 foremost <code>0</code>s and 8 bits of the specified byte
+     */
+    public int byteToUnsignedInt(final byte byteValue) {
+        return byteValue & 0xFF;
+    }
 }
