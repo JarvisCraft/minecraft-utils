@@ -7,12 +7,16 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static com.google.common.collect.Maps.immutableEntry;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 class MapUtilTest {
 
@@ -78,6 +82,25 @@ class MapUtilTest {
 
         assertThat(entries, hasSize(2));
         assertThat(entries, contains(immutableEntry(1, "Hello"), immutableEntry(2, "world")));
+    }
+
+    @Test
+    void testGetOrDefault() {
+        val map = new HashMap<Integer, String>();
+        map.put(1, "One");
+        map.put(2, "Two");
+
+        @SuppressWarnings("unchecked") final Supplier<String> defaultSupplier = mock(Supplier.class);
+        when(defaultSupplier.get()).thenReturn("Default");
+
+        assertEquals("One", MapUtil.getOrDefault(map, 1, defaultSupplier));
+        verify(defaultSupplier, times(0)).get();
+
+        assertEquals("Two", MapUtil.getOrDefault(map, 2, defaultSupplier));
+        verify(defaultSupplier, times(0)).get();
+
+        assertEquals("Default", MapUtil.getOrDefault(map, 3, defaultSupplier));
+        verify(defaultSupplier, times(1)).get();
     }
 
     ///////////////////////////////////////////////////////////////////////////
