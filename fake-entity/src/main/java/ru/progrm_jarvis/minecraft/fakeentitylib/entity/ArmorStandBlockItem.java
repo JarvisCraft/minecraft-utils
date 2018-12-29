@@ -51,7 +51,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
     /**
      * Initializes a newly created armor stand block-item from parameters given.
      *
-     * @param uuid unique entity id of this block-item entity
+     * @param uuid unique entity ID of this block-item entity
      * @param playersMap map to be used as backend for this block-item entity
      * @param global whether this block-item is global (the value returned by {@link #isGlobal()})
      * @param visible whether this block-item is initially be visible
