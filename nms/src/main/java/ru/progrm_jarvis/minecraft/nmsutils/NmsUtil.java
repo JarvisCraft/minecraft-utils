@@ -101,9 +101,9 @@ public class NmsUtil {
     }
 
     /**
-     * Gets id for entity preventing from conflicts with real entities.
+     * Gets ID for entity preventing from conflicts with real entities.
      *
-     * @return new id for an entity
+     * @return new ID for an entity
      */
     public int nextEntityId() {
         synchronized (ENTITY_COUNT_FIELD) {
