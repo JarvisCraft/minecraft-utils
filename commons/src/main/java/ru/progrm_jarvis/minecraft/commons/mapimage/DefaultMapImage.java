@@ -205,6 +205,9 @@ public class DefaultMapImage implements MapImage {
             unchanged = false;
 
             for (val column : buffer) Arrays.fill(column, color);
+            leastChangedX = leastChangedY = 0;
+            mostChangedX = WIDTH;
+            mostChangedY = HEIGHT;
 
             return this;
         }
