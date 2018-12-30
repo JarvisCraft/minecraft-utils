@@ -1,6 +1,5 @@
 package ru.progrm_jarvis.minecraft.commons.player.registry;
 
-import com.google.common.base.MoreObjects;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
@@ -18,15 +17,8 @@ public class PlayerRegistries {
 
     private final Map<Plugin, PlayerRegistry> DEFAULT_REGISTRIES = new ConcurrentHashMap<>();
 
-    private static final String DEFAULT_CHECK_INTERVAL_PROPERTY_NAME
-            = PlayerContainers.class.getTypeName().concat(".DEFAULT_CHECK_INTERVAL");
-
-    private static final long DEFAULT_CHECK_INTERVAL = Long.parseLong(MoreObjects.firstNonNull(
-            System.getProperty(DEFAULT_CHECK_INTERVAL_PROPERTY_NAME), "5")
-    );
-
     public PlayerRegistry defaultRegistry(@NonNull final Plugin plugin) {
-        return DEFAULT_REGISTRIES.computeIfAbsent(plugin, pl -> new DefaultPlayerRegistry(pl, DEFAULT_CHECK_INTERVAL));
+        return DEFAULT_REGISTRIES.computeIfAbsent(plugin, DefaultPlayerRegistry::new);
     }
 
     public <C extends PlayerContainer> C registerInDefaultRegistry(@NonNull final Plugin plugin,
@@ -35,13 +27,13 @@ public class PlayerRegistries {
     }
 
     public PlayerContainer registerInDefaultRegistry(@NonNull final Plugin plugin,
-                                          @NonNull final Collection<Player> collectionOfPlayers) {
+                                                     @NonNull final Collection<Player> collectionOfPlayers) {
         return registerInDefaultRegistry(plugin, PlayerContainers.wrap(collectionOfPlayers));
     }
 
     public <T> PlayerContainer registerInDefaultRegistry(@NonNull final Plugin plugin,
-                                              @NonNull final Map<Player, T> mapOfPlayers,
-                                              @NonNull final Function<Player, T> defaultValueSupplier) {
+                                                         @NonNull final Map<Player, T> mapOfPlayers,
+                                                         @NonNull final Function<Player, T> defaultValueSupplier) {
         return registerInDefaultRegistry(plugin, PlayerContainers.wrap(mapOfPlayers, defaultValueSupplier));
     }
 }
