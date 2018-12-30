@@ -1,4 +1,4 @@
-package ru.progrm_jarvis.minecraft.playerutils;
+package ru.progrm_jarvis.minecraft.commons.player;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;

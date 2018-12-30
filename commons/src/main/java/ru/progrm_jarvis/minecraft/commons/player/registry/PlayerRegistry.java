@@ -1,10 +1,10 @@
-package ru.progrm_jarvis.minecraft.playerutils.registry;
+package ru.progrm_jarvis.minecraft.commons.player.registry;
 
 import lombok.NonNull;
 import lombok.val;
 import org.bukkit.entity.Player;
-import ru.progrm_jarvis.minecraft.playerutils.collection.PlayerContainer;
-import ru.progrm_jarvis.minecraft.playerutils.collection.PlayerContainers;
+import ru.progrm_jarvis.minecraft.commons.player.collection.PlayerContainer;
+import ru.progrm_jarvis.minecraft.commons.player.collection.PlayerContainers;
 
 import java.util.Collection;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package ru.progrm_jarvis.minecraft.playerutils.collection;
+package ru.progrm_jarvis.minecraft.commons.player.collection;
 
 import lombok.val;
 import org.bukkit.Bukkit;

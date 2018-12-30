@@ -1,4 +1,4 @@
-package ru.progrm_jarvis.minecraft.playerutils.registry;
+package ru.progrm_jarvis.minecraft.commons.player.registry;
 
 import com.google.common.base.Preconditions;
 import lombok.AccessLevel;
@@ -14,7 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
-import ru.progrm_jarvis.minecraft.playerutils.collection.PlayerContainer;
+import ru.progrm_jarvis.minecraft.commons.player.collection.PlayerContainer;
 
 import java.util.Collections;
 import java.util.HashSet;

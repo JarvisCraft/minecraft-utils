@@ -15,7 +15,6 @@
         <module>commons</module>
         <module>nms</module>
         <module>scheduler</module>
-        <module>player</module>
         <module>config</module>
         <module>fake-entity</module>
     </modules>
@@ -223,11 +222,6 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>scheduler-utils</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>player-utils</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

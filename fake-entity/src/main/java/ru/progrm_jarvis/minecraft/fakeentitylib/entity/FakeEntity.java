@@ -3,7 +3,7 @@ package ru.progrm_jarvis.minecraft.fakeentitylib.entity;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import ru.progrm_jarvis.minecraft.playerutils.collection.PlayerContainer;
+import ru.progrm_jarvis.minecraft.commons.player.collection.PlayerContainer;
 
 import java.util.Collection;
 
