@@ -324,7 +324,6 @@ public interface MapImage {
      *
      * @see BufferedDrawer most common use-case of delta
      */
-    @FieldDefaults(level = AccessLevel.PRIVATE)
     interface Delta {
 
         /**
@@ -418,6 +417,7 @@ public interface MapImage {
          */
         @Value
         @Accessors(fluent = true)
+        @FieldDefaults(level = AccessLevel.PRIVATE)
         class NonEmpty implements Delta {
 
             byte[][] pixels;

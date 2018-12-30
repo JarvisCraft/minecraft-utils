@@ -166,7 +166,7 @@ public class DefaultMapImage implements MapImage {
             // for each column copy its rows from leastChangedX to mostChangedX to the next available
             // row in changedPixels copying from leastChangedY to mostChangedY (of yLength)
             // indexing happens from 0 by each axis, so i is target array index, and x is source array index (column)
-            for (var x = leastChangedX, i = 0; x < mostChangedX; x++, i++) System.arraycopy(
+            for (int x = leastChangedX, i = 0; x < mostChangedX; x++, i++) System.arraycopy(
                     pixels[x] /* source column */, leastChangedY, changedPixels[i] /* target column*/, 0, yLength
             );
 

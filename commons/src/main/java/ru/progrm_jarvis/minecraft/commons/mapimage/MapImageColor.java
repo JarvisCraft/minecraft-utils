@@ -120,7 +120,7 @@ public class MapImageColor {
             final byte colorCode;
 
             val minecraftColorCode = MapImageMinecraftColors.getMinecraftColorCode(rgb);
-            if (minecraftColorCode == MapImageMinecraftColors.NO_COLOR_CODE) {
+            if (minecraftColorCode == NO_COLOR_CODE) {
                 var minDistanceSquared = Integer.MAX_VALUE;
                 var closestColor = 0;
 
