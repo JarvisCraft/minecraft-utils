@@ -2,11 +2,14 @@ package ru.progrm_jarvis.minecraft.commons.mapimage;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedConsumer;
 import ru.progrm_jarvis.minecraft.commons.util.function.lazy.Lazies;
 import ru.progrm_jarvis.minecraft.commons.util.function.lazy.Lazy;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static ru.progrm_jarvis.minecraft.commons.mapimage.MapImage.blankPixels;
@@ -33,6 +36,11 @@ public class DefaultMapImage implements MapImage {
      * Lazily initialized buffered drawer
      */
     Lazy<BufferedDrawer> bufferedDrawer = Lazies.lazy(BufferedDrawer::new);
+
+    /**
+     * All subscribers active.
+     */
+    Collection<UncheckedConsumer<Delta>> updateSubscribers = new ArrayList<>();
 
     /**
      * Creates new map image from pixels.
@@ -66,6 +74,34 @@ public class DefaultMapImage implements MapImage {
     public static DefaultMapImage from(@NonNull final BufferedImage image, final boolean resize) {
         return new DefaultMapImage(MapImages.getMapImagePixels(image, resize));
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Updates and Subscriptions logic
+    ///////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public boolean isSubscribable() {
+        return true;
+    }
+
+    @Override
+    public void subscribeOnUpdates(final UncheckedConsumer<Delta> subscriber) {
+        updateSubscribers.add(subscriber);
+    }
+
+    @Override
+    public void unsubscribeFromUpdates(final UncheckedConsumer<Delta> subscriber) {
+        updateSubscribers.remove(subscriber);
+    }
+
+    @Override
+    public void onUpdate(@NonNull final Delta delta) {
+        for (val updateSubscriber : updateSubscribers) updateSubscriber.accept(delta);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Drawers
+    ///////////////////////////////////////////////////////////////////////////
 
     @Override
     public MapImage.Drawer drawer() {
@@ -140,9 +176,12 @@ public class DefaultMapImage implements MapImage {
         }
 
         @Override
-        public MapImage.Drawer dispose() {
-            // disposal is not needed if there are no changes
-            if (!unchanged) {
+        public Delta dispose() {
+            // real disposal should happen only if there are changes
+            val delta = getDelta();
+
+            // perform image update only if delta is not empty (there are changes)
+            if (!delta.isEmpty()) {
                 for (var x = leastChangedX; x <= mostChangedX; x++) {
                     if (mostChangedY + 1 - leastChangedY >= 0) System.arraycopy(
                             buffer[x], leastChangedY, pixels[x], leastChangedY, mostChangedY + 1 - leastChangedY
@@ -150,9 +189,11 @@ public class DefaultMapImage implements MapImage {
                 }
 
                 reset();
+
+                onUpdate(delta);
             }
 
-            return this;
+            return delta;
         }
 
         @Override

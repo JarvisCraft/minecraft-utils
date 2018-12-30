@@ -1,13 +1,12 @@
 package ru.progrm_jarvis.minecraft.commons.mapimage;
 
-import lombok.AccessLevel;
-import lombok.Value;
+import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
-import lombok.val;
-import lombok.var;
 import org.jetbrains.annotations.Contract;
+import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedConsumer;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -55,6 +54,49 @@ public interface MapImage {
      * @return buffered drawer for this image
      */
     BufferedDrawer bufferedDrawer();
+
+    /**
+     * Handler for performed update (called whenever an update happens).
+     *
+     * @param delta delta of the image update
+     * @apiNote may not be called whenever there are no changes, but yet should normally handle empty deltas
+     */
+    default void onUpdate(@NonNull final Delta delta) {}
+
+    /**
+     * Checks whether this map image allows subscriptions on updates.
+     *
+     * @return {@code true} if this map image allows update subscriptions and {@code false} otherwise
+     */
+    default boolean isSubscribable() {
+        return false;
+    }
+
+    /**
+     * Subscribes on this image's updates.
+     *
+     * @param subscriber subscriber to be notified whenever an image is updated
+     * @throws UnsupportedOperationException if this map image doesn't allow update subscriptions
+     *
+     * @apiNote may not be called whenever there are no changes, but yet should normally handle empty deltas
+     * @implSpec may be unavailable, check {@link #isSubscribable()} before usage
+     */
+    default void subscribeOnUpdates(final UncheckedConsumer<Delta> subscriber) {
+        throw new UnsupportedOperationException(getClass() + " doesn't support update subscriptions");
+    }
+
+    /**
+     * Unsubscribes from this image's updates.
+     *
+     * @param subscriber subscriber to stop being notified on image updates
+     * @throws UnsupportedOperationException if this map image doesn't allow update subscriptions
+     *
+     * @implSpec should do nothing if the callback is not subscribed
+     * @implSpec may be unavailable, check {@link #isSubscribable()} before usage
+     */
+    default void unsubscribeFromUpdates(final UncheckedConsumer<Delta> subscriber) {
+        throw new UnsupportedOperationException(getClass() + " doesn't support update subscriptions");
+    }
 
     /**
      * Makes all pixels of the specified array blank ({@link MapImageColor#NO_COLOR_CODE}).
@@ -300,23 +342,13 @@ public interface MapImage {
 
         /**
          * Disposes the image. Disposal means applying all changes to the source Map image.
+         * This method should call source image's {@link #onUpdate(Delta)} with the actual delta
+         * whenever it is not empty.
          *
-         * @return this drawer for chaining
+         * @return delta disposed
+         * @apiNote may not call {@link #onUpdate(Delta)} if the delta is empty
          */
-        @Contract(" -> this")
-        Drawer dispose();
-
-        /**
-         * Gets the delta of the image which this drawer is having disposing the image.
-         *
-         * @return delta of the image
-         */
-        default Delta pickDelta() {
-            val delta = getDelta();
-            dispose();
-
-            return delta;
-        }
+        Delta dispose();
     }
 
     /**
@@ -378,8 +410,10 @@ public interface MapImage {
          * @return empty delta if {@code pixels} is empty or {@code leastX} or {@code leastY} is {@link Delta#NONE}
          * and non-empty delta otherwise
          */
-        static Delta of(final byte[][] pixels, final int leastX, final int leastY) {
-            if (pixels.length == 0 || leastX == NONE || leastY == NONE) return EMPTY;
+        @Nonnull static Delta of(final byte[][] pixels, final int leastX, final int leastY) {
+            val pixelsLength = pixels.length;
+            if (pixelsLength == 0 || leastX == NONE || leastY == NONE) return EMPTY;
+            if (pixelsLength == 1 && pixels[0].length == 1) return new SinglePixel(pixels, leastX, leastY);
             return new NonEmpty(pixels, leastX, leastY);
         }
 
@@ -423,6 +457,44 @@ public interface MapImage {
             byte[][] pixels;
 
             int leastX, leastY;
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+        }
+
+        /**
+         * Delta affecting only one single pixel of an image.
+         */
+        @Value
+        @Getter(AccessLevel.NONE) // not generate getter due to other names of fields
+        @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+        @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+        class SinglePixel implements Delta {
+
+            public SinglePixel(final byte color, final int x, final int y) {
+                this(new byte[][]{{color}}, x, y);
+            }
+
+            byte[][] pixel;
+
+            int x, y;
+
+            @Override
+            public byte[][] pixels() {
+                return pixel;
+            }
+
+            @Override
+            public int leastX() {
+                return x;
+            }
+
+            @Override
+            public int leastY() {
+                return y;
+            }
 
             @Override
             public boolean isEmpty() {
