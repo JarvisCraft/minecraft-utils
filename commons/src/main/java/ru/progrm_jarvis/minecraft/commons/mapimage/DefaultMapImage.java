@@ -25,7 +25,16 @@ public class DefaultMapImage implements MapImage {
     /**
      * Byte array of pixels of an image by X, Y indexes (columns of rows).
      */
+    /*
+          x1|x2|x3|x4|c5|c6|
+        y1__|__|__|__|__|__|
+        y2__|__|__|__|__|__|
+        y3__|__|__|__|__|__|
+        y4__|__|__|__|__|__|
+        y5__|__|__|__|__|__|
+     */
     byte[][] pixels;
+    byte displayMode;
 
     /**
      * Lazily initialized non-buffered drawer
@@ -47,11 +56,12 @@ public class DefaultMapImage implements MapImage {
      *
      * @param pixels array of Minecraft color IDs (columns of rows)
      */
-    public DefaultMapImage(final byte[][] pixels) {
+    public DefaultMapImage(final byte[][] pixels, final byte displayMode) {
         checkArgument(pixels.length == WIDTH, "Pixels length should be " + WIDTH);
         for (val column : pixels) checkArgument(column.length == HEIGHT, "Pixels height should be " + HEIGHT);
 
         this.pixels = pixels;
+        this.displayMode = displayMode;
     }
 
     @Override
@@ -64,6 +74,32 @@ public class DefaultMapImage implements MapImage {
         return HEIGHT;
     }
 
+    @Override
+    public byte getDisplay() {
+        return displayMode;
+    }
+
+    @Override
+    public byte[] getMapData() {
+        val width = getWidth();
+        val height = getHeight();
+        val data = new byte[width * height];
+
+        for (var x = 0; x < height; x++) for (var y = 0; y < width; y++) data[x + width * y] = pixels[x][y];
+
+        return data;
+    }
+
+    @Override
+    public byte[] getMapData(int leastX, int leastY, final int width, final int height) {
+        val data = new byte[width * height];
+
+        for (var x = 0; x < width; x++) for (var y = 0; y < height; y++) data[x + width * y]
+                = pixels[x + leastX][y + leastY];
+
+        return data;
+    }
+
     /**
      * Creates new map image from image.
      *
@@ -71,8 +107,9 @@ public class DefaultMapImage implements MapImage {
      * @param resize whether the image should be resized or cut to fit map image dimensions
      * @return created map image
      */
-    public static DefaultMapImage from(@NonNull final BufferedImage image, final boolean resize) {
-        return new DefaultMapImage(MapImages.getMapImagePixels(image, resize));
+    public static DefaultMapImage from(@NonNull final BufferedImage image, final boolean resize,
+                                       final byte displayMode) {
+        return new DefaultMapImage(MapImages.getMapImagePixels(image, resize), displayMode);
     }
 
     ///////////////////////////////////////////////////////////////////////////

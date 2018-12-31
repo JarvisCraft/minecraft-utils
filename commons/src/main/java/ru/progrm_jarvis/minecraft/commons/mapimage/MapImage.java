@@ -28,6 +28,13 @@ public interface MapImage {
     PIXELS = WIDTH * HEIGHT;
 
     /**
+     * Gets display mode of the map image.
+     *
+     * @return value from {@code 0} (fully zoomed-in, 1 block/px) to {@code 4} (fully zoomed-out 16 blocks/px)
+     */
+    byte getDisplay();
+
+    /**
      * Gets the width of this map image.
      *
      * @return this map image's width
@@ -40,6 +47,48 @@ public interface MapImage {
      * @return this map image's height
      */
     int getHeight();
+
+    /**
+     * Gets 1-dimensional {@link byte}-array of this image map's pixels.
+     *
+     * @return this image's pixel data
+     *
+     * @apiNote order as {@link #getWidth()} {@link byte}s (columns)
+     * coming in a row {@link #getHeight()} times (once for each row)
+     */
+    /*
+        From Minecraft Wiki:
+        colorID = Colors[widthOffset + heightOffset * width] ~~> color(x, y) = data[x + width * y] ~~>
+        ~~> / * x;y * /
+            0;0 1;0 2;0,   0;1 1;1 2;1,   0;2 1;2 1;3
+     */
+    byte[] getMapData();
+
+    /**
+     * Gets 1-dimensional {@link byte}-array of this image map's pixels segment.
+     *
+     * @param leastX least X-coordinate of image segment
+     * @param leastY least Y-coordinate of image segment
+     * @param width width of the image segment
+     * @param height of image segment
+     * @return this image's pixel data segment
+     *
+     * @apiNote order as {@code width} {@link byte}s (columns) coming in a row {@code height} times (once for each row)
+     */
+    byte[] getMapData(final int leastX, final int leastY, final int width, final int height);
+
+    /**
+     * Gets 1-dimensional {@link byte}-array of this image map's pixels segment.
+     *
+     * @param delta delta for whose coordinates to get the image segment
+     * @return this image's pixel data segment
+     *
+     * @apiNote order as {@link Delta#width()} {@link byte}s (columns)
+     * coming in a row {@link Delta#height()} times (once for each row)
+     */
+    default byte[] getMapData(@Nonnull final Delta delta) {
+        return getMapData(delta.leastX(), delta.leastY(), delta.width(), delta.height());
+    }
 
     /**
      * Gets the non-buffered drawer for this image.
@@ -402,6 +451,20 @@ public interface MapImage {
         int leastY();
 
         /**
+         * Gets width of changed image segment
+         *
+         * @return width of changed image segment
+         */
+        int width();
+
+        /**
+         * Gets height of changed image segment
+         *
+         * @return height of changed image segment
+         */
+        int height();
+
+        /**
          * Creates new delta.
          *
          * @param pixels pixels changed
@@ -442,6 +505,16 @@ public interface MapImage {
             public int leastY() {
                 return -1;
             }
+
+            @Override
+            public int width() {
+                return 0;
+            }
+
+            @Override
+            public int height() {
+                return 0;
+            }
         }
 
         /**
@@ -461,6 +534,16 @@ public interface MapImage {
             @Override
             public boolean isEmpty() {
                 return false;
+            }
+
+            @Override
+            public int width() {
+                return pixels.length;
+            }
+
+            @Override
+            public int height() {
+                return pixels[0].length;
             }
         }
 
@@ -499,6 +582,16 @@ public interface MapImage {
             @Override
             public boolean isEmpty() {
                 return false;
+            }
+
+            @Override
+            public int width() {
+                return 1;
+            }
+
+            @Override
+            public int height() {
+                return 1;
             }
         }
     }
