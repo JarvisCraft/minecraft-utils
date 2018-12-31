@@ -79,7 +79,7 @@ public class PacketListeners {
                 .map(field -> {
                     try {
                         return field.get(null);
-                    } catch (IllegalAccessException e) {
+                    } catch (final IllegalAccessException e) {
                         throw new RuntimeException(e);
                     }
                 })
