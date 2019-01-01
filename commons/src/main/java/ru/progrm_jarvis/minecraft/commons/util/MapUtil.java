@@ -8,6 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -198,6 +199,24 @@ public class MapUtil {
         // the value is got from map, non-null value is surely a present one, but null may have different meanings
         val value = map.get(key);
         return value == null ? map.containsKey(key) ? null : defaultValueSupplier.get() : value;
+    }
+
+    public <K, V, R> R getOrDefault(@NonNull final Map<K, V> map, final K key, final Function<V, R> valueTransformer,
+                                    final R defaultValue) {
+        // the value is got from map, non-null value is surely a present one, but null may have different meanings
+        val value = map.get(key);
+        return value == null
+                ? map.containsKey(key) ? valueTransformer.apply(null) : defaultValue
+                : valueTransformer.apply(value);
+    }
+
+    public <K, V, R> R getOrDefault(@NonNull final Map<K, V> map, final K key, final Function<V, R> valueTransformer,
+                                    final Supplier<R> defaultValueSupplier) {
+        // the value is got from map, non-null value is surely a present one, but null may have different meanings
+        val value = map.get(key);
+        return value == null
+                ? map.containsKey(key) ? valueTransformer.apply(null) : defaultValueSupplier.get()
+                : valueTransformer.apply(value);
     }
 
     /**
