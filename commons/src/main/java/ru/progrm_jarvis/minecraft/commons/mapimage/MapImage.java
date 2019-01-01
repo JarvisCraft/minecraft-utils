@@ -9,6 +9,8 @@ import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedConsumer;
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 /**
  * Image on a map.
  */
@@ -25,7 +27,16 @@ public interface MapImage {
     /**
      * Maximal (and only possible) amount of pixels on a map allowed by Minecraft.
      */
-    PIXELS = WIDTH * HEIGHT;
+    PIXELS_COUNT = WIDTH * HEIGHT;
+
+    /**
+     * {@link #WIDTH} as {@link float} for coefficient calculations.
+     */
+    float WIDTH_F = (float) WIDTH,
+    /**
+     * {@link #HEIGHT} as {@link float} for coefficient calculations
+     */
+    HEIGHT_F = (float) HEIGHT;
 
     /**
      * Gets display mode of the map image.
@@ -150,11 +161,11 @@ public interface MapImage {
     /**
      * Makes all pixels of the specified array blank ({@link MapImageColor#NO_COLOR_CODE}).
      *
-     * @param pixels 2-dimensional array of pixels to make blank
+     * @param pixels array of pixels to make blank
      * @return passed array of pixels made blank
      */
-    static byte[][] blankPixels(final byte[][] pixels) {
-        for (val bytes : pixels) Arrays.fill(bytes, MapImageColor.NO_COLOR_CODE);
+    static byte[] blankPixels(final byte[] pixels) {
+        Arrays.fill(pixels, MapImageColor.NO_COLOR_CODE);
 
         return pixels;
     }
@@ -415,7 +426,7 @@ public interface MapImage {
         /**
          * The value returned by {@link #pixels()} whenever there are no changes.
          */
-        byte[][] NO_PIXELS = new byte[0][0];
+        byte[] NO_PIXELS = new byte[0];
 
         /**
          * An empty delta. This should be used whenever there were no changes to the image.
@@ -434,7 +445,7 @@ public interface MapImage {
          *
          * @return pixels changed or {@link #NO_PIXELS} if none were changed
          */
-        byte[][] pixels();
+        byte[] pixels();
 
         /**
          * Gets the least X-coordinate of the changed segment
@@ -468,16 +479,16 @@ public interface MapImage {
          * Creates new delta.
          *
          * @param pixels pixels changed
+         * @param width width of image segment
          * @param leastX least X-coordinate of the affected segment
          * @param leastY least Y-coordinate of the affected segment
-         * @return empty delta if {@code pixels} is empty or {@code leastX} or {@code leastY} is {@link Delta#NONE}
-         * and non-empty delta otherwise
+         * @return empty delta if {@code pixels} is empty and non-empty delta otherwise
          */
-        @Nonnull static Delta of(final byte[][] pixels, final int leastX, final int leastY) {
+        @Nonnull static Delta of(final byte[] pixels, final int width, final int leastX, final int leastY) {
             val pixelsLength = pixels.length;
-            if (pixelsLength == 0 || leastX == NONE || leastY == NONE) return EMPTY;
-            if (pixelsLength == 1 && pixels[0].length == 1) return new SinglePixel(pixels, leastX, leastY);
-            return new NonEmpty(pixels, leastX, leastY);
+            if (pixelsLength == 0) return EMPTY;
+            if (pixelsLength == 1) return new SinglePixel(pixels, leastX, leastY);
+            return new NonEmpty(pixels, width, leastX, leastY);
         }
 
         /**
@@ -492,7 +503,7 @@ public interface MapImage {
             }
 
             @Override
-            public byte[][] pixels() {
+            public byte[] pixels() {
                 return NO_PIXELS;
             }
 
@@ -519,31 +530,49 @@ public interface MapImage {
 
         /**
          * Non-empty delta. Usage of this class guarantees that it is not empty
-         * (its constructor <b>does not perform checks</b> of {@code pixels} emptiness
-         * and {@code leastX}, {@code leastY} ranges).
+         * (its constructor <b>does not perform checks</b> of {@code pixels} emptiness and so can actually be empty).
          */
         @Value
         @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE)
         class NonEmpty implements Delta {
 
-            byte[][] pixels;
+            byte[] pixels;
 
+            int width, height;
             int leastX, leastY;
+
+            public NonEmpty(final byte[] pixels, final int width, final int leastX, final int leastY) {
+                checkArgument(
+                        pixels.length % width == 0, "Length of pixels should be multiple of width (" + width + ")"
+                );
+                checkArgument(
+                        leastX >= 0 && leastX <= WIDTH, "leastX should be between 0 and " + WIDTH
+                );
+                checkArgument(
+                        leastY >= 0 && leastY <= HEIGHT, "leastX should be between 0 and " + HEIGHT
+                );
+
+                this.pixels = pixels;
+                this.width = width;
+                this.height = pixels.length / width;
+                this.leastX = leastX;
+                this.leastY = leastY;
+            }
 
             @Override
             public boolean isEmpty() {
-                return false;
+                return pixels.length != 0;
             }
 
             @Override
             public int width() {
-                return pixels.length;
+                return width;
             }
 
             @Override
             public int height() {
-                return pixels[0].length;
+                return height;
             }
         }
 
@@ -556,16 +585,16 @@ public interface MapImage {
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         class SinglePixel implements Delta {
 
-            public SinglePixel(final byte color, final int x, final int y) {
-                this(new byte[][]{{color}}, x, y);
-            }
-
-            byte[][] pixel;
+            byte[] pixel;
 
             int x, y;
 
+            public SinglePixel(final byte color, final int x, final int y) {
+                this(new byte[]{color}, x, y);
+            }
+
             @Override
-            public byte[][] pixels() {
+            public byte[] pixels() {
                 return pixel;
             }
 

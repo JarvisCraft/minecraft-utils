@@ -9,6 +9,7 @@ import org.bukkit.plugin.Plugin;
 import ru.progrm_jarvis.minecraft.commons.mapimage.MapImage;
 import ru.progrm_jarvis.minecraft.commons.player.registry.PlayerRegistries;
 import ru.progrm_jarvis.minecraft.commons.player.registry.RegistersSelfInPlayerRegistry;
+import ru.progrm_jarvis.minecraft.commons.util.MapUtil;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -119,5 +120,12 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
     @Override
     public Collection<Player> getPlayers() {
         return playerMaps.keySet();
+    }
+
+    @Override
+    public Integer getMapId(final Player player) {
+        return MapUtil.getOrDefault(
+                playerMaps, player, map -> PlayerMapManager.getMapId(map).intValue(), (Integer) null
+        );
     }
 }

@@ -5,6 +5,7 @@ import lombok.experimental.FieldDefaults;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedConsumer;
 import ru.progrm_jarvis.minecraft.commons.util.function.lazy.Lazies;
 import ru.progrm_jarvis.minecraft.commons.util.function.lazy.Lazy;
+import ru.progrm_jarvis.minecraft.commons.util.hack.PreSuperCheck;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -13,27 +14,23 @@ import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static ru.progrm_jarvis.minecraft.commons.mapimage.MapImage.blankPixels;
+import static ru.progrm_jarvis.minecraft.commons.mapimage.MapImageColor.NO_COLOR_CODE;
 
 /**
- * The default {@link MapImage} implementation which stores its pixels as a 2-dimensional {@link byte}-array.
+ * The default {@link MapImage} implementation which stores its pixels as a 1-dimensional.
  */
 @ToString
 @EqualsAndHashCode
-@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DefaultMapImage implements MapImage {
 
     /**
-     * Byte array of pixels of an image by X, Y indexes (columns of rows).
+     * {@link byte}-array of pixels of an image by X, Y indexes.
+     * A pixel can be accessed as {@code pixels[x + y * getWidth()]}
      */
-    /*
-          x1|x2|x3|x4|c5|c6|
-        y1__|__|__|__|__|__|
-        y2__|__|__|__|__|__|
-        y3__|__|__|__|__|__|
-        y4__|__|__|__|__|__|
-        y5__|__|__|__|__|__|
-     */
-    byte[][] pixels;
+    byte[] pixels;
+    @Getter int width, height;
     byte displayMode;
 
     /**
@@ -55,23 +52,20 @@ public class DefaultMapImage implements MapImage {
      * Creates new map image from pixels.
      *
      * @param pixels array of Minecraft color IDs (columns of rows)
+     * @param displayMode possible map image display mode (from {@code 0} to {@code 4})
      */
-    public DefaultMapImage(final byte[][] pixels, final byte displayMode) {
-        checkArgument(pixels.length == WIDTH, "Pixels length should be " + WIDTH);
-        for (val column : pixels) checkArgument(column.length == HEIGHT, "Pixels height should be " + HEIGHT);
-
-        this.pixels = pixels;
-        this.displayMode = displayMode;
-    }
-
-    @Override
-    public int getWidth() {
-        return WIDTH;
-    }
-
-    @Override
-    public int getHeight() {
-        return HEIGHT;
+    public DefaultMapImage(final byte[] pixels, final byte displayMode) {
+        this(
+                PreSuperCheck.beforeSuper(pixels,
+                        () -> checkArgument(pixels.length == PIXELS_COUNT, "pixels length should be " + PIXELS_COUNT)
+                ),
+                WIDTH, HEIGHT,
+                PreSuperCheck.beforeSuper(displayMode,
+                        () -> checkArgument(
+                                displayMode >= 0 && displayMode <= 4, "displayMode should be between 0 and 4"
+                        )
+                )
+        );
     }
 
     @Override
@@ -81,21 +75,15 @@ public class DefaultMapImage implements MapImage {
 
     @Override
     public byte[] getMapData() {
-        val width = getWidth();
-        val height = getHeight();
-        val data = new byte[width * height];
-
-        for (var x = 0; x < height; x++) for (var y = 0; y < width; y++) data[x + width * y] = pixels[x][y];
-
-        return data;
+        return pixels;
     }
 
     @Override
-    public byte[] getMapData(int leastX, int leastY, final int width, final int height) {
+    public byte[] getMapData(final int leastX, final int leastY, final int width, final int height) {
         val data = new byte[width * height];
-
-        for (var x = 0; x < width; x++) for (var y = 0; y < height; y++) data[x + width * y]
-                = pixels[x + leastX][y + leastY];
+        var i = 0;
+        final int xBound = leastX + width, yBound = leastY + height;
+        for (var x = leastX; x < xBound; x++) for (var y = 0; y < yBound; y++) data[i] = pixels[x + y * width];
 
         return data;
     }
@@ -156,14 +144,15 @@ public class DefaultMapImage implements MapImage {
 
         @Override
         public MapImage.Drawer px(final int x, final int y, final byte color) {
-            pixels[x][y] = color;
+            pixels[x + y * getWidth()] = color;
 
             return this;
         }
 
         @Override
         public MapImage.Drawer fill(final byte color) {
-            for (val column : pixels) Arrays.fill(column, color);
+            Arrays.fill(pixels, color);
+            onUpdate(Delta.of(pixels, width, 0, 0));
 
             return this;
         }
@@ -181,7 +170,7 @@ public class DefaultMapImage implements MapImage {
         /**
          * Array of changed pixels
          */
-        final byte[][] buffer = blankPixels(new byte[DefaultMapImage.this.getWidth()][DefaultMapImage.this.getWidth()]);
+        final byte[] buffer = blankPixels(new byte[DefaultMapImage.this.getWidth() * DefaultMapImage.this.getHeight()]);
 
         boolean unchanged = true;
 
@@ -219,10 +208,15 @@ public class DefaultMapImage implements MapImage {
 
             // perform image update only if delta is not empty (there are changes)
             if (!delta.isEmpty()) {
-                for (var x = leastChangedX; x <= mostChangedX; x++) {
-                    if (mostChangedY + 1 - leastChangedY >= 0) System.arraycopy(
-                            buffer[x], leastChangedY, pixels[x], leastChangedY, mostChangedY + 1 - leastChangedY
-                    );
+                final int width = delta.width(), height = delta.height(),
+                        leastX = delta.leastX(), leastY = delta.leastY();
+
+                val pixels = delta.pixels();
+                var i = -1;
+                for (var y = leastY; y < height; y++) {
+                    val offset = y * width;
+                    for (var x = leastX; x < width; x++) if (pixels[++i] != NO_COLOR_CODE) DefaultMapImage.this
+                            .pixels[x + offset] = pixels[i];
                 }
 
                 reset();
@@ -237,18 +231,15 @@ public class DefaultMapImage implements MapImage {
         public Delta getDelta() {
             if (unchanged) return Delta.EMPTY;
 
-            // length of pixels changed at y (rows affected)
-            val yLength = mostChangedY - leastChangedY + 1;
-            // target array to store changed pixels
-            val changedPixels = new byte[mostChangedX - leastChangedX + 1][yLength];
-            // for each column copy its rows from leastChangedX to mostChangedX to the next available
-            // row in changedPixels copying from leastChangedY to mostChangedY (of yLength)
-            // indexing happens from 0 by each axis, so i is target array index, and x is source array index (column)
-            for (int x = leastChangedX, i = 0; x < mostChangedX; x++, i++) System.arraycopy(
-                    pixels[x] /* source column */, leastChangedY, changedPixels[i] /* target column*/, 0, yLength
-            );
+            val width = mostChangedX - leastChangedX + 1;
+            val pixels = new byte[width * (mostChangedY - leastChangedY + 1)];
+            var i = 0;
+            for (var y = leastChangedY; y < mostChangedY; y++) {
+                val offset = y * width;
+                for (var x = leastChangedX; x < mostChangedX; x++) pixels[i++] = buffer[x + offset];
+            }
 
-            return Delta.of(changedPixels, leastChangedX, leastChangedY);
+            return Delta.of(pixels, width, leastChangedX, leastChangedY);
         }
 
         ///////////////////////////////////////////////////////////////////////////
@@ -258,7 +249,7 @@ public class DefaultMapImage implements MapImage {
         @Override
         public MapImage.Drawer px(final int x, final int y, final byte color) {
             // put the changed pixel to the buffer
-            buffer[x][y] = color;
+            buffer[x + y * width] = color;
 
             // perform delta update if needed
             // if it is the first update then the pixels is the zone of changes
@@ -282,7 +273,7 @@ public class DefaultMapImage implements MapImage {
         public MapImage.Drawer fill(final byte color) {
             unchanged = false;
 
-            for (val column : buffer) Arrays.fill(column, color);
+            Arrays.fill(buffer, color);
             leastChangedX = leastChangedY = 0;
             mostChangedX = WIDTH;
             mostChangedY = HEIGHT;
