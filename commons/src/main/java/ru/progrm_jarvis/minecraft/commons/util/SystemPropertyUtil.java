@@ -27,7 +27,7 @@ public class SystemPropertyUtil {
                                    @NonNull final Supplier<T> defaultValueSupplier) {
         val property = System.getProperty(propertyName);
 
-        return property == null ? defaultValueSupplier.get() :  transformer.apply(property);
+        return property == null ? defaultValueSupplier.get() : transformer.apply(property);
     }
 
     /**
