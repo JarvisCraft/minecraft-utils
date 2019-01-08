@@ -2,17 +2,16 @@ package ru.progrm_jarvis.minecraft.commons.mapimage;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.TObjectByteMap;
-import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TObjectByteHashMap;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
+import org.bukkit.map.MapPalette;
 import ru.progrm_jarvis.minecraft.commons.util.BitwiseUtil;
 import ru.progrm_jarvis.minecraft.commons.util.SystemPropertyUtil;
 
-import javax.annotation.Nonnegative;
+import java.awt.*;
 
 import static java.lang.Math.abs;
 
@@ -45,15 +44,6 @@ public class MapImageColor {
      * All associations of color's with their available IDs.
      */
     private static final TObjectByteMap<MapImageColor> COLOR_CODE_CACHE = new TObjectByteHashMap<>();
-
-    private static final int COLOR_LENGTHS_EMPTY_VALUE = -1;
-
-    private static final TIntIntMap COLOR_LENGTHS = new TIntIntHashMap(32, 0.5f, 0, COLOR_LENGTHS_EMPTY_VALUE);
-
-    private static final ColorLengthAlgorithm COLOR_LENGTH_ALGORITHM = SystemPropertyUtil.getSystemProperty(
-            MapImageColor.class.getTypeName() + ".color-length-algorithm",
-            ColorLengthAlgorithm::valueOf, ColorLengthAlgorithm.SUM
-    );
 
     /**
      * 8 bits describing red part of the color
@@ -117,30 +107,22 @@ public class MapImageColor {
     }
 
     /**
-     * Gets cached color length for the specified RGB-{@link int} using default algorithm.
+     * Creates new map image color from specified {@link java.awt} {@link Color}.
      *
-     * @param rgb RGB-{@link int} color for which to get the length
-     * @return color length of the color
-     *
-     * @implNote not synchronized as concurrent access will not break logic
+     * @param color color to convert to map image color object
+     * @return map image color equivalent of specified color object
      */
-    public static int getColorLength(final int rgb) {
-        var length = COLOR_LENGTHS.get(rgb);
-        if (length == COLOR_LENGTHS_EMPTY_VALUE) {
-            length = COLOR_LENGTH_ALGORITHM.length(rgb);
-            COLOR_LENGTHS.put(rgb, length);
-        }
-
-        return length;
+    public static MapImageColor from(@NonNull final Color color) {
+        return of(color.getRed(), color.getGreen(), color.getBlue());
     }
 
     /**
-     * Gets the id of the color closest to the one given by calculating
-     * dissimilarity rate of each available with the one given.
-     * This value is cached for further usage.
+     * Gets the id of the color closest to the one given. This value is cached for further usage.
      *
      * @param color color for which to find the closest available color code
      * @return closest available color code
+     *
+     * @implNote uses {@link MapPalette#matchColor(Color)} because (although it is deprecated) it is the simplest way
      */
     @SneakyThrows
     public static byte getClosestColorCode(final MapImageColor color) {
@@ -149,30 +131,8 @@ public class MapImageColor {
         // the value which will store the color code
         final byte colorCode;
         synchronized (COLOR_IDS_CACHE_MUTEX) {
-            val rgb = color.rgb;
-
-            val minecraftColorCode = MapImageMinecraftColors.getMinecraftColorCode(rgb);
-            if (minecraftColorCode == NO_COLOR_CODE) {
-                // length of the current color
-                val length = getColorLength(rgb);
-
-                var minDistance = Integer.MAX_VALUE;
-                var closestColor = 0;
-
-                // find the color with the minimal RGB-distance
-                for (val minecraftRgb : MapImageMinecraftColors.MINECRAFT_RGB_COLOR_CODES.keys()) {
-                    val distance = abs(length - getColorLength(minecraftRgb));
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        closestColor = minecraftRgb;
-                    }
-                }
-
-                colorCode = MapImageMinecraftColors.getMinecraftColorCode(closestColor);
-            } else colorCode = minecraftColorCode;
-
-            // now store the best fitting color code in cache
-            COLOR_CODE_CACHE.put(color, colorCode);
+            //noinspection deprecation ( use of MapPalette#matchColor(..)
+            COLOR_CODE_CACHE.put(color, colorCode = MapPalette.matchColor(new Color(color.rgb)));
         }
 
         return colorCode;
@@ -360,33 +320,5 @@ public class MapImageColor {
 
     public int getNaturalDistanceSquared(final int rgb) {
         return getNaturalDistanceSquared(red(rgb), green(rgb), blue(rgb));
-    }
-
-    private enum ColorLengthAlgorithm {
-        SUM {
-            @Override
-            int length(final int rgb) {
-                return getSum(rgb, 0);
-            }
-        },
-        MULTIPLICATION_PRODUCT {
-            @Override
-            int length(final int rgb) {
-                return getMultiplicationProduct(rgb, 0);
-            }
-        },
-        DISTANCE {
-            @Override
-            int length(final int rgb) {
-                return getDistanceSquared(rgb, 0);
-            }
-        },
-        NATURAL_DISTANCE {
-            @Override
-            int length(final int rgb) {
-                return getNaturalDistanceSquared(rgb, 0);
-            }
-        };
-        @Nonnegative abstract int length(int rgb);
     }
 }
