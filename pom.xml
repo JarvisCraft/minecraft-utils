@@ -17,6 +17,7 @@
         <module>scheduler</module>
         <module>config</module>
         <module>fake-entity</module>
+        <module>lib-loader</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -232,6 +233,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>fake-entity-lib</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>lib-loader</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
