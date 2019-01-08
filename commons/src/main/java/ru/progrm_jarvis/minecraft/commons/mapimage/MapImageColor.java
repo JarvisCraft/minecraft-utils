@@ -11,6 +11,7 @@ import org.bukkit.map.MapPalette;
 import ru.progrm_jarvis.minecraft.commons.util.BitwiseUtil;
 import ru.progrm_jarvis.minecraft.commons.util.SystemPropertyUtil;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 
 import static java.lang.Math.abs;
@@ -58,7 +59,30 @@ public class MapImageColor {
      */
     blue;
 
+    /**
+     * An {@link int} representation of the color. Also used as the only field for hash-code generation.
+     */
     @EqualsAndHashCode.Include int rgb;
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Construction
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Constructs a new map image color instance based on 3 base colors.
+     * This is an internal constructor as, normally, there should only exist one cached instance of any used color.
+     *
+     * @param red red color channel
+     * @param green green color channel
+     * @param blue blue color channel
+     */
+    private MapImageColor(final byte red, final byte green, final byte blue) {
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+
+        this.rgb = asRgb(red, green, blue);
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // Conversions
@@ -112,8 +136,46 @@ public class MapImageColor {
      * @param color color to convert to map image color object
      * @return map image color equivalent of specified color object
      */
-    public static MapImageColor from(@NonNull final Color color) {
+    @Nonnull public static MapImageColor from(@NonNull final Color color) {
         return of(color.getRed(), color.getGreen(), color.getBlue());
+    }
+
+    /**
+     * Gets or creates cached map image color from specified {@link int}-RGB.
+     *
+     * @param rgb RGB encoded as {@link int}
+     * @return cached or created and cached map image color
+     */
+    @SneakyThrows
+    @Nonnull public static MapImageColor of(final int rgb) {
+        return COLOR_CACHE.get(rgb, () -> new MapImageColor(red(rgb), green(rgb), blue(rgb)));
+    }
+
+    /**
+     * Gets or creates cached map image color from specified color divided on color channels.
+     *
+     * @param red red color channel
+     * @param green green color channel
+     * @param blue blue color channel
+     * @return cached or created and cached map image color
+     */
+    @SneakyThrows
+    @Nonnull public static MapImageColor of(final byte red, final byte green, final byte blue) {
+        return COLOR_CACHE.get(asRgb(red, green, blue), () -> new MapImageColor(red, green, blue));
+    }
+
+    /**
+     * Gets or creates cached map image color from specified color divided on color channels.
+     *
+     * @param red red color channel
+     * @param green green color channel
+     * @param blue blue color channel
+     * @return cached or created and cached map image color
+     *
+     * @apiNote alias {@link #of(byte, byte, byte)} using {@link int}s not to perform casts in method call
+     */
+    @Nonnull public static MapImageColor of(final int red, final int green, final int blue) {
+        return of((byte) red, (byte) green, (byte) blue);
     }
 
     /**
@@ -149,40 +211,6 @@ public class MapImageColor {
     @SneakyThrows
     public static byte getClosestColorCode(final int rgb) {
         return getClosestColorCode(of(rgb));
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Construction
-    ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Constructs a new map image color instance based on 3 base colors.
-     * This is an internal constructor as, normally, there should only exist one cached instance of any used color.
-     *
-     * @param red red color channel
-     * @param green green color channel
-     * @param blue blue color channel
-     */
-    private MapImageColor(final byte red, final byte green, final byte blue) {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
-
-        this.rgb = asRgb(red, green, blue);
-    }
-
-    @SneakyThrows
-    public static MapImageColor of(final int rgb) {
-        return COLOR_CACHE.get(rgb, () -> new MapImageColor(red(rgb), green(rgb), blue(rgb)));
-    }
-
-    @SneakyThrows
-    public static MapImageColor of(final byte red, final byte green, final byte blue) {
-        return COLOR_CACHE.get(asRgb(red, green, blue), () -> new MapImageColor(red, green, blue));
-    }
-
-    public static MapImageColor of(final int red, final int green, final int blue) {
-        return of((byte) red, (byte) green, (byte) blue);
     }
 
     ///////////////////////////////////////////////////////////////////////////
