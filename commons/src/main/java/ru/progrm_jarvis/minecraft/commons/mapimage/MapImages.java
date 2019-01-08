@@ -6,12 +6,13 @@ import lombok.val;
 import lombok.var;
 import org.jetbrains.annotations.Contract;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.lang.Math.min;
+import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 import static ru.progrm_jarvis.minecraft.commons.mapimage.MapImage.*;
 import static ru.progrm_jarvis.minecraft.commons.mapimage.MapImageColor.NO_COLOR_CODE;
 
@@ -76,9 +77,9 @@ public class MapImages {
      *
      * @apiNote returned object may be ignored as all changes happen to the provided image
      */
-    @Contract("null -> fail; _ -> param1")
-    public BufferedImage fitImage(@NonNull final BufferedImage image) {
-        final int width = image.getWidth(), height = image.getHeight();
+    @Contract(pure = true)
+    @Nonnull public BufferedImage fitImage(@NonNull final BufferedImage image) {
+        int width = image.getWidth(), height = image.getHeight();
 
         // if an image is bigger at any bound
         if (width > WIDTH || height > HEIGHT) {
@@ -87,26 +88,28 @@ public class MapImages {
             // then divide both by bigger k (treat same optimally!)
 
             final float kWidth = width / WIDTH_F, kHeight = height / HEIGHT_F;
-            if (kHeight == kHeight) {
+            if (kWidth == kHeight) {
                 // if both overflow coefficients are the same than the image's proportions are same to image map's
-                val graphics = image.getGraphics();
-                graphics.drawImage(image.getScaledInstance(WIDTH, HEIGHT, Image.SCALE_SMOOTH), 0, 0, null);
-                graphics.dispose();
+                width = WIDTH;
+                height = HEIGHT;
             } else if (kWidth > kHeight) {
                 // width overflow coefficient is bigger
-                val graphics = image.getGraphics();
-                graphics.drawImage(
-                        image.getScaledInstance(WIDTH, (int) (height / kWidth), Image.SCALE_SMOOTH), 0, 0, null
-                );
-                graphics.dispose();
+                //noinspection SuspiciousNameCombination the relatively least dimension is diveided by bigger's coef.
+                height /= kWidth;
+                width = WIDTH;
             } else {
                 // height overflow coefficient is bigger
-                val graphics = image.getGraphics();
-                graphics.drawImage(
-                        image.getScaledInstance((int) (width / kHeight), HEIGHT, Image.SCALE_SMOOTH), 0, 0, null
-                );
-                graphics.dispose();
+                //noinspection SuspiciousNameCombination the relatively least dimension is diveided by bigger's coef.
+                width /= kHeight;
+                height = HEIGHT;
             }
+
+            val newImage = new BufferedImage(width, height, TYPE_INT_ARGB);
+            val graphics = newImage.getGraphics();
+            graphics.drawImage(image.getScaledInstance(width, height, Image.SCALE_SMOOTH), 0, 0, null);
+            graphics.dispose();
+
+            return newImage;
         }
 
         return image;
@@ -120,9 +123,9 @@ public class MapImages {
      * @param resize whether the image should be resized or cut to fit map image dimensions
      * @return 2-dimensional array of RGB-{@link int} colors.
      */
-    public int[][] getNonNormalizedMapImagePixels2D(@NonNull final BufferedImage image, final boolean resize) {
-        if (resize) fitImage(image);
-        final int width = min(image.getWidth(), WIDTH), height = min(image.getHeight(), HEIGHT);
+    public int[][] getNonNormalizedMapImagePixels2D(@NonNull BufferedImage image, final boolean resize) {
+        if (resize) image = fitImage(image);
+        final int width = image.getWidth(), height = image.getHeight();
 
         val pixels = new int[WIDTH][HEIGHT];
         val rgb = image.getRGB(0, 0, width, height, new int[width * height], 0, width);
@@ -148,8 +151,8 @@ public class MapImages {
      * @return array of RGB-{@link int} colors.
      */
     public int[] getNonNormalizedMapImagePixels(@NonNull BufferedImage image, final boolean resize) {
-        if (resize) fitImage(image);
-        final int width = min(image.getWidth(), WIDTH), height = min(image.getHeight(), HEIGHT);
+        if (resize) image = fitImage(image);
+        final int width = image.getWidth(), height = image.getHeight();
 
         val pixels = new int[PIXELS_COUNT];
         val rgb = image.getRGB(0, 0, width, height, new int[width * height], 0, width);
