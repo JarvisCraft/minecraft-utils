@@ -73,17 +73,19 @@ public class MapImages {
      * yet fitting the bounds of {@link MapImage#WIDTH}×{@link MapImage#HEIGHT}</dd>
      *
      * @param image image to fit (will be redrawn)
+     * @param resize whether the image should be resized ({@code true}) or cut ({@code false})
      * @return the given image redrawn so that its non-empty pixels
      * are in bound of {@link MapImage#WIDTH}×{@link MapImage#HEIGHT}
      *
      * @apiNote returned object may be ignored as all changes happen to the provided image
      */
     @Contract(pure = true)
-    @Nonnull public BufferedImage fitImage(@NonNull final BufferedImage image) {
+    @Nonnull public BufferedImage fitImage(@NonNull final BufferedImage image, final boolean resize) {
         int width = image.getWidth(), height = image.getHeight();
 
         // if an image is bigger at any bound
-        if (width > WIDTH || height > HEIGHT) {
+        if (width > WIDTH || height > HEIGHT) if (resize) {
+
             // resizing should be proportional, so:
             // k(bound) = bound / maxAllowed(bound)
             // then divide both by bigger k (treat same optimally!)
@@ -111,6 +113,9 @@ public class MapImages {
             graphics.dispose();
 
             return newImage;
+        } else {
+            // cut image
+            return image.getSubimage(0, 0, min(width, WIDTH), min(height, HEIGHT));
         }
 
         return image;
@@ -125,8 +130,8 @@ public class MapImages {
      * @return 2-dimensional array of RGB-{@link int} colors.
      */
     public int[][] getNonNormalizedMapImagePixels2D(@NonNull BufferedImage image, final boolean resize) {
-        if (resize) image = fitImage(image);
-        final int width = min(WIDTH, image.getWidth()), height = min(HEIGHT, image.getHeight());
+        image = fitImage(image, resize);
+        final int width = image.getWidth(), height = image.getHeight();
 
         val pixels = new int[WIDTH][HEIGHT];
         val rgb = image.getRGB(0, 0, width, height, new int[width * height], 0, width);
@@ -152,8 +157,8 @@ public class MapImages {
      * @return array of RGB-{@link int} colors.
      */
     public int[] getNonNormalizedMapImagePixels(@NonNull BufferedImage image, final boolean resize) {
-        if (resize) image = fitImage(image);
-        final int width = min(WIDTH, image.getWidth()), height = min(HEIGHT, image.getHeight());
+        image = fitImage(image, resize);
+        final int width = image.getWidth(), height = image.getHeight();
 
         val pixels = new int[PIXELS_COUNT];
         val rgb = image.getRGB(0, 0, width, height, new int[width * height], 0, width);
