@@ -13,6 +13,7 @@ import java.util.Arrays;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
+import static java.lang.Math.min;
 import static ru.progrm_jarvis.minecraft.commons.mapimage.MapImage.*;
 import static ru.progrm_jarvis.minecraft.commons.mapimage.MapImageColor.NO_COLOR_CODE;
 
@@ -125,7 +126,7 @@ public class MapImages {
      */
     public int[][] getNonNormalizedMapImagePixels2D(@NonNull BufferedImage image, final boolean resize) {
         if (resize) image = fitImage(image);
-        final int width = image.getWidth(), height = image.getHeight();
+        final int width = min(WIDTH, image.getWidth()), height = min(HEIGHT, image.getHeight());
 
         val pixels = new int[WIDTH][HEIGHT];
         val rgb = image.getRGB(0, 0, width, height, new int[width * height], 0, width);
@@ -152,7 +153,7 @@ public class MapImages {
      */
     public int[] getNonNormalizedMapImagePixels(@NonNull BufferedImage image, final boolean resize) {
         if (resize) image = fitImage(image);
-        final int width = image.getWidth(), height = image.getHeight();
+        final int width = min(WIDTH, image.getWidth()), height = min(HEIGHT, image.getHeight());
 
         val pixels = new int[PIXELS_COUNT];
         val rgb = image.getRGB(0, 0, width, height, new int[width * height], 0, width);
