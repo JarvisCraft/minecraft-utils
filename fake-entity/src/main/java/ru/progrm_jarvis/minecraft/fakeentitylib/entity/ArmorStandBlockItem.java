@@ -13,18 +13,18 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import ru.progrm_jarvis.minecraft.nmsutils.NmsUtil;
-import ru.progrm_jarvis.minecraft.nmsutils.metadata.MetadataGenerator;
-import ru.progrm_jarvis.minecraft.nmsutils.metadata.MetadataGenerator.ArmorStand;
-import ru.progrm_jarvis.minecraft.nmsutils.metadata.MetadataGenerator.Entity;
+import ru.progrm_jarvis.minecraft.commons.nms.NmsUtil;
+import ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator;
+import ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand;
+import ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.Entity;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ru.progrm_jarvis.minecraft.nmsutils.metadata.MetadataGenerator.ArmorStand.armorStandFlags;
-import static ru.progrm_jarvis.minecraft.nmsutils.metadata.MetadataGenerator.ArmorStand.headRotation;
-import static ru.progrm_jarvis.minecraft.nmsutils.metadata.MetadataGenerator.Entity.entityFlags;
+import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand.armorStandFlags;
+import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand.headRotation;
+import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.Entity.entityFlags;
 
 /**
  * A fake small (or very small) movable block-item which can be normally rotated over all axises

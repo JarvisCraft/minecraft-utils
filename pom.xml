@@ -12,9 +12,16 @@
     <version>0.1.0-SNAPSHOT</version>
     <modules>
         <module>mc-unit</module>
+
         <module>commons</module>
+        <module>commons-dep</module>
+
         <module>config</module>
+        <module>config-dep</module>
+
         <module>fake-entity</module>
+        <module>fake-entity-dep</module>
+
         <module>lib-loader</module>
     </modules>
     <packaging>pom</packaging>
@@ -255,16 +262,6 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>minecraft-commons</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>nms-utils</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>scheduler-utils</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
