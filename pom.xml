@@ -167,6 +167,19 @@
                         </dependency>
                     </dependencies>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.2.1</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
 
                 <!-- Maven Central integration -->
                 <plugin>
@@ -304,7 +317,7 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.18.4</version>
-                <scope>provided</scope>
+                <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>org.aspectj</groupId>
@@ -315,13 +328,13 @@
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
                 <version>16.0.3</version>
-                <scope>provided</scope>
+                <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
                 <version>3.0.2</version>
-                <scope>provided</scope>
+                <optional>true</optional>
             </dependency>
 
             <!-- Test dependencies -->
@@ -398,6 +411,54 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>build-jars-with-dependencies</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>shade</id>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <finalName>${project.build.finalName}-with-dep</finalName>
+                            <artifactSet>
+                                <excludes>
+                                    <!-- Annotation-related optional dependencies -->
+                                    <exlude>org.projectlombok:lombok</exlude>
+                                    <exlude>org.jetbrains:annotations</exlude>
+                                    <exlude>com.google.code.findbugs:jsr305</exlude>
+                                    <!-- Third-party dependencies not required at runtime -->
+                                    <exclude>org.openjdk.jmh:*</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>plugin.yml</exclude>
+                                        <exclude>Log4j-*</exclude>
+                                        <exclude>yggdrasil_session_pubkey.der</exclude>
+                                        <!-- Some unknown files present in META-INF :D -->
+                                        <exclude>META-INF/DEPENDENCIES</exclude>
+                                        <exclude>META-INF/LICENSE</exclude>
+                                        <exclude>META-INF/LICENSE.txt</exclude>
+                                        <exclude>META-INF/log4j-provider.properties</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>META-INF/NOTICE</exclude>
+                                        <exclude>META-INF/NOTICE.txt</exclude>
+                                        <exclude>META-INF/web-fragment.xml</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
