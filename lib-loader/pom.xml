@@ -9,5 +9,19 @@
     </parent>
 
     <artifactId>lib-loader</artifactId>
-    <description>A lightweight module for automatic loading of libraries.</description>
+    <description>
+        A lightweight module for automatic loading of libraries.
+        This is made to have no compile dependencies.
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+        </dependency>
+    </dependencies>
 </project>
