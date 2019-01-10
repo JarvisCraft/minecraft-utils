@@ -3,10 +3,7 @@ package ru.progrm_jarvis.minecraft.libloader;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
@@ -211,7 +208,7 @@ public class LibLoader {
     }
 
     /**
-     * Loads a file from URL to file specified
+     * Loads a file from URL to file specified.
      *
      * @param url url from which to get the file
      * @throws IOException if an exception occurs in an I/O operation
@@ -219,6 +216,21 @@ public class LibLoader {
     public static void loadFromUrl(final URL url, final File file) throws IOException {
         try (val stream = url.openStream()) {
             Files.copy(stream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    /**
+     * Loads a file from input stream to file specified.
+     * The input stream will be closed after the operation (even if it exits with an exception).
+     *
+     * @param inputStream input stream from which to get the file
+     * @throws IOException if an exception occurs in an I/O operation
+     */
+    public static void loadFromInputStreamClosing(final InputStream inputStream, final File file) throws IOException {
+        try {
+            Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } finally {
+            inputStream.close();
         }
     }
 
@@ -245,13 +257,15 @@ public class LibLoader {
 
         val artifactFile = new File(rootDirectory, name + ".jar");
         val hashFile = new File(rootDirectory, name + ".hash");
+
+        libCoords.refresh();
+
         val hash = libCoords.computeHash();
 
         if (!artifactFile.isFile() || !hashFile.isFile() || !Files.lines(hashFile.toPath()).findFirst().equals(hash)) {
             {
-                val url = libCoords.getArtifactUrl();
-                log.info("Downloading library " + name + " from source: " + url);
-                loadFromUrl(url, artifactFile);
+                log.info("Downloading library " + name);
+                loadFromInputStreamClosing(libCoords.openArtifactStream(), artifactFile);
             }
             Files.write(hashFile.toPath(), hash.orElse("").getBytes(StandardCharsets.UTF_8));
         }
