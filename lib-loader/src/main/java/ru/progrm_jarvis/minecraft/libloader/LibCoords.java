@@ -249,7 +249,6 @@ public interface LibCoords {
                 if (mavenMetadata.isEmpty()) throw new RuntimeException(
                         "Could not read Maven metadata from " + mavenMetadataUrl + " as it's content is empty"
                 );
-                System.out.println(mavenMetadata);
                 metadataDocument = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder()
                         .parse(new InputSource(new StringReader(mavenMetadata)));
             } catch (final IOException | SAXException e) {
