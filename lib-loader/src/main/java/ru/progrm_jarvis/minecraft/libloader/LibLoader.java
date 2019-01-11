@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
@@ -50,6 +51,8 @@ public class LibLoader {
      * Logger for external usage
      */
     @NonNull @Getter @Setter private Logger log = DEFAULT_LOGGER;
+
+    @NonNull final Map<String, File> loadedLibs;
 
     // creates a MethodHandle object for URLClassLoader#addUrl(URL) method
     static {
@@ -108,6 +111,7 @@ public class LibLoader {
                 classLoader + " is not instance of URLClassLoader"
         );
 
+        loadedLibs = new ConcurrentHashMap<>();
         this.classLoader = (URLClassLoader) classLoader;
         this.rootDirectory = rootDirectory;
     }
@@ -181,10 +185,31 @@ public class LibLoader {
     }
 
     /**
+     * Checks whether the lib by specified name was loaded or not.
+     *
+     * @param name name of the lib
+     * @return {@code true} if the lib was loaded by the specified name anf {@code false} otherwise
+     */
+    public boolean isLibLoaded(@NonNull final String name) {
+        return loadedLibs.containsKey(name);
+    }
+
+    /**
+     * Gets the loaded lib's artifact file if it was loaded.
+     *
+     * @param name name of the lib
+     * @return optional containing file og lib's artifact
+     * if it was loaded by the specified name or empty optional otherwise
+     */
+    public Optional<File> getLoadedLibArtifact(@NonNull final String name) {
+        return Optional.ofNullable(loadedLibs.get(name));
+    }
+
+    /**
      * Call to this method guarantees that after it {@link #rootDirectory} will be a valid directory.
      */
     @SneakyThrows
-    private void assureRootDirectoryExists() {
+    protected void assureRootDirectoryExists() {
         if (!rootDirectory.isFile()) Files.createDirectories(rootDirectory.toPath());
     }
 
@@ -205,6 +230,7 @@ public class LibLoader {
      */
     @SneakyThrows
     public File loadLib(@NonNull final String name, @NonNull final LibCoords libCoords, final boolean addToClasspath) {
+        if (isLibLoaded(name)) throw new IllegalStateException("Library " + name + " is a;ready loaded by LibLoader");
         assureRootDirectoryExists();
 
         log.info("Loading library " + name);
