@@ -156,8 +156,4 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
                 location.getYaw() + dYaw, location.getPitch() + dPitch
         );
     }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // ASPECTS
-    ///////////////////////////////////////////////////////////////////////////
 }
