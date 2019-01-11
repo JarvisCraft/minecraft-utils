@@ -9,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import ru.progrm_jarvis.minecraft.fakeentitylib.entity.aspect.annotation.WhenVisible;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -231,17 +230,19 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     ///////////////////////////////////////////////////////////////////////////
 
     @Override
-    @WhenVisible
     public void spawn() {
-        actualizeSpawnPacket();
+        if (visible) {
+            actualizeSpawnPacket();
 
-        for (val entry : players.entrySet()) if (entry.getValue()) performSpawnNoChecks(entry.getKey());
+            for (val entry : players.entrySet()) if (entry.getValue()) performSpawnNoChecks(entry.getKey());
+        }
     }
 
     @Override
-    @WhenVisible
     public void despawn() {
-        for (val entry : players.entrySet()) if (entry.getValue()) performDespawnNoChecks(entry.getKey());
+        if (visible) {
+            for (val entry : players.entrySet()) if (entry.getValue()) performDespawnNoChecks(entry.getKey());
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -259,31 +260,33 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
      * @param pitch new pitch
      */
     @Override
-    @WhenVisible
     protected void performMove(final double dx, final double dy, final double dz, final float yaw, final float pitch) {
-        if (pitch == 0 && yaw == 0) {
-            if (movePacket == null) {
-                movePacket = new WrapperPlayServerRelEntityMove();
-                movePacket.setEntityID(id);
-            }
+        if (visible) {
+            if (pitch == 0 && yaw == 0) {
+                if (movePacket == null) {
+                    movePacket = new WrapperPlayServerRelEntityMove();
+                    movePacket.setEntityID(id);
+                }
 
-            movePacket.setDx((int) (dx * 32 * 128));
-            movePacket.setDy((int) (dy * 32 * 128));
-            movePacket.setDz((int) (dz * 32 * 128));
+                movePacket.setDx((int) (dx * 32 * 128));
+                movePacket.setDy((int) (dy * 32 * 128));
+                movePacket.setDz((int) (dz * 32 * 128));
 
-            for (val entry : players.entrySet()) if (entry.getValue()) movePacket.sendPacket(entry.getKey());
-        } else {
-            if (moveLookPacket == null) {
-                moveLookPacket = new WrapperPlayServerRelEntityMoveLook();
-                moveLookPacket.setEntityID(id);
+                for (val entry : players.entrySet()) if (entry.getValue()) movePacket.sendPacket(entry.getKey());
+            } else {
+                if (moveLookPacket == null) {
+                    moveLookPacket = new WrapperPlayServerRelEntityMoveLook();
+                    moveLookPacket.setEntityID(id);
 
-                moveLookPacket.setDx((int) (dx * 32 * 128));
-                moveLookPacket.setDy((int) (dy * 32 * 128));
-                moveLookPacket.setDz((int) (dz * 32 * 128));
-                moveLookPacket.setYaw(yaw);
-                moveLookPacket.setPitch(pitch);
+                    moveLookPacket.setDx((int) (dx * 32 * 128));
+                    moveLookPacket.setDy((int) (dy * 32 * 128));
+                    moveLookPacket.setDz((int) (dz * 32 * 128));
+                    moveLookPacket.setYaw(yaw);
+                    moveLookPacket.setPitch(pitch);
 
-                for (val entry : players.entrySet()) if (entry.getValue()) moveLookPacket.sendPacket(entry.getKey());
+                    for (val entry : players.entrySet()) if (entry.getValue()) moveLookPacket
+                            .sendPacket(entry.getKey());
+                }
             }
         }
     }
@@ -299,21 +302,22 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
      * @param pitch new pitch
      */
     @Override
-    @WhenVisible
     protected void performTeleportation(final double x, final double y, final double z,
                                         final float yaw, final float pitch) {
-        if (teleportPacket == null) {
-            teleportPacket = new WrapperPlayServerEntityTeleport();
-            teleportPacket.setEntityID(id);
+        if (visible) {
+            if (teleportPacket == null) {
+                teleportPacket = new WrapperPlayServerEntityTeleport();
+                teleportPacket.setEntityID(id);
+            }
+
+            teleportPacket.setX(x + xDelta);
+            teleportPacket.setY(y + yDelta);
+            teleportPacket.setZ(z + zDelta);
+            teleportPacket.setYaw(yaw + yawDelta);
+            teleportPacket.setPitch(pitch + pitchDelta);
+
+            for (val entry : players.entrySet()) if (entry.getValue()) teleportPacket.sendPacket(entry.getKey());
         }
-
-        teleportPacket.setX(x + xDelta);
-        teleportPacket.setY(y + yDelta);
-        teleportPacket.setZ(z + zDelta);
-        teleportPacket.setYaw(yaw + yawDelta);
-        teleportPacket.setPitch(pitch + pitchDelta);
-
-        for (val entry : players.entrySet()) if (entry.getValue()) teleportPacket.sendPacket(entry.getKey());
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -324,16 +328,17 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
      * Sends metadata to all players seeing this entity creating packet if it has not yet been initialized.
      */
     @Override
-    @WhenVisible
     protected void sendMetadata() {
-        if (metadata == null) return;
-        if (metadataPacket == null) {
-            metadataPacket = new WrapperPlayServerEntityMetadata();
-            metadataPacket.setEntityID(id);
-        }
-        metadataPacket.setMetadata(metadata.getWatchableObjects());
+        if (visible) {
+            if (metadata == null) return;
+            if (metadataPacket == null) {
+                metadataPacket = new WrapperPlayServerEntityMetadata();
+                metadataPacket.setEntityID(id);
+            }
+            metadataPacket.setMetadata(metadata.getWatchableObjects());
 
-        for (val entry : players.entrySet()) if (entry.getValue()) metadataPacket.sendPacket(entry.getKey());
+            for (val entry : players.entrySet()) if (entry.getValue()) metadataPacket.sendPacket(entry.getKey());
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
