@@ -2,6 +2,7 @@ package ru.progrm_jarvis.minecraft.libloader;
 
 import lombok.*;
 import lombok.experimental.Accessors;
+import lombok.experimental.FieldDefaults;
 
 import java.io.*;
 import java.lang.invoke.MethodHandle;
@@ -12,9 +13,7 @@ import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -24,19 +23,32 @@ import java.util.logging.Logger;
 @EqualsAndHashCode
 @RequiredArgsConstructor
 @Accessors(chain = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class LibLoader {
 
+    /**
+     * Default logger to use if no other was specified for the lib loader instance
+     */
     private static final Logger DEFAULT_LOGGER = Logger.getLogger("LibLoader");
 
+    /**
+     * Method handle of {@code URLClassLoader.addURL(URL)}
+     */
     @NonNull private static final MethodHandle URL_CLASS_LOADER__ADD_URL_METHOD;
 
-    @NonNull @Getter private URLClassLoader classLoader;
+    /**
+     * Current class loader used by this lib loader
+     */
+    @NonNull @Getter URLClassLoader classLoader;
 
     /**
      * Directory to store library artifacts and hashes in
      */
     @NonNull private final File rootDirectory;
 
+    /**
+     * Logger for external usage
+     */
     @NonNull @Getter @Setter private Logger log = DEFAULT_LOGGER;
 
     // creates a MethodHandle object for URLClassLoader#addUrl(URL) method
@@ -177,64 +189,6 @@ public class LibLoader {
     }
 
     /**
-     * Reads content of a URL as a list of lines.
-     *
-     * @param url url to read data from
-     * @return lines read from URL
-     * @throws IOException if an exception occurs while reading
-     */
-    public static List<String> readLinesFromUrl(final URL url) throws IOException {
-        try (val reader = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
-            val lines = new ArrayList<String>();
-
-            String line;
-            while ((line = reader.readLine()) != null) lines.add(line);
-
-            return lines;
-        }
-    }
-
-    /**
-     * Reads content of a URL as a single line.
-     *
-     * @param url url to read data from
-     * @return first line read from URL
-     * @throws IOException if an exception occurs while reading
-     */
-    public static String readLineFromUrl(final URL url) throws IOException {
-        try (val reader = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
-            return reader.readLine();
-        }
-    }
-
-    /**
-     * Loads a file from URL to file specified.
-     *
-     * @param url url from which to get the file
-     * @throws IOException if an exception occurs in an I/O operation
-     */
-    public static void loadFromUrl(final URL url, final File file) throws IOException {
-        try (val stream = url.openStream()) {
-            Files.copy(stream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        }
-    }
-
-    /**
-     * Loads a file from input stream to file specified.
-     * The input stream will be closed after the operation (even if it exits with an exception).
-     *
-     * @param inputStream input stream from which to get the file
-     * @throws IOException if an exception occurs in an I/O operation
-     */
-    public static void loadFromInputStreamClosing(final InputStream inputStream, final File file) throws IOException {
-        try {
-            Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } finally {
-            inputStream.close();
-        }
-    }
-
-    /**
      * Loads a library by its coords.
      * Loading should happen if:
      * <ul>
@@ -305,5 +259,55 @@ public class LibLoader {
     @SneakyThrows
     public static void addUrlToClasspath(@NonNull final URLClassLoader classLoader, @NonNull final URL url) {
         URL_CLASS_LOADER__ADD_URL_METHOD.invokeExact(classLoader, url);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Network utility methods
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Reads content of a URL as a list of lines.
+     *
+     * @param url url to read data from
+     * @return lines read from URL
+     * @throws IOException if an exception occurs while reading
+     */
+    public static List<String> readLinesFromUrl(final URL url) throws IOException {
+        try (val reader = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
+            val lines = new ArrayList<String>();
+
+            String line;
+            while ((line = reader.readLine()) != null) lines.add(line);
+
+            return lines;
+        }
+    }
+
+    /**
+     * Reads content of a URL as a single line.
+     *
+     * @param url url to read data from
+     * @return first line read from URL
+     * @throws IOException if an exception occurs while reading
+     */
+    public static String readLineFromUrl(final URL url) throws IOException {
+        try (val reader = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
+            return reader.readLine();
+        }
+    }
+
+    /**
+     * Loads a file from input stream to file specified.
+     * The input stream will be closed after the operation (even if it exits with an exception).
+     *
+     * @param inputStream input stream from which to get the file
+     * @throws IOException if an exception occurs in an I/O operation
+     */
+    public static void loadFromInputStreamClosing(final InputStream inputStream, final File file) throws IOException {
+        try {
+            Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } finally {
+            inputStream.close();
+        }
     }
 }
