@@ -17,6 +17,15 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RandomUtil {
 
     /**
+     * Provides {@code 1} or {@code -1} randomly.
+     *
+     * @return {@code 1} or {@code -1}
+     */
+    public static int randomSign() {
+        return ThreadLocalRandom.current().nextBoolean() ? 1 : -1;
+    }
+
+    /**
      * Gets a random value from the map specified considering chances.
      *
      * @param chancedValues values from which to get a random one

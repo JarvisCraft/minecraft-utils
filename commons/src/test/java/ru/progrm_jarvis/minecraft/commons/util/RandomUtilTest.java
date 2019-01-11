@@ -1,5 +1,6 @@
 package ru.progrm_jarvis.minecraft.commons.util;
 
+import lombok.val;
 import lombok.var;
 import org.apache.commons.lang.math.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -10,11 +11,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.isIn;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RandomUtilTest {
+
+    @Test
+    void testGetRandomSign() {
+        val isAllowedValue = anyOf(is(1), is(-1));
+
+        for (var i = 0; i < 64 + RandomUtils.nextInt(65); i++) assertThat(RandomUtil.randomSign(), isAllowedValue);
+    }
 
     @Test
     void testGetRandomFromMapOfChances() {
