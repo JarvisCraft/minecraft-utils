@@ -66,6 +66,7 @@ public class LibLoader {
             );
         }
 
+        val accessible = addUrlMethod.isAccessible();
         addUrlMethod.setAccessible(true);
         try {
             URL_CLASS_LOADER__ADD_URL_METHOD = MethodHandles.lookup().unreflect(addUrlMethod);
@@ -75,7 +76,7 @@ public class LibLoader {
                             + " cannot be unreflected to MethodHandle"
             );
         } finally {
-            addUrlMethod.setAccessible(false);
+            addUrlMethod.setAccessible(accessible);
         }
     }
 
