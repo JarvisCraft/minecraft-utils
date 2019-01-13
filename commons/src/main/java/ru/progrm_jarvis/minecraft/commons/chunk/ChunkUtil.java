@@ -3,12 +3,30 @@ package ru.progrm_jarvis.minecraft.commons.chunk;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
+ * Utilities related to chunks.
+ * <p>
+ * There are general conventions for type=methods:
+ *
+ * <dt>{@code Foo [bar]foo(Bar...)}</dt>
+ * <dd>return the specified <i>bar</i> value's <i>foo</i>component (other data is lost)</dd>
+ *
+ * <dt>{@code Foo [bar]toFoo(Bar...)}</dt>
+ * <dd>convert the specified <i>bar</i> value to its <i>foo</i> representation (no data is lost)</dd>
+ *
+ * <dt>{@code Foo <action>[Bar]Foo(Bar...)}</dt>
+ * <dd>performs the action specified on <i>bar</i> using <i>foo</i></dd>
  *
  * @apiNote chunks are (by default) returned as a single {@link long} as the limit of chunk at non-Y-axis is 3750000
- * where the first 32-most significant stand for X coordinate and the last 32 bits stand for Z coordinate
+ * where 32 most significant bits stand for X-coordinate and 32 least significant bits stand for Z-coordinate
+ * @apiNote chunks-local locations are (by default) returned as a single {@link short}
+ * whose bits are ordered as 4 bits for X-coordinate, 8 bits for Y-coordinate, 4 bits for Z-coordinate
  *
  * @see <a href="https://minecraft.gamepedia.com/Chunk">General info about chinks</a>
  */
@@ -22,7 +40,7 @@ public class ChunkUtil {
      * @param z Z coordinate of a chunk
      * @return chunk treated as {@link long}
      */
-    public long chunk(final int x, final int z) {
+    public long toChunkLong(final int x, final int z) {
         return ((long) x << 32) | ((long) z & 0xFFFFFFFFL);
     }
 
@@ -53,8 +71,8 @@ public class ChunkUtil {
      * @param z Y coordinate of the location
      * @return chunk location treated as {@link long}
      */
-    public long chunkByLocation(final long x, final long z) {
-        return chunk((int) (x >> 4), (int) (z >> 4));
+    public long chunkAt(final long x, final long z) {
+        return toChunkLong((int) (x >> 4), (int) (z >> 4));
     }
 
     /**
@@ -66,5 +84,138 @@ public class ChunkUtil {
      */
     public Chunk getChunk(@NonNull final World world, final long chunk) {
         return world.getChunkAt(chunkX(chunk), chunkZ(chunk));
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Chunk local location
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Converts the specified x, y and z chunk-local coordinates to a {@link short}-representation
+     *
+     * @param chunkLocalX X-coordinate inside the chunk between 0 and 15
+     * @param chunkLocalY Y-coordinate inside the chunk between 0 and 255
+     * @param chunkLocalZ Z-coordinate inside the chunk between 0 and 15
+     * @return {@link short}-representation of specified chunk-local coordinated
+     *
+     * @throws IllegalArgumentException if {@code x} is not in range [0; 15]
+     * @throws IllegalArgumentException if {@code z} is not in range [0; 15]
+     * @throws IllegalArgumentException if {@code y} is not in range [0; 255]
+     */
+    public short toChunkLocalLocationShort(final int chunkLocalX, final int chunkLocalY, final int chunkLocalZ) {
+        checkArgument(chunkLocalX >= 0 && chunkLocalX < 16, "chunkLocalX should be in range [0; 15]");
+        checkArgument(chunkLocalZ >= 0 && chunkLocalZ < 16, "chunkLocalZ should be in range [0; 15]");
+        checkArgument(chunkLocalY >= 0 && chunkLocalY < 256, "chunkLocalY should be in range [0; 255]");
+
+        return (short) (((chunkLocalX & 0xF) << 12) | ((chunkLocalY & 0xFF) << 4) | (chunkLocalZ & 0xF));
+    }
+
+    /**
+     * Gets the X-coordinate from a {@link short}-representation of a chunk-local location.
+     *
+     * @param location {@link short}-representation of a chunk-local location
+     * @return X-coordinate of a chunk local location
+     */
+    public int chunkLocalLocationX(final short location) {
+        return (location >> 12) & 0xF;
+    }
+
+    /**
+     * Gets the Y-coordinate from a {@link short}-representation of a chunk-local location.
+     *
+     * @param location {@link short}-representation of a chunk-local location
+     * @return Y-coordinate of a chunk local location
+     */
+    public int chunkLocalLocationY(final short location) {
+        return (location >> 4) & 0xFF;
+    }
+
+    /**
+     * Gets the Z-coordinate from a {@link short}-representation of a chunk-local location.
+     *
+     * @param location {@link short}-representation of a chunk-local location
+     * @return Z-coordinate of a chunk local location
+     */
+    public int chunkLocalLocationZ(final short location) {
+        return location & 0xF;
+    }
+
+    /**
+     * Gets the chunk-local X-coordinate value of the location.
+     *
+     * @param x X-coordinate
+     * @return chunk-local X-coordinate
+     */
+    public int chunkLocalX(final int x) {
+        return x & 0xF;
+    }
+
+    /**
+     * Gets the chunk-local Y-coordinate value of the location.
+     *
+     * @param y Y-coordinate
+     * @return chunk-local Y-coordinate
+     */
+    public int chunkLocalY(final int y) {
+        return y & 0xFF;
+    }
+
+    /**
+     * Gets the chunk-local Z-coordinate value of the location.
+     *
+     * @param z Z-coordinate
+     * @return chunk-local Z-coordinate
+     */
+    public int chunkLocalZ(final int z) {
+        return z & 0xF;
+    }
+
+    /**
+     * Gets the specified location's chunk-local location.
+     *
+     * @param x X-coordinate of the location whose chunk-local location should be got
+     * @param y Y-coordinate of the location whose chunk-local location should be got
+     * @param z Z-coordinate of the location whose chunk-local location should be got
+     * @return {@link short}-representation of location's chunk-local location
+     *
+     * @see #chunkLocalLocation(Location) is an allias for {@link Location} argument
+     */
+    public short chunkLocalLocation(final int x, final int y, final int z) {
+        return toChunkLocalLocationShort(chunkLocalX(x), chunkLocalY(y), chunkLocalZ(z));
+    }
+
+    /**
+     * Gets the specified location's chunk-local location.
+     *
+     * @param location location whose chunk-local location should be got
+     * @return {@link short}-representation of location's chunk-local location
+     *
+     * @see #toChunkLocalLocationShort(int, int, int) is called with location's coordinates
+     */
+    public short chunkLocalLocation(@NonNull final Location location) {
+        return chunkLocalLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
+    /**
+     * Gets the block in a chunk from its chunk-local location in {@link short}-representation
+     *
+     * @param chunk chunk whose block to get
+     * @param location {@link short}-representation of a chunk-local location
+     * @return block from the chunk of specified chunk-local location
+     */
+    public Block getChunkBlock(final Chunk chunk, final short location) {
+        return chunk.getBlock(
+                chunkLocalLocationX(location), chunkLocalLocationY(location), chunkLocalLocationZ(location)
+        );
+    }
+
+    /**
+     * Converts location to it's chunk-local location representation.
+     *
+     * @param location location whose chunk-local location should be got
+     * @return chunk local location of the location
+     */
+    public ChunkLocalLocation toChunkLocalLocation(final Location location) {
+        return new ChunkLocalLocation(location.getChunk(), chunkLocalLocation(location));
     }
 }
