@@ -12,7 +12,6 @@ import ru.progrm_jarvis.minecraft.commons.player.registry.RegistersSelfInPlayerR
 import ru.progrm_jarvis.minecraft.commons.util.MapUtil;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,8 +56,6 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
             setX(0);
             setZ(0);
             setData(image.getMapData());
-
-            System.out.println(Arrays.toString(this.getData()));
         }}.sendPacket(player);
     }
 
