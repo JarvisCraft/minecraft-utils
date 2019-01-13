@@ -7,14 +7,80 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentMatchers;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static ru.progrm_jarvis.minecraft.commons.chunk.ChunkUtil.*;
 
 class ChunkUtilTest {
+
+    @Test
+    void testRangeCheckChunkLocalX() {
+        for (var chunkLocalX = -32; chunkLocalX <= 32; chunkLocalX++) {
+            final Executable executable;
+            {
+                val x = chunkLocalX;
+                executable = () -> ChunkUtil.rangeCheckChunkLocalX(x);
+            }
+
+            if (chunkLocalX < 0 || chunkLocalX > 15) assertThrows(IllegalArgumentException.class, executable);
+            else assertDoesNotThrow(executable);
+        }
+    }
+
+    @Test
+    void testRangeCheckChunkLocalY() {
+        for (var chunkLocalZ = -32; chunkLocalZ <= 32; chunkLocalZ++) {
+            final Executable executable;
+            {
+                val z = chunkLocalZ;
+                executable = () -> ChunkUtil.rangeCheckChunkLocalZ(z);
+            }
+
+            if (chunkLocalZ < 0 || chunkLocalZ > 15) assertThrows(IllegalArgumentException.class, executable);
+            else assertDoesNotThrow(executable);
+        }
+    }
+
+    @Test
+    void testRangeCheckChunkLocalZ() {
+        for (var chunkLocalY = -512; chunkLocalY <= 512; chunkLocalY++) {
+            final Executable executable;
+            {
+                val y = chunkLocalY;
+                executable = () -> ChunkUtil.rangeCheckChunkLocalY(y);
+            }
+
+            if (chunkLocalY < 0 || chunkLocalY > 255) assertThrows(IllegalArgumentException.class, executable);
+            else assertDoesNotThrow(executable);
+        }
+    }
+
+    @Test
+    void testRangeCheckChunkLocal() {
+        for (var chunkLocalY = -256; chunkLocalY <= 256; chunkLocalY++) {
+            val y = chunkLocalY;
+            for (var chunkLocalX = -32; chunkLocalX <= 32; chunkLocalX++) {
+                val x = chunkLocalX;
+                for (var chunkLocalZ = -32; chunkLocalZ <= 32; chunkLocalZ++) {
+                    final Executable executable;
+                    {
+                        final int z = chunkLocalZ;
+                        executable = () -> ChunkUtil.rangeCheckChunkLocal(x, y, z);
+                    }
+
+                    if (chunkLocalX < 0 || chunkLocalX > 15
+                            || chunkLocalZ < 0 || chunkLocalZ > 15
+                            || chunkLocalY < 0 || chunkLocalY > 255) assertThrows(
+                                    IllegalArgumentException.class, executable
+                    );
+                    else assertDoesNotThrow(executable);
+                }
+            }
+        }
+    }
 
     @Test
     void testToChunkLong() {
