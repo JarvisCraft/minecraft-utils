@@ -4,17 +4,15 @@ import lombok.NonNull;
 import lombok.val;
 import lombok.var;
 import org.apache.commons.lang.math.RandomUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.ThrowingSupplier;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import ru.progrm_jarvis.minecraft.commons.util.RandomUtil;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.function.IntBinaryOperator;
 import java.util.function.IntUnaryOperator;
 
@@ -22,10 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
-@RunWith(Parameterized.class)
 class IntWrapperTest {
 
-    static List<Arguments> provideIntWrappers() {
+    static Collection<Arguments> intWrapperParameters() {
         val arguments = new ArrayList<Arguments>();
 
         arguments.add(of(IntWrapper.create()));
@@ -56,7 +53,7 @@ class IntWrapperTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideIntWrappers")
+    @MethodSource("intWrapperParameters")
     void testGetValueOfSpecificNumericType(@NonNull final IntWrapper wrapper) {
         val value = wrapper.get();
 
@@ -69,7 +66,7 @@ class IntWrapperTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideIntWrappers")
+    @MethodSource("intWrapperParameters")
     void testGetSet(@NonNull final IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val value = RandomUtils.nextInt();
@@ -79,7 +76,7 @@ class IntWrapperTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideIntWrappers")
+    @MethodSource("intWrapperParameters")
     void testGetAndIncrement(@NonNull final IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val value = wrapper.get();
@@ -89,7 +86,7 @@ class IntWrapperTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideIntWrappers")
+    @MethodSource("intWrapperParameters")
     void testIncrementAndGet(@NonNull final IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val newValue = wrapper.get() + 1;
@@ -99,7 +96,7 @@ class IntWrapperTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideIntWrappers")
+    @MethodSource("intWrapperParameters")
     void testGetAndDecrement(@NonNull final IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val value = wrapper.get();
@@ -109,7 +106,7 @@ class IntWrapperTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideIntWrappers")
+    @MethodSource("intWrapperParameters")
     void testDecrementAndGet(@NonNull final IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val newValue = wrapper.get() - 1;
@@ -119,7 +116,7 @@ class IntWrapperTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideIntWrappers")
+    @MethodSource("intWrapperParameters")
     void testGetAndAdd(@NonNull final IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val delta = RandomUtils.nextInt() * RandomUtil.randomSign();
@@ -131,7 +128,7 @@ class IntWrapperTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideIntWrappers")
+    @MethodSource("intWrapperParameters")
     void testAddAndGet(@NonNull final IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val delta = RandomUtils.nextInt() * RandomUtil.randomSign();
@@ -143,7 +140,7 @@ class IntWrapperTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideIntWrappers")
+    @MethodSource("intWrapperParameters")
     void testGetAndUpdate(@NonNull final IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val function = randomIntUnaryFunction();
@@ -155,7 +152,7 @@ class IntWrapperTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideIntWrappers")
+    @MethodSource("intWrapperParameters")
     void testUpdateAndGet(@NonNull final IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val function = randomIntUnaryFunction();
@@ -167,7 +164,7 @@ class IntWrapperTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideIntWrappers")
+    @MethodSource("intWrapperParameters")
     void testGetAndAccumulate(@NonNull final IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val function = randomIntBinaryFunction();
@@ -180,7 +177,7 @@ class IntWrapperTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideIntWrappers")
+    @MethodSource("intWrapperParameters")
     void testAccumulateAndGet(@NonNull final IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val function = randomIntBinaryFunction();
