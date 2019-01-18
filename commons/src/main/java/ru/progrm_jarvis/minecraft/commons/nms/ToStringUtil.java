@@ -1,6 +1,6 @@
 package ru.progrm_jarvis.minecraft.commons.nms;
 
-import com.comphenix.packetwrapper.PacketWrapper;
+import com.comphenix.packetwrapper.AbstractPacket;
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.cache.Cache;
@@ -47,13 +47,13 @@ public class ToStringUtil {
             .build();
 
     @SneakyThrows
-    public String toString(final PacketWrapper packetWrapper) {
-        if (packetWrapper == null) return "null";
+    public String toString(final AbstractPacket packet) {
+        if (packet == null) return "null";
 
         final Map<String, MethodWrapper<Object, Object>> methods;
         final String className;
         {
-            val clazz = packetWrapper.getClass();
+            val clazz = packet.getClass();
             methods = METHODS_CACHE.get(clazz, () -> Arrays.stream(clazz.getDeclaredMethods())
                     .filter(method -> method.getName().startsWith("get"))
                     .collect(Collectors.toMap(
@@ -75,7 +75,7 @@ public class ToStringUtil {
             while (hasNext) {
                 val entry = entries.next();
                 // invoked before append() to exit if an exception occurs without any unneeded operations
-                val value = entry.getValue().invoke(packetWrapper);
+                val value = entry.getValue().invoke(packet);
 
                 stringBuilder
                         .append(entry.getKey())
