@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import ru.progrm_jarvis.minecraft.commons.player.registry.ShouldBeRegisteredInPlayerRegistry;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -17,6 +18,7 @@ import java.util.UUID;
 /**
  * A simple living entity self-sustained for direct usage.
  */
+@ShouldBeRegisteredInPlayerRegistry
 @ToString
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PROTECTED)
