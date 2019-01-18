@@ -2,17 +2,16 @@ package ru.progrm_jarvis.minecraft.fakeentitylib.entity.observer;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import ru.progrm_jarvis.minecraft.commons.plugin.BukkitPluginShutdownUtil;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.ObservableFakeEntity;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.management.AbstractSetBasedEntityManager;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -56,12 +55,7 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
 
         this.entitiesSetSupplier = entitiesSetSupplier;
 
-        Bukkit.getPluginManager().registerEvents(new Listener() {
-            @EventHandler
-            public void onPluginDisable(final PluginDisableEvent event) {
-                if (event.getPlugin() == plugin) shutdown();
-            }
-        }, plugin);
+        BukkitPluginShutdownUtil.addShutdownHook(plugin, this::shutdown);
     }
 
     protected RedrawEntitiesRunnable getRedrawEntitiesRunnable() {
