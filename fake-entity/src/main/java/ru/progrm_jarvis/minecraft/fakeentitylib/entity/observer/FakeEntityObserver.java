@@ -6,6 +6,7 @@ import ru.progrm_jarvis.minecraft.fakeentitylib.entity.management.FakeEntityMana
 
 /**
  * An object responsible for entity observation.
+ * Observation is the process of controlling the entity visibility for players.
  *
  * @param <P> type of parent plugin
  * @param <E> type of entity managed
