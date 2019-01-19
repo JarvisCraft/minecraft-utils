@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -45,7 +46,7 @@ public abstract class AbstractPlayerContainingFakeEntity extends AbstractObserva
     @Override
     public void addPlayer(final Player player) {
         if (!players.containsKey(player)) {
-            if (canSee(player)) render(player);
+            if (shouldSee(player)) render(player);
             else players.put(player, false);
         }
     }
@@ -57,6 +58,22 @@ public abstract class AbstractPlayerContainingFakeEntity extends AbstractObserva
             if (canSee) unrender(player);
             else players.remove(player);
         }
+    }
+
+    @Override
+    public Collection<Player> getSeeingPlayers() {
+        val seeingPlayers = new HashSet<Player>();
+        for (val entry : players.entrySet()) if (entry.getValue()) seeingPlayers.add(entry.getKey());
+
+        return seeingPlayers;
+    }
+
+    @Override
+    public Collection<Player> getNotSeeingPlayers() {
+        val notSeeingPlayers = new HashSet<Player>();
+        for (val entry : players.entrySet()) if (!entry.getValue()) notSeeingPlayers.add(entry.getKey());
+
+        return notSeeingPlayers;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -83,8 +100,8 @@ public abstract class AbstractPlayerContainingFakeEntity extends AbstractObserva
         if (sees == null) return;
 
         if (sees) {
-            if (!canSee(player)) render(player);
-        } else if (canSee(player)) unrender(player);
+            if (!shouldSee(player)) render(player);
+        } else if (shouldSee(player)) unrender(player);
     }
 
 
@@ -94,8 +111,8 @@ public abstract class AbstractPlayerContainingFakeEntity extends AbstractObserva
             val player = entry.getKey();
 
             if (entry.getValue()) { // sees
-                if (!canSee(player)) unrender(player);
-            } else if (canSee(player)) render(player);
+                if (!shouldSee(player)) unrender(player);
+            } else if (shouldSee(player)) render(player);
         }
     }
 }

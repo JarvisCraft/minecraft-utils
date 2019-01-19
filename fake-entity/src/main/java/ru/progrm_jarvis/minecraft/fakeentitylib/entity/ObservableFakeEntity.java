@@ -3,6 +3,8 @@ package ru.progrm_jarvis.minecraft.fakeentitylib.entity;
 import lombok.val;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
+
 public interface ObservableFakeEntity extends FakeEntity {
 
     /**
@@ -38,7 +40,23 @@ public interface ObservableFakeEntity extends FakeEntity {
      * @param player player to check for ability to see this fake entity
      * @return whether or not the player can see this fake entity
      */
-    boolean canSee(Player player);
+    boolean shouldSee(Player player);
+
+    /**
+     * Gets all players who are related to this fake entity
+     * and are seeing it at the moment (have it rendered).
+     *
+     * @return all players who have this fake entity rendered at the moment
+     */
+    Collection<Player> getSeeingPlayers();
+
+    /**
+     * Gets all players who are related to this fake entity
+     * and are not seeing it at the moment (don't have it rendered).
+     *
+     * @return all players who don't have this fake entity rendered at the moment
+     */
+    Collection<Player> getNotSeeingPlayers();
 
     /**
      * Attempt to rerender this fake entity for player specified.

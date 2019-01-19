@@ -27,7 +27,7 @@ public abstract class AbstractObservableFakeEntity extends AbstractFakeEntity im
     }
 
     @Override
-    public boolean canSee(final Player player) {
+    public boolean shouldSee(final Player player) {
         return player.getWorld() == location.getWorld()
                 && player.getEyeLocation().distanceSquared(location) <= viewDistanceSquared;
     }
