@@ -10,6 +10,13 @@ import java.util.Collection;
 public interface FakeEntity extends PlayerContainer {
 
     /**
+     * Gets the unique ID of this entity for use in player packets.
+     *
+     * @return Minecraft entity unique ID of this fake entity
+     */
+    int getEntityId();
+
+    /**
      * Gets the world of this fake entity.
      *
      * @return world of this fake entity
