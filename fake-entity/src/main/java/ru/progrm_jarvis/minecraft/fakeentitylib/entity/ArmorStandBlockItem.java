@@ -77,7 +77,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
         this.rotation = rotation;
 
         equipmentPacket = new WrapperPlayServerEntityEquipment();
-        equipmentPacket.setEntityID(id);
+        equipmentPacket.setEntityID(entityId);
         equipmentPacket.setSlot(EnumWrappers.ItemSlot.HEAD);
         equipmentPacket.setItem(this.item = item);
 

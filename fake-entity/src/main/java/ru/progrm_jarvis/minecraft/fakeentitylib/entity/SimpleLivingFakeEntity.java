@@ -31,7 +31,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     /**
      * Unique entity ID by which it should be identified in all packets.
      */
-    final int id; // id should not be generated before all checks are performed
+    @Getter(AccessLevel.PROTECTED) final int entityId; // id should not be generated before all checks are performed
 
     /**
      * This fake entity's UUID
@@ -159,7 +159,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
 
         // setup fields
 
-        this.id = entityId;
+        this.entityId = entityId;
         this.uuid = uuid;
         this.type = type;
 
@@ -177,12 +177,12 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
         // setup packets
 
         spawnPacket = new WrapperPlayServerSpawnEntityLiving();
-        spawnPacket.setEntityID(id);
+        spawnPacket.setEntityID(this.entityId);
         spawnPacket.setType(type);
         if (uuid != null) spawnPacket.setUniqueId(uuid);
 
         despawnPacket = new WrapperPlayServerEntityDestroy();
-        despawnPacket.setEntityIds(new int[]{id});
+        despawnPacket.setEntityIds(new int[]{this.entityId});
     }
 
     /**
@@ -267,7 +267,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
             if (pitch == 0 && yaw == 0) {
                 if (movePacket == null) {
                     movePacket = new WrapperPlayServerRelEntityMove();
-                    movePacket.setEntityID(id);
+                    movePacket.setEntityID(entityId);
                 }
 
                 movePacket.setDx((int) (dx * 32 * 128));
@@ -278,7 +278,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
             } else {
                 if (moveLookPacket == null) {
                     moveLookPacket = new WrapperPlayServerRelEntityMoveLook();
-                    moveLookPacket.setEntityID(id);
+                    moveLookPacket.setEntityID(entityId);
 
                     moveLookPacket.setDx((int) (dx * 32 * 128));
                     moveLookPacket.setDy((int) (dy * 32 * 128));
@@ -309,7 +309,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
         if (visible) {
             if (teleportPacket == null) {
                 teleportPacket = new WrapperPlayServerEntityTeleport();
-                teleportPacket.setEntityID(id);
+                teleportPacket.setEntityID(entityId);
             }
 
             teleportPacket.setX(x + xDelta);
@@ -335,7 +335,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
             if (metadata == null) return;
             if (metadataPacket == null) {
                 metadataPacket = new WrapperPlayServerEntityMetadata();
-                metadataPacket.setEntityID(id);
+                metadataPacket.setEntityID(entityId);
             }
             metadataPacket.setMetadata(metadata.getWatchableObjects());
 
