@@ -79,7 +79,7 @@ public class ToStringUtil {
 
                 stringBuilder
                         .append(entry.getKey())
-                        .append(String.valueOf(value));
+                        .append(value);
 
                 hasNext = entries.hasNext();
                 if (hasNext) stringBuilder
