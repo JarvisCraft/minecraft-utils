@@ -31,7 +31,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     /**
      * Unique entity ID by which it should be identified in all packets.
      */
-    @Getter(AccessLevel.PROTECTED) final int entityId; // id should not be generated before all checks are performed
+    @Getter final int entityId; // id should not be generated before all checks are performed
 
     /**
      * This fake entity's UUID
