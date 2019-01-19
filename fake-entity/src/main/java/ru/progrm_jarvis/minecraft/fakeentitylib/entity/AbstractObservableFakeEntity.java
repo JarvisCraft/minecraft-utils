@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public abstract class AbstractObservableFakeEntity extends AbstractFakeEntity implements ObservableFakeEntity {
 
-
     @Getter final boolean global;
     @Getter final int viewDistance;
     @Getter final int viewDistanceSquared;
