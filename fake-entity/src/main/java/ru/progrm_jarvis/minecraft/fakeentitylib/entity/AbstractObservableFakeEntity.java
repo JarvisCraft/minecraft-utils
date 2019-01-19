@@ -10,12 +10,12 @@ import org.bukkit.entity.Player;
  */
 @ToString
 @EqualsAndHashCode(callSuper = false)
-@FieldDefaults(level = AccessLevel.PROTECTED)
+@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public abstract class AbstractObservableFakeEntity extends AbstractFakeEntity implements ObservableFakeEntity {
 
-    @Getter final boolean global;
-    @Getter final int viewDistance;
-    @Getter final int viewDistanceSquared;
+    @Getter boolean global;
+    @Getter int viewDistance;
+    @Getter int viewDistanceSquared;
 
     public AbstractObservableFakeEntity(final boolean global, final int viewDistance,
                                         @NonNull final Location location) {
@@ -23,7 +23,7 @@ public abstract class AbstractObservableFakeEntity extends AbstractFakeEntity im
 
         this.global = global;
         this.viewDistance = viewDistance;
-        this.viewDistanceSquared = viewDistance * viewDistance;
+        viewDistanceSquared = viewDistance * viewDistance;
     }
 
     @Override
