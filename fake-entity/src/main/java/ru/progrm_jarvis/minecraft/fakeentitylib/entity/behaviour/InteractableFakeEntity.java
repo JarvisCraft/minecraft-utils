@@ -7,7 +7,5 @@ public interface InteractableFakeEntity extends FakeEntity {
 
     int getEntityId();
 
-    boolean sendsEvents();
-
     void handleInteraction(Player player, FakeEntityInteraction interaction);
 }
