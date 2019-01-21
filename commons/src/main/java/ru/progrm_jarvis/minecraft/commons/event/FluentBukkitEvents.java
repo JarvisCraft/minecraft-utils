@@ -167,8 +167,10 @@ public class FluentBukkitEvents {
 
         @Override
         public void execute(final Listener listener, final Event event) {
-            @SuppressWarnings("unchecked") val castEvent = (E) event;
-            for (val eventListener : eventListeners) eventListener.accept(castEvent);
+            if (configuration.type.isAssignableFrom(event.getClass())) {
+                @SuppressWarnings("unchecked") val castEvent = (E) event;
+                for (val eventListener : eventListeners) eventListener.accept(castEvent);
+            }
         }
     }
 
