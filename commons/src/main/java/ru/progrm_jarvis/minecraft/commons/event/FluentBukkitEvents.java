@@ -83,7 +83,10 @@ public class FluentBukkitEvents {
          */
         @SuppressWarnings("unchecked")
         private EventListenersGroup<E> getListenersGroup() {
-            return (EventListenersGroup<E>) LISTENERS_GROUPS.get(new ListenerConfiguration<>(plugin, type, priority));
+            return (EventListenersGroup<E>) LISTENERS_GROUPS.computeIfAbsent(
+                    new ListenerConfiguration<>(plugin, type, priority),
+                    configuration -> new EventListenersGroup<>((ListenerConfiguration<E>) configuration)
+            );
         }
 
         /**
