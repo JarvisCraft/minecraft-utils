@@ -29,7 +29,7 @@ public abstract class AbstractPlayerContainingFakeEntity extends AbstractObserva
     }
 
     @Override
-    public Collection<Player> getPlayers() {
+    public Collection<? extends Player> getPlayers() {
         return players.keySet();
     }
 

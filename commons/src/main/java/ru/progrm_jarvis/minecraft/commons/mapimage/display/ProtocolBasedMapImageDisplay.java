@@ -115,7 +115,7 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
     }
 
     @Override
-    public Collection<Player> getPlayers() {
+    public Collection<? extends Player> getPlayers() {
         return playerMaps.keySet();
     }
 

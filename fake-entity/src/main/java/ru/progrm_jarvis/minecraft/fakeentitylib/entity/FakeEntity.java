@@ -36,7 +36,7 @@ public interface FakeEntity extends PlayerContainer {
      *
      * @return all players associated with this entity
      */
-    Collection<Player> getPlayers();
+    Collection<? extends Player> getPlayers();
 
     /**
      * Gets whether this fake entity is visible or not.

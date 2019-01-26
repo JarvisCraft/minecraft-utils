@@ -42,7 +42,7 @@ public class PlayerContainers {
         }
 
         @Override
-        public Collection<Player> getPlayers() {
+        public Collection<? extends Player> getPlayers() {
             return collection;
         }
     }
@@ -69,7 +69,7 @@ public class PlayerContainers {
         }
 
         @Override
-        public Collection<Player> getPlayers() {
+        public Collection<? extends Player> getPlayers() {
             return map.keySet();
         }
     }

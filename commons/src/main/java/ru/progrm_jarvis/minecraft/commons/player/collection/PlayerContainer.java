@@ -79,5 +79,5 @@ public interface PlayerContainer {
      *
      * @return all players contained
      */
-    Collection<Player> getPlayers();
+    Collection<? extends Player> getPlayers();
 }
