@@ -26,7 +26,7 @@ public class FileUtil {
     public File makeSureExists(@NonNull final File file) {
         if (!file.isFile()) {
             val parent = file.getParentFile();
-            if (!parent.isDirectory()) Files.createDirectories(parent.toPath());
+            if (parent != null && !parent.isDirectory()) Files.createDirectories(parent.toPath());
 
             Files.createFile(file.toPath());
         }
