@@ -3,8 +3,10 @@ package ru.progrm_jarvis.minecraft.commons.player.collection;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.UtilityClass;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
@@ -28,6 +30,13 @@ public class PlayerContainers {
 
         @NonNull private Collection<Player> collection;
         boolean global;
+
+        public PlayerContainerCollectionWrapper(@NonNull final Collection<Player> collection, final boolean global) {
+            this.collection = collection;
+            this.global = global;
+
+            if (global) addPlayers(new ArrayList<>(Bukkit.getOnlinePlayers()));
+        }
 
         @Override
         public void addPlayer(final Player player) {
@@ -56,6 +65,16 @@ public class PlayerContainers {
         @NonNull private Map<Player, T> map;
         @NonNull private Function<Player, T> defaultValueSupplier;
         boolean global;
+
+        public PlayerContainerMapWrapper(@NonNull final Map<Player, T> map,
+                                         @NonNull final Function<Player, T> defaultValueSupplier,
+                                         final boolean global) {
+            this.map = map;
+            this.defaultValueSupplier = defaultValueSupplier;
+            this.global = global;
+
+            if (global) addPlayers(new ArrayList<>(Bukkit.getOnlinePlayers()));
+        }
 
         @Override
         public void addPlayer(final Player player) {
