@@ -55,7 +55,7 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
                 ? new Listener() {
             @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
             public final void onPlayerJoin(final PlayerJoinEvent event) {
-                addPlayer(event.getPlayer());
+                addPlayer(event.getPlayer(), false);
             }
 
             @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -80,18 +80,23 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
         this(plugin, true, true);
     }
 
-    @Override
-    public void addPlayer(final Player player) {
+    public void addPlayer(final Player player, final boolean force) {
         players.add(player);
 
         Bukkit.getScheduler().runTask(plugin, () -> {
             playerContainersReadLock.lock();
             try {
-                for (val playerContainer : playerContainers) playerContainer.addPlayer(player);
+                for (val playerContainer : playerContainers) if (force || playerContainer.isGlobal()) playerContainer
+                        .addPlayer(player);
             } finally {
                 playerContainersReadLock.unlock();
             }
         });
+    }
+
+    @Override
+    public void addPlayer(final Player player) {
+        addPlayer(player, true);
     }
 
     @Override
