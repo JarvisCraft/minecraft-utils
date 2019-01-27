@@ -13,6 +13,16 @@ import java.util.Collections;
 public interface PlayerContainer {
 
     /**
+     * Gets whether or not this player container should be global.
+     * Global player container means that it considers all online players
+     *
+     * @return whether or not this fake entity is global
+     *
+     * @apiNote When global, all online players should be added on initialization of the object.
+     */
+    boolean isGlobal();
+
+    /**
      * Adds a player to this container.
      *
      * @param player player to add

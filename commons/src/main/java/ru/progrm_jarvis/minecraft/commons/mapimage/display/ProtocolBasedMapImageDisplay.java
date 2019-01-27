@@ -19,24 +19,26 @@ import java.util.Map;
 @RegistersSelfInPlayerRegistry
 @ToString
 @EqualsAndHashCode
-@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
 
     @NonNull MapImage image;
     @NonNull Map<Player, MapView> playerMaps;
+    @Getter boolean global;
 
     public ProtocolBasedMapImageDisplay(@NonNull final MapImage image, @NonNull final Map<Player, MapView> playerMaps,
-                                        @NonNull final Plugin plugin) {
+                                        @NonNull final Plugin plugin, final boolean global) {
         this.image = image;
         this.playerMaps = playerMaps;
+        this.global = global;
 
         PlayerRegistries.registerInDefaultRegistry(plugin, this);
         image.subscribeOnUpdates(this::sendDeltaToAllPlayers);
     }
 
-    public ProtocolBasedMapImageDisplay(@NonNull final MapImage image, @NonNull final Plugin plugin) {
-        this(image, new HashMap<>(), plugin);
+    public ProtocolBasedMapImageDisplay(@NonNull final MapImage image, @NonNull final Plugin plugin,
+                                        final boolean global) {
+        this(image, new HashMap<>(), plugin, global);
     }
 
     @Override

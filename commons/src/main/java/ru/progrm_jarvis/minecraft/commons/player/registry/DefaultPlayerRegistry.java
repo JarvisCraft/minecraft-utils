@@ -1,15 +1,13 @@
 package ru.progrm_jarvis.minecraft.commons.player.registry;
 
 import com.google.common.base.Preconditions;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NonNull;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
-import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -25,24 +23,36 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+@ToString
+@EqualsAndHashCode
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class DefaultPlayerRegistry implements PlayerRegistry {
 
     @NonNull Plugin plugin;
     @NonNull @Getter Set<Player> players;
+    @Getter boolean global;
     @NonNull Set<PlayerContainer> playerContainers = Collections.newSetFromMap(new WeakHashMap<>());
-    private ReadWriteLock playerContainersLock = new ReentrantReadWriteLock();
-    Lock playerContainersReadLock = playerContainersLock.readLock();
-    Lock playerContainersWriteLock = playerContainersLock.writeLock();
+    Lock playerContainersReadLock;
+    Lock playerContainersWriteLock;
 
-    public DefaultPlayerRegistry(@NonNull final Plugin plugin, @NonNull final Set<Player> playerSet) {
+    Listener listener;
+
+    public DefaultPlayerRegistry(@NonNull final Plugin plugin, @NonNull final Set<Player> playerSet,
+                                 final boolean global) {
         Preconditions.checkArgument(playerSet.isEmpty(), "playerSet should be empty");
 
         this.plugin = plugin;
         players = playerSet;
+        this.global = global;
 
-        Bukkit.getPluginManager().registerEvents(new Listener() {
+        {
+            ReadWriteLock playerContainersLock = new ReentrantReadWriteLock();
+            playerContainersReadLock = playerContainersLock.readLock();
+            playerContainersWriteLock = playerContainersLock.writeLock();
+        }
 
+        Bukkit.getPluginManager().registerEvents(listener = global
+                ? new Listener() {
             @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
             public final void onPlayerJoin(final PlayerJoinEvent event) {
                 addPlayer(event.getPlayer());
@@ -52,15 +62,22 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
             public final void onPlayerQuit(final PlayerQuitEvent event) {
                 removePlayer(event.getPlayer());
             }
+        }
+        : new Listener() {
+
+            @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+            public final void onPlayerQuit(final PlayerQuitEvent event) {
+                removePlayer(event.getPlayer());
+            }
         }, plugin);
     }
 
-    public DefaultPlayerRegistry(@NonNull final Plugin plugin, final boolean concurrent) {
-        this(plugin, concurrent ? new HashSet<>() : ConcurrentHashMap.newKeySet());
+    public DefaultPlayerRegistry(@NonNull final Plugin plugin, final boolean concurrent, final boolean global) {
+        this(plugin, concurrent ? new HashSet<>() : ConcurrentHashMap.newKeySet(), global);
     }
 
     public DefaultPlayerRegistry(@NonNull final Plugin plugin) {
-        this(plugin, true);
+        this(plugin, true, true);
     }
 
     @Override
@@ -118,5 +135,10 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
         }
 
         return playerContainer;
+    }
+
+    @Override
+    public void shutdown() {
+        HandlerList.unregisterAll(listener);
     }
 }

@@ -16,18 +16,21 @@ public interface PlayerRegistry extends PlayerContainer {
 
     <C extends PlayerContainer> C unregister(C playerContainer);
 
-    default PlayerContainer register(@NonNull final Collection<Player> playerCollection) {
-        val playerContainer = PlayerContainers.wrap(playerCollection);
+    default PlayerContainer register(@NonNull final Collection<Player> playerCollection, final boolean global) {
+        val playerContainer = PlayerContainers.wrap(playerCollection, global);
         register(playerContainer);
 
         return playerContainer;
     }
 
     default <T> PlayerContainer register(@NonNull final Map<Player, T> playerCollection,
-                                         @NonNull final Function<Player, T> defaultValueSupplier) {
-        val playerContainer = PlayerContainers.wrap(playerCollection, defaultValueSupplier);
+                                         @NonNull final Function<Player, T> defaultValueSupplier,
+                                         final boolean global) {
+        val playerContainer = PlayerContainers.wrap(playerCollection, defaultValueSupplier, global);
         register(playerContainer);
 
         return playerContainer;
     }
+
+    void shutdown();
 }

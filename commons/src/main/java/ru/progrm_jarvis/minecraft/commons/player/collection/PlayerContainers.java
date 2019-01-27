@@ -12,19 +12,22 @@ import java.util.function.Function;
 @UtilityClass
 public class PlayerContainers {
 
-    public PlayerContainer wrap(@NonNull final Collection<Player> collectionOfPlayers) {
-        return new PlayerContainerCollectionWrapper(collectionOfPlayers);
+    public PlayerContainer wrap(@NonNull final Collection<Player> collectionOfPlayers,
+                                final boolean global) {
+        return new PlayerContainerCollectionWrapper(collectionOfPlayers, global);
     }
 
     public <T> PlayerContainer wrap(@NonNull final Map<Player, T> mapOfPlayers,
-                                    @NonNull final Function<Player, T> defaultValueSupplier) {
-        return new PlayerContainerMapWrapper<>(mapOfPlayers, defaultValueSupplier);
+                                    @NonNull final Function<Player, T> defaultValueSupplier,
+                                    final boolean global) {
+        return new PlayerContainerMapWrapper<>(mapOfPlayers, defaultValueSupplier, global);
     }
 
     @Value
     protected class PlayerContainerCollectionWrapper implements PlayerContainer {
 
-        @NonNull private final Collection<Player> collection;
+        @NonNull private Collection<Player> collection;
+        boolean global;
 
         @Override
         public void addPlayer(final Player player) {
@@ -50,8 +53,9 @@ public class PlayerContainers {
     @Value
     protected class PlayerContainerMapWrapper<T> implements PlayerContainer {
 
-        @NonNull private final Map<Player, T> map;
+        @NonNull private Map<Player, T> map;
         @NonNull private Function<Player, T> defaultValueSupplier;
+        boolean global;
 
         @Override
         public void addPlayer(final Player player) {

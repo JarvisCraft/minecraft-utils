@@ -8,14 +8,6 @@ import java.util.Collection;
 public interface ObservableFakeEntity extends FakeEntity {
 
     /**
-     * Gets whether or not this fake entity should be visible for all players online
-     * which means that observer will attempt to add players to it whenever  they join game and remove them on leave.
-     *
-     * @return whether or not this fake entity is global
-     */
-    boolean isGlobal();
-
-    /**
      * Gets view distance for this fake entity. This may be not present in which case this returns {@code -1}.
      *
      * @return non-negative view distance for this fake entity if present and {@code -1} otherwise

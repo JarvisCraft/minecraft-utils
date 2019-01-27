@@ -27,13 +27,15 @@ public class PlayerRegistries {
     }
 
     public PlayerContainer registerInDefaultRegistry(@NonNull final Plugin plugin,
-                                                     @NonNull final Collection<Player> collectionOfPlayers) {
-        return registerInDefaultRegistry(plugin, PlayerContainers.wrap(collectionOfPlayers));
+                                                     @NonNull final Collection<Player> collectionOfPlayers,
+                                                     final boolean global) {
+        return registerInDefaultRegistry(plugin, PlayerContainers.wrap(collectionOfPlayers, global));
     }
 
     public <T> PlayerContainer registerInDefaultRegistry(@NonNull final Plugin plugin,
                                                          @NonNull final Map<Player, T> mapOfPlayers,
-                                                         @NonNull final Function<Player, T> defaultValueSupplier) {
-        return registerInDefaultRegistry(plugin, PlayerContainers.wrap(mapOfPlayers, defaultValueSupplier));
+                                                         @NonNull final Function<Player, T> defaultValueSupplier,
+                                                         final boolean global) {
+        return registerInDefaultRegistry(plugin, PlayerContainers.wrap(mapOfPlayers, defaultValueSupplier, global));
     }
 }
