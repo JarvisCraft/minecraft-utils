@@ -39,6 +39,11 @@ public interface PlayerControls<S extends PlayerControls.Session> extends Player
         getSession(player).ifPresent(Session::end);
     }
 
+    @Override
+    default boolean containsPlayer(@NonNull final Player player) {
+        return getSession(player).isPresent();
+    }
+
     /**
      * Session of player controls, responsible for handling the player's controls
      */
