@@ -1,7 +1,10 @@
 package ru.progrm_jarvis.minecraft.commons.control;
 
+import lombok.NonNull;
 import org.bukkit.entity.Player;
 import ru.progrm_jarvis.minecraft.commons.player.collection.PlayerContainer;
+
+import java.util.Optional;
 
 /**
  * An object which manages the player
@@ -16,7 +19,25 @@ public interface PlayerControls<S extends PlayerControls.Session> extends Player
      *
      * @apiNote the session should be ended using {@link S#end()}
      */
-    S startSession(final Player player);
+    S startSession(Player player);
+
+    @Override
+    default void addPlayer(@NonNull final Player player) {
+        startSession(player);
+    }
+
+    /**
+     * Gets the current controls session of the specified player.
+     *
+     * @param player player for whom to get the controls sessions
+     * @return optional of the player's current controls session or empty if it doesn't have one
+     */
+    Optional<S> getSession(Player player);
+
+    @Override
+    default void removePlayer(@NonNull final Player player) {
+        getSession(player).ifPresent(Session::end);
+    }
 
     /**
      * Session of player controls, responsible for handling the player's controls
