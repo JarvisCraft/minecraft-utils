@@ -19,7 +19,7 @@ public abstract class AbstractPlayerControls<S extends AbstractPlayerControls.Se
     /**
      * Map of player's currently managed by this player controls and their current active sessions
      */
-    Map<Player, @NonNull S> sessions;
+    @NonNull Map<Player, @NonNull S> sessions;
 
     /**
      * Whether this control session is a <i>global player container</i> or not
@@ -45,7 +45,7 @@ public abstract class AbstractPlayerControls<S extends AbstractPlayerControls.Se
     }
 
     @Override
-    public S startSession(@NonNull final Player player) {
+    @NonNull public S startSession(@NonNull final Player player) {
         val session = createSession(player);
         sessions.put(player, session);
 
@@ -63,7 +63,7 @@ public abstract class AbstractPlayerControls<S extends AbstractPlayerControls.Se
      *
      * @see Session#startSession(Player) this method's default caller
      */
-    protected abstract S createSession(Player player);
+    @NonNull protected abstract S createSession(Player player);
 
     /**
      * Finalizer called in {@link S#end()} in order to cleanup everything needed when the player end his session.

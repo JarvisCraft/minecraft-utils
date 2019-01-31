@@ -19,7 +19,7 @@ public interface PlayerControls<S extends PlayerControls.Session> extends Player
      *
      * @apiNote the session should be ended using {@link S#end()}
      */
-    S startSession(Player player);
+    @NonNull S startSession(@NonNull Player player);
 
     @Override
     default void addPlayer(@NonNull final Player player) {
@@ -32,7 +32,7 @@ public interface PlayerControls<S extends PlayerControls.Session> extends Player
      * @param player player for whom to get the controls sessions
      * @return optional of the player's current controls session or empty if it doesn't have one
      */
-    Optional<S> getSession(Player player);
+    @NonNull Optional<S> getSession(@NonNull Player player);
 
     @Override
     default void removePlayer(@NonNull final Player player) {
