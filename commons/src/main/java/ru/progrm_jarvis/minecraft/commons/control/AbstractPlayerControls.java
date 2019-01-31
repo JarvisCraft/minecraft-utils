@@ -80,7 +80,7 @@ public abstract class AbstractPlayerControls<S extends AbstractPlayerControls.Se
 
     @ToString
     @EqualsAndHashCode
-    @RequiredArgsConstructor
+    @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
     @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
     protected abstract class Session implements PlayerControls.Session {
 
