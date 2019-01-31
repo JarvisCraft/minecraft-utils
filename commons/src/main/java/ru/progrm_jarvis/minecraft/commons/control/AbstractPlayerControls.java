@@ -24,7 +24,7 @@ public abstract class AbstractPlayerControls<S extends AbstractPlayerControls.Se
     /**
      * Whether this control session is a <i>global player container</i> or not
      */
-    boolean global;
+    @Getter boolean global;
 
     // a more optimal solution without allocating unneeded Optional objects
     @Override
