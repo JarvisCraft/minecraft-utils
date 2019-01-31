@@ -19,7 +19,7 @@ public abstract class AbstractPlayerControls<S extends AbstractPlayerControls.Se
     /**
      * Map of player's currently managed by this player controls and their current active sessions
      */
-    @NonNull Map<Player, @NonNull S> sessions;
+    @NonNull Map<@NonNull Player, @NonNull S> sessions;
 
     /**
      * Whether this control session is a <i>global player container</i> or not
