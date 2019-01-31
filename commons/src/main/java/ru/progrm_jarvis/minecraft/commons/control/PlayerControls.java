@@ -2,14 +2,23 @@ package ru.progrm_jarvis.minecraft.commons.control;
 
 import lombok.NonNull;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import ru.progrm_jarvis.minecraft.commons.player.collection.PlayerContainer;
+import ru.progrm_jarvis.minecraft.commons.plugin.BukkitPluginContainer;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * An object which manages the player
+ *
+ * @param <P> type of plugin owning this player controls
+ * @param <S> type of session created for player whose controls are managed
+ * @param <E> tye of event to be called by the controls manager
  */
-public interface PlayerControls<S extends PlayerControls.Session> extends PlayerContainer {
+public interface PlayerControls<P extends Plugin, S extends PlayerControls.Session, E>
+        extends BukkitPluginContainer<P>, PlayerContainer {
 
     /**
      * Starts the new controls session for the player.
@@ -43,6 +52,20 @@ public interface PlayerControls<S extends PlayerControls.Session> extends Player
     default boolean containsPlayer(@NonNull final Player player) {
         return getSession(player).isPresent();
     }
+
+    /**
+     * Subscribes the event handler on this player controls' events.
+     *
+     * @param eventHandler event handler to be used whenever an event is fired
+     */
+    void subscribe(@NonNull Consumer<E> eventHandler);
+
+    /**
+     * Unsubscribes the current event handler from this player controls' events.
+     *
+     * @return event handler which was unsubscribed or {@code null} if there was no subscribed event handler
+     */
+    @Nullable Consumer<E> unsubscribe();
 
     /**
      * Session of player controls, responsible for handling the player's controls

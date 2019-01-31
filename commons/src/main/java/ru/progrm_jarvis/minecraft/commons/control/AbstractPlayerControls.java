@@ -3,9 +3,14 @@ package ru.progrm_jarvis.minecraft.commons.control;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 /**
  * Abstract implementation of {@link PlayerControls} providing its common mechanisms.
@@ -14,7 +19,18 @@ import java.util.Map;
 @EqualsAndHashCode
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
-public abstract class AbstractPlayerControls<S extends AbstractPlayerControls.Session> implements PlayerControls<S> {
+public abstract class AbstractPlayerControls<P extends Plugin, S extends AbstractPlayerControls.Session, E>
+        implements PlayerControls<P, S, E> {
+
+    /**
+     * Plugin whose player controls those are.
+     */
+    @NonNull P plugin;
+
+    /**
+     * Whether this control session is a <i>global player container</i> or not
+     */
+    @Getter boolean global;
 
     /**
      * Map of player's currently managed by this player controls and their current active sessions
@@ -22,9 +38,14 @@ public abstract class AbstractPlayerControls<S extends AbstractPlayerControls.Se
     @NonNull Map<@NonNull Player, @NonNull S> sessions;
 
     /**
-     * Whether this control session is a <i>global player container</i> or not
+     * Reference to the currently set event handler of this player controls
      */
-    @Getter boolean global;
+    @NonNull AtomicReference<Consumer<E>> eventHandler = new AtomicReference<>();
+
+    @Override
+    public P getBukkitPlugin() {
+        return plugin;
+    }
 
     // a more optimal solution without allocating unneeded Optional objects
     @Override
@@ -52,6 +73,11 @@ public abstract class AbstractPlayerControls<S extends AbstractPlayerControls.Se
         return session;
     }
 
+    @Override
+    public @NonNull Optional<S> getSession(@NonNull final Player player) {
+        return Optional.ofNullable(sessions.get(player));
+    }
+
     /**
      * Creates the controls session for the player specified.
      *
@@ -76,7 +102,18 @@ public abstract class AbstractPlayerControls<S extends AbstractPlayerControls.Se
      *
      * @see Session#end() this method's default caller
      */
-    protected abstract void releaseControls(S session);
+    protected void releaseControls(@NonNull final S session) {}
+
+    @Override
+    public void subscribe(@NonNull final Consumer<E> eventHandler) {
+        this.eventHandler.set(eventHandler);
+    }
+
+    @Nullable
+    @Override
+    public Consumer<E> unsubscribe() {
+        return eventHandler.getAndSet(null);
+    }
 
     /**
      * Default session object to be used with {@link AbstractPlayerControls}.
