@@ -122,7 +122,7 @@ public abstract class AbstractPlayerControls<P extends Plugin, S extends Abstrac
     @EqualsAndHashCode
     @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
     @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
-    protected abstract class Session implements PlayerControls.Session {
+    public abstract class Session implements PlayerControls.Session {
 
         /**
          * Player whose session this one is
