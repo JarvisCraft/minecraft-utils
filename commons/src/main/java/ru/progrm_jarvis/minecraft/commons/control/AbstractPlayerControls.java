@@ -78,12 +78,18 @@ public abstract class AbstractPlayerControls<S extends AbstractPlayerControls.Se
      */
     protected abstract void releaseControls(S session);
 
+    /**
+     * Default session object to be used with {@link AbstractPlayerControls}.
+     */
     @ToString
     @EqualsAndHashCode
     @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
     @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
     protected abstract class Session implements PlayerControls.Session {
 
+        /**
+         * Player whose session this one is
+         */
         @Getter Player player;
 
         @Override
