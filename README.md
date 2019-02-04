@@ -1,5 +1,7 @@
 # minecraft-utils
 A big utility pack for various Minecraft things
+## Develpoment Note
+At current, the actual version is stored at [development branch](https://github.com/JarvisCraft/minecraft-utils/tree/development) which is a recommended version until `1.0.0` release
 
 ## Adding as dependency
 ### Snapshot builds
