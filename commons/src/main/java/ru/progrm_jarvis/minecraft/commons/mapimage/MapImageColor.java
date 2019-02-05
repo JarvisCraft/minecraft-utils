@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 import org.bukkit.map.MapPalette;
 import ru.progrm_jarvis.minecraft.commons.util.BitwiseUtil;
 import ru.progrm_jarvis.minecraft.commons.util.SystemPropertyUtil;
+import ru.progrm_jarvis.minecraft.commons.util.image.ColorUtil;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -81,54 +82,24 @@ public class MapImageColor {
         this.green = green;
         this.blue = blue;
 
-        this.rgb = asRgb(red, green, blue);
+        this.rgb = ColorUtil.toArgb(red, green, blue);
+    }
+
+    /**
+     * Constructs a new map image color instance based on 3 base colors.
+     * This is an internal constructor as, normally, there should only exist one cached instance of any used color.
+     *
+     * @param red red color channel
+     * @param green green color channel
+     * @param blue blue color channel
+     */
+    private MapImageColor(final int red, final int green, final int blue) {
+        this((byte) red, (byte) green, (byte) blue);
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Conversions
     ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Transforms 3 color channels
-     *
-     * @param red red color channel (between {@code 0} and {@code 255})
-     * @param green green color channel (between {@code 0} and {@code 255})
-     * @param blue blue color channel (between {@code 0} and {@code 255})
-     * @return color as a single RGB {@link int}
-     */
-    public static int asRgb(final int red, final int green, final int blue) {
-        return (red << 16) | (green << 8) | blue;
-    }
-
-    /**
-     * Gets the red color channel value for the specified RGB {@link int}.
-     *
-     * @param rgb RGB encoded as a single integer
-     * @return red color channel value
-     */
-    public static byte red(final int rgb) {
-        return (byte) ((rgb >> 16) & 0xFF);
-    }
-
-    /**
-     * Gets the green color channel value for the specified RGB {@link int}.
-     *
-     * @param rgb RGB encoded as a single integer
-     * @return green color channel value
-     */
-    public static byte green(final int rgb) {
-        return (byte) ((rgb >> 8) & 0xFF);
-    }
-
-    /**
-     * Gets the blue color channel value for the specified RGB {@link int}.
-     *
-     * @param rgb RGB encoded as a single integer
-     * @return blue color channel value
-     */
-    public static byte blue(final int rgb) {
-        return (byte) (rgb & 0xFF);
-    }
 
     /**
      * Creates new map image color from specified {@link java.awt} {@link Color}.
@@ -148,7 +119,7 @@ public class MapImageColor {
      */
     @SneakyThrows
     @Nonnull public static MapImageColor of(final int rgb) {
-        return COLOR_CACHE.get(rgb, () -> new MapImageColor(red(rgb), green(rgb), blue(rgb)));
+        return COLOR_CACHE.get(rgb, () -> new MapImageColor(ColorUtil.red(rgb), ColorUtil.green(rgb), ColorUtil.blue(rgb)));
     }
 
     /**
@@ -161,7 +132,7 @@ public class MapImageColor {
      */
     @SneakyThrows
     @Nonnull public static MapImageColor of(final byte red, final byte green, final byte blue) {
-        return COLOR_CACHE.get(asRgb(red, green, blue), () -> new MapImageColor(red, green, blue));
+        return COLOR_CACHE.get(ColorUtil.toArgb(red, green, blue), () -> new MapImageColor(red, green, blue));
     }
 
     /**
@@ -221,13 +192,27 @@ public class MapImageColor {
     // Distance squared (as if colors were 3 axises)
     ///////////////////////////////////////////////////////////////////////////
 
+    public static int getDistanceSquared(final int red1, final int green1, final int blue1,
+                                         final int red2, final int green2, final int blue2) {
+        final int dRed = red2 - red1, dGreen = green2 - green1, dBlue = blue2 - blue1;
+
+        return dRed * dRed + dBlue * dBlue + dGreen * dGreen;
+    }
+
     public static int getDistanceSquared(final byte red1, final byte green1, final byte blue1,
                                          final byte red2, final byte green2, final byte blue2) {
         val dRed = BitwiseUtil.byteToUnsignedInt(red2) - BitwiseUtil.byteToUnsignedInt(red1);
         val dGreen = BitwiseUtil.byteToUnsignedInt(green2) - BitwiseUtil.byteToUnsignedInt(green1);
         val dBlue = BitwiseUtil.byteToUnsignedInt(blue2) - BitwiseUtil.byteToUnsignedInt(blue1);
 
-        return dRed * dRed + dBlue * dBlue + dGreen * dGreen;
+        return getDistanceSquared(
+                BitwiseUtil.byteToUnsignedInt(red1),
+                BitwiseUtil.byteToUnsignedInt(green1),
+                BitwiseUtil.byteToUnsignedInt(blue1),
+                BitwiseUtil.byteToUnsignedInt(red2),
+                BitwiseUtil.byteToUnsignedInt(green2),
+                BitwiseUtil.byteToUnsignedInt(blue2)
+        );
     }
 
     public static int getDistanceSquared(@NonNull final MapImageColor color1, @NonNull final MapImageColor color2) {
@@ -235,11 +220,22 @@ public class MapImageColor {
     }
 
     public static int getDistanceSquared(final int rgb1, final int rgb2) {
-        return getDistanceSquared(red(rgb1), green(rgb1), blue(rgb1), red(rgb2), green(rgb2), blue(rgb2));
+        return getDistanceSquared(
+                ColorUtil.red(rgb1), ColorUtil.green(rgb1), ColorUtil.blue(rgb1),
+                ColorUtil.red(rgb2), ColorUtil.green(rgb2), ColorUtil.blue(rgb2)
+        );
     }
 
     public int getDistanceSquared(final byte red, final byte green, final byte blue) {
         return getDistanceSquared(this.red, this.green, this.blue, red, green, blue);
+    }
+
+    public int getDistanceSquared(final int red, final int green, final int blue) {
+        return getDistanceSquared(
+                BitwiseUtil.byteToUnsignedInt(this.red),
+                BitwiseUtil.byteToUnsignedInt(this.green),
+                BitwiseUtil.byteToUnsignedInt(this.blue),
+                red, green, blue);
     }
 
     public int getDistanceSquared(@NonNull final MapImageColor other) {
@@ -247,18 +243,28 @@ public class MapImageColor {
     }
 
     public int getDistanceSquared(final int rgb) {
-        return getDistanceSquared(red(rgb), green(rgb), blue(rgb));
+        return getDistanceSquared(ColorUtil.red(rgb), ColorUtil.green(rgb), ColorUtil.blue(rgb));
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Sum of channels
     ///////////////////////////////////////////////////////////////////////////
 
+    public static int getSum(final int red1, final int green1, final int blue1,
+                             final int red2, final int green2, final int blue2) {
+        return abs(red2 - red1) + abs(green2 - green1) + abs(blue2 - blue1);
+    }
+
     public static int getSum(final byte red1, final byte green1, final byte blue1,
                              final byte red2, final byte green2, final byte blue2) {
-        return abs(BitwiseUtil.byteToUnsignedInt(red2) - BitwiseUtil.byteToUnsignedInt(red1))
-                + abs(BitwiseUtil.byteToUnsignedInt(green2) - BitwiseUtil.byteToUnsignedInt(green1))
-                + abs(BitwiseUtil.byteToUnsignedInt(blue2) - BitwiseUtil.byteToUnsignedInt(blue1));
+        return getSum(
+                BitwiseUtil.byteToUnsignedInt(red1),
+                BitwiseUtil.byteToUnsignedInt(green1),
+                BitwiseUtil.byteToUnsignedInt(blue1),
+                BitwiseUtil.byteToUnsignedInt(red2),
+                BitwiseUtil.byteToUnsignedInt(green2),
+                BitwiseUtil.byteToUnsignedInt(blue2)
+        );
     }
 
     public static int getSum(@NonNull final MapImageColor color1, @NonNull final MapImageColor color2) {
@@ -266,11 +272,23 @@ public class MapImageColor {
     }
 
     public static int getSum(final int rgb1, final int rgb2) {
-        return getSum(red(rgb1), green(rgb1), blue(rgb1), red(rgb2), green(rgb2), blue(rgb2));
+        return getSum(
+                ColorUtil.red(rgb1), ColorUtil.green(rgb1), ColorUtil.blue(rgb1),
+                ColorUtil.red(rgb2), ColorUtil.green(rgb2), ColorUtil.blue(rgb2)
+        );
     }
 
     public int getSum(final byte red, final byte green, final byte blue) {
         return getSum(this.red, this.green, this.blue, red, green, blue);
+    }
+
+    public int getSum(final int red, final int green, final int blue) {
+        return getSum(
+                BitwiseUtil.byteToUnsignedInt(this.red),
+                BitwiseUtil.byteToUnsignedInt(this.green),
+                BitwiseUtil.byteToUnsignedInt(this.blue),
+                red, green, blue
+        );
     }
 
     public int getSum(@NonNull final MapImageColor other) {
@@ -278,12 +296,17 @@ public class MapImageColor {
     }
 
     public int getSum(final int rgb) {
-        return getSum(red(rgb), green(rgb), blue(rgb));
+        return getSum(ColorUtil.red(rgb), ColorUtil.green(rgb), ColorUtil.blue(rgb));
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Multiplication product of channels
     ///////////////////////////////////////////////////////////////////////////
+
+    public static int getMultiplicationProduct(final int red1, final int green1, final int blue1,
+                                               final int red2, final int green2, final int blue2) {
+        return (red2 - red1) * (green2 - green1) * (blue2 - blue1);
+    }
 
     public static int getMultiplicationProduct(final byte red1, final byte green1, final byte blue1,
                                                final byte red2, final byte green2, final byte blue2) {
@@ -297,7 +320,19 @@ public class MapImageColor {
     }
 
     public static int getMultiplicationProduct(final int rgb1, final int rgb2) {
-        return getMultiplicationProduct(red(rgb1), green(rgb1), blue(rgb1), red(rgb2), green(rgb2), blue(rgb2));
+        return getMultiplicationProduct(
+                ColorUtil.red(rgb1), ColorUtil.green(rgb1), ColorUtil.blue(rgb1),
+                ColorUtil.red(rgb2), ColorUtil.green(rgb2), ColorUtil.blue(rgb2)
+        );
+    }
+
+    public int getMultiplicationProduct(final int red, final int green, final int blue) {
+        return getMultiplicationProduct(
+                BitwiseUtil.byteToUnsignedInt(this.red),
+                BitwiseUtil.byteToUnsignedInt(this.green),
+                BitwiseUtil.byteToUnsignedInt(this.blue),
+                red, green, blue
+        );
     }
 
     public int getMultiplicationProduct(final byte red, final byte green, final byte blue) {
@@ -309,7 +344,7 @@ public class MapImageColor {
     }
 
     public int getMultiplicationProduct(final int rgb) {
-        return getMultiplicationProduct(red(rgb), green(rgb), blue(rgb));
+        return getMultiplicationProduct(ColorUtil.red(rgb), ColorUtil.green(rgb), ColorUtil.blue(rgb));
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -330,12 +365,30 @@ public class MapImageColor {
         return (int) (dRed * dRed + dBlue * dBlue + dGreen * dGreen);
     }
 
+    public static int getNaturalDistanceSquared(final int red1, final int green1, final int blue1,
+                                                final int red2, final int green2, final int blue2) {
+        final double dRed = (red2 - red1) * 0.3, dGreen = (green2 - green1) * 0.59, dBlue = (blue2 - blue1) * 0.11;
+
+        return (int) (dRed * dRed + dBlue * dBlue + dGreen * dGreen);
+    }
+
     public static int getNaturalDistanceSquared(@NonNull final MapImageColor color1, @NonNull final MapImageColor color2) {
         return getNaturalDistanceSquared(color1.red, color1.green, color1.blue, color2.red, color2.green, color2.blue);
     }
 
     public static int getNaturalDistanceSquared(final int rgb1, final int rgb2) {
-        return getNaturalDistanceSquared(red(rgb1), green(rgb1), blue(rgb1), red(rgb2), green(rgb2), blue(rgb2));
+        return getNaturalDistanceSquared(
+                ColorUtil.red(rgb1), ColorUtil.green(rgb1), ColorUtil.blue(rgb1),
+                ColorUtil.red(rgb2), ColorUtil.green(rgb2), ColorUtil.blue(rgb2)
+        );
+    }
+
+    public int getNaturalDistanceSquared(final int red, final int green, final int blue) {
+        return getNaturalDistanceSquared(
+                BitwiseUtil.byteToUnsignedInt(this.red),
+                BitwiseUtil.byteToUnsignedInt(this.green),
+                BitwiseUtil.byteToUnsignedInt(this.blue),
+                red, green, blue);
     }
 
     public int getNaturalDistanceSquared(final byte red, final byte green, final byte blue) {
@@ -347,6 +400,6 @@ public class MapImageColor {
     }
 
     public int getNaturalDistanceSquared(final int rgb) {
-        return getNaturalDistanceSquared(red(rgb), green(rgb), blue(rgb));
+        return getNaturalDistanceSquared(ColorUtil.red(rgb), ColorUtil.green(rgb), ColorUtil.blue(rgb));
     }
 }
