@@ -3,8 +3,6 @@ package ru.progrm_jarvis.minecraft.commons.schedule.pool;
 import lombok.NonNull;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Collection;
-
 /**
  * A loop pool which allows storing its elements by keys.
  *
@@ -15,14 +13,10 @@ public interface KeyedLoopPool<T extends Runnable, K> extends LoopPool<T> {
 
     Plugin getPlugin();
 
-    void addTask(@NonNull final TaskOptions taskOptions, final K key, @NonNull final T task);
+    TaskRemover addTask(@NonNull final TaskOptions taskOptions, final K key, @NonNull final T task);
 
     @Override
-    default void addTask(final TaskOptions taskOptions, final T task) {
-        addTask(taskOptions, null, task);
+    default TaskRemover addTask(@NonNull final TaskOptions taskOptions, @NonNull final T task) {
+        return addTask(taskOptions, null, task);
     }
-
-    T removeTask(@NonNull final TaskOptions taskOptions, @NonNull final K key);
-
-    Collection<T> removeTasks(@NonNull final K key);
 }

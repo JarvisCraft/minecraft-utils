@@ -21,13 +21,7 @@ public interface LoopPool<T extends Runnable> {
 
     int tasksSize();
 
-    void addTask(@NonNull final TaskOptions taskOptions, @NonNull final T task);
-
-    T removeTask(@NonNull final T task);
-
-    Collection<T> removeTasks(@NonNull final T task);
-
-    Collection<T> removeTasks(@NonNull final TaskOptions taskOptions);
+    TaskRemover addTask(@NonNull final TaskOptions taskOptions, @NonNull final T task);
 
     Collection<T> clearTasks();
 
@@ -51,5 +45,10 @@ public interface LoopPool<T extends Runnable> {
 
             return options;
         }
+    }
+
+    @FunctionalInterface
+    interface TaskRemover {
+        void removeTask();
     }
 }
