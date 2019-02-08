@@ -21,7 +21,7 @@ public class RandomUtil {
      *
      * @return {@code 1} or {@code -1}
      */
-    public static int randomSign() {
+    public int randomSign() {
         return ThreadLocalRandom.current().nextBoolean() ? 1 : -1;
     }
 
