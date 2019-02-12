@@ -8,8 +8,8 @@ import ru.progrm_jarvis.minecraft.fakeentitylib.entity.FakeEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import static ru.progrm_jarvis.minecraft.commons.util.hack.PreSuperCheck.beforeSuper;
@@ -27,8 +27,16 @@ import static ru.progrm_jarvis.minecraft.commons.util.hack.PreSuperCheck.beforeS
 public abstract class AbstractSetBasedEntityManager<P extends Plugin, E extends FakeEntity>
         implements FakeEntityManager<P, E> {
 
-    P plugin;
-    Set<E> entities;
+    @NonNull P plugin;
+    @NonNull Set<E> entities;
+    @NonNull Set<E> entitiesView;
+
+    public AbstractSetBasedEntityManager(@NonNull final P plugin,
+                                         @NonNull final Set<E> entities) {
+        this.plugin = plugin;
+        this.entities = entities;
+        this.entitiesView = Collections.unmodifiableSet(entities);
+    }
 
     /**
      * Constructs a new AbstractSetBasedEntityManager based on weak set with optional concurrency
@@ -55,12 +63,7 @@ public abstract class AbstractSetBasedEntityManager<P extends Plugin, E extends 
 
     @Override
     public Collection<E> getManagedEntities() {
-        return entities;
-    }
-
-    @Override
-    public Collection<E> getManagedEntitiesCollection() {
-        return new ArrayList<>(entities);
+        return entitiesView;
     }
 
     @Override
