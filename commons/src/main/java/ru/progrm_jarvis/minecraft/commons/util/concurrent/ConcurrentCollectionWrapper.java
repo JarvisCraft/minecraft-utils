@@ -51,7 +51,12 @@ public class ConcurrentCollectionWrapper<E, T extends Collection<E>>
     @Override
     @Nonnull
     public Iterator<E> iterator() {
-        return new ConcurrentIterator(wrapped.iterator());
+        readLock.lock();
+        try {
+            return wrapped.iterator();
+        } finally {
+            readLock.unlock();
+        }
     }
 
     @Override
@@ -192,53 +197,6 @@ public class ConcurrentCollectionWrapper<E, T extends Collection<E>>
             return wrapped.parallelStream();
         } finally {
             readLock.unlock();
-        }
-    }
-
-    protected class ConcurrentIterator extends ConcurrentWrapper<Iterator<E>> implements Iterator<E> {
-
-        public ConcurrentIterator(@NonNull final Iterator<E> wrapped) {
-            super(wrapped);
-        }
-
-        @Override
-        public boolean hasNext() {
-            readLock.lock();
-            try {
-                return wrapped.hasNext();
-            } finally {
-                readLock.unlock();
-            }
-        }
-
-        @Override
-        public E next() {
-            readLock.lock();
-            try {
-                return wrapped.next();
-            } finally {
-                readLock.unlock();
-            }
-        }
-
-        @Override
-        public void remove() {
-            writeLock.lock();
-            try {
-                wrapped.remove();
-            } finally {
-                writeLock.unlock();
-            }
-        }
-
-        @Override
-        public void forEachRemaining(@NonNull final Consumer<? super E> action) {
-            writeLock.lock();
-            try {
-                wrapped.forEachRemaining(action);
-            } finally {
-                writeLock.unlock();
-            }
         }
     }
 }
