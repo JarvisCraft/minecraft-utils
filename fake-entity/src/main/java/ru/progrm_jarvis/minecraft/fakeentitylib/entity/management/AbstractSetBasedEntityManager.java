@@ -1,6 +1,5 @@
 package ru.progrm_jarvis.minecraft.fakeentitylib.entity.management;
 
-import com.google.common.base.Preconditions;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.plugin.Plugin;
@@ -11,8 +10,6 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
-
-import static ru.progrm_jarvis.minecraft.commons.util.hack.PreSuperCheck.beforeSuper;
 
 /**
  * Simple abstract {@link FakeEntityManager} storing entities in a weak, optionally concurrent set.
@@ -45,10 +42,7 @@ public abstract class AbstractSetBasedEntityManager<P extends Plugin, E extends 
      * @param concurrent whether or not this map should be thread-safe
      */
     public AbstractSetBasedEntityManager(@Nonnull final P plugin, final boolean concurrent) {
-        this(
-                beforeSuper(plugin, () -> Preconditions.checkNotNull(plugin, "plugin should be nonnull")),
-                concurrent ? FakeEntityManager.concurrentWeakEntitySet() : FakeEntityManager.weakEntitySet()
-        );
+        this(plugin, concurrent ? FakeEntityManager.concurrentWeakEntitySet() : FakeEntityManager.weakEntitySet());
     }
 
     @Override
