@@ -77,11 +77,6 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     float headPitch;
 
     /**
-     * Velocity of this fake entity
-     */
-    @Nullable Vector velocity;
-
-    /**
      * Metadata of this fake entity
      */
     @Nullable @Getter WrappedDataWatcher metadata;
@@ -121,6 +116,11 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     WrapperPlayServerEntityTeleport teleportPacket;
 
     /**
+     * Packet used for fake entity velocity
+     */
+    WrapperPlayServerEntityVelocity velocityPacket;
+
+    /**
      * Difference between the actual entity <i>x</i> and its visible value
      */
     double xDelta,
@@ -153,9 +153,9 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
                                   @NonNull final Map<Player, Boolean> players,
                                   final boolean global, final int viewDistance,
                                   boolean visible,
-                                  @NonNull final Location location, float headPitch, @Nullable final Vector velocity,
-                                  @Nullable final WrappedDataWatcher metadata) {
-        super(global, viewDistance, location, players, metadata);
+                                  @NonNull final Location location, float headPitch,
+                                  @Nullable final Vector velocity, @Nullable final WrappedDataWatcher metadata) {
+        super(global, viewDistance, location, players, velocity, metadata);
 
         // setup fields
 
@@ -170,7 +170,6 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
 
         this.location = location;
         this.headPitch = headPitch;
-        this.velocity = velocity;
 
         this.metadata = metadata;
 
@@ -251,6 +250,26 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     // Movement
     ///////////////////////////////////////////////////////////////////////////
 
+    protected boolean hasVelocity() {
+        return velocity.length() != 0;
+    }
+
+    /**
+     * Updates the velocity packet initializing it if it haven;t been initialized.
+     *
+     * @apiNote call to this method guarantees that {@link #velocityPacket} won't be {@link null} after it
+     */
+    protected void actualizeVelocityPacket() {
+        if (velocityPacket == null) {
+            velocityPacket = new WrapperPlayServerEntityVelocity();
+            velocityPacket.setEntityID(entityId);
+        }
+
+        velocityPacket.setVelocityX(velocity.getX());
+        velocityPacket.setVelocityY(velocity.getY());
+        velocityPacket.setVelocityZ(velocity.getZ());
+    }
+
     /**
      * Performs the movement of this living fake entity by given deltas and yaw and pitch specified
      * not performing any checks such as 8-block limit of deltas or angle minimization.
@@ -262,6 +281,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
      * @param pitch new pitch
      */
     @Override
+    @SuppressWarnings("Duplicates")
     protected void performMove(final double dx, final double dy, final double dz, final float yaw, final float pitch) {
         if (visible) {
             if (pitch == 0 && yaw == 0) {
@@ -274,20 +294,35 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
                 movePacket.setDy((int) (dy * 32 * 128));
                 movePacket.setDz((int) (dz * 32 * 128));
 
-                for (val entry : players.entrySet()) if (entry.getValue()) movePacket.sendPacket(entry.getKey());
+                boolean hasVelocity = hasVelocity();
+                if (hasVelocity) actualizeVelocityPacket();
+
+                for (val entry : players.entrySet()) if (entry.getValue()) {
+                    val player = entry.getKey();
+
+                    if (hasVelocity) velocityPacket.sendPacket(player);
+                        movePacket.sendPacket(player);
+                }
             } else {
                 if (moveLookPacket == null) {
                     moveLookPacket = new WrapperPlayServerRelEntityMoveLook();
                     moveLookPacket.setEntityID(entityId);
+                }
 
-                    moveLookPacket.setDx((int) (dx * 32 * 128));
-                    moveLookPacket.setDy((int) (dy * 32 * 128));
-                    moveLookPacket.setDz((int) (dz * 32 * 128));
-                    moveLookPacket.setYaw(yaw);
-                    moveLookPacket.setPitch(pitch);
+                moveLookPacket.setDx((int) (dx * 32 * 128));
+                moveLookPacket.setDy((int) (dy * 32 * 128));
+                moveLookPacket.setDz((int) (dz * 32 * 128));
+                moveLookPacket.setYaw(yaw);
+                moveLookPacket.setPitch(pitch);
 
-                    for (val entry : players.entrySet()) if (entry.getValue()) moveLookPacket
-                            .sendPacket(entry.getKey());
+                boolean hasVelocity = hasVelocity();
+                if (hasVelocity) actualizeVelocityPacket();
+
+                for (val entry : players.entrySet()) if (entry.getValue()) {
+                    val player = entry.getKey();
+
+                    if (hasVelocity) velocityPacket.sendPacket(player);
+                    moveLookPacket.sendPacket(player);
                 }
             }
         }
@@ -304,6 +339,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
      * @param pitch new pitch
      */
     @Override
+    @SuppressWarnings("Duplicates")
     protected void performTeleportation(final double x, final double y, final double z,
                                         final float yaw, final float pitch) {
         if (visible) {
@@ -318,7 +354,15 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
             teleportPacket.setYaw(yaw + yawDelta);
             teleportPacket.setPitch(pitch + pitchDelta);
 
-            for (val entry : players.entrySet()) if (entry.getValue()) teleportPacket.sendPacket(entry.getKey());
+            boolean hasVelocity = hasVelocity();
+            if (hasVelocity) actualizeVelocityPacket();
+
+            for (val entry : players.entrySet()) if (entry.getValue()) {
+                val player = entry.getKey();
+
+                if (hasVelocity) velocityPacket.sendPacket(player);
+                teleportPacket.sendPacket(player);
+            }
         }
     }
 

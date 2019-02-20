@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -23,12 +24,18 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
      */
     @Nullable @Getter WrappedDataWatcher metadata;
 
+    /**
+     * Velocity of this fake entity
+     */
+    @NonNull Vector velocity;
+
     public AbstractBasicFakeEntity(final boolean global, final int viewDistance,
                                    @NonNull final Location location,
                                    @NonNull final Map<Player, Boolean> players,
-                                   @Nullable final WrappedDataWatcher metadata) {
+                                   @Nullable final Vector velocity, @Nullable final WrappedDataWatcher metadata) {
         super(viewDistance, global, location, players);
 
+        this.velocity = velocity == null ? new Vector() : velocity;
         this.metadata = metadata;
     }
 
@@ -150,8 +157,16 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
         location.setYaw(yaw);
         location.setPitch(pitch);
 
+        velocity.setX(dx * 8000);
+        velocity.setX(dy * 8000);
+        velocity.setX(dz * 8000);
+
         if (dx > 8 || dy > 8 || dz > 8) performTeleportation(x, y, z, yaw, pitch);
         else performMove(dx, dy, dz, yaw, pitch);
+
+        velocity.setX(0);
+        velocity.setY(0);
+        velocity.setZ(0);
     }
 
     @Override
@@ -162,6 +177,10 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
         location.setYaw(location.getYaw() + dYaw);
         location.setPitch(location.getPitch() + dPitch);
 
+        velocity.setX(dx * 8000);
+        velocity.setX(dy * 8000);
+        velocity.setX(dz * 8000);
+
         // use teleportation if any of axises is above 8 blocks limit
         if (dx > 8 || dy > 8 || dz > 8) performTeleportation(
                 location.getX() + dx, location.getY() + dy, location.getZ() + dz,
@@ -169,5 +188,9 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
         );
         // otherwise use move
         else performMove(dx, dy, dz, location.getYaw() + dYaw, location.getPitch() + dPitch);
+
+        velocity.setX(0);
+        velocity.setY(0);
+        velocity.setZ(0);
     }
 }
