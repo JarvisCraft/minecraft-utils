@@ -2,6 +2,7 @@ package ru.progrm_jarvis.minecraft.commons.event;
 
 import lombok.*;
 import lombok.experimental.Accessors;
+import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
@@ -11,13 +12,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
-import ru.progrm_jarvis.minecraft.commons.util.concurrent.ConcurrentCollections;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedConsumer;
 
-import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -123,18 +123,18 @@ public class FluentBukkitEvents {
      * @param <E> type of handled event
      */
     @Value
+    @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
     private static final class EventListenersGroup<E extends Event> implements Listener, EventExecutor {
 
         /**
          * Plugin managing these event listeners
          */
-        @NonNull final ListenerConfiguration<E> configuration;
+        @NonNull ListenerConfiguration<E> configuration;
 
         /**
          * Event listeners in this event listener group's dequeue
          */
-        @Getter(AccessLevel.NONE) @NonNull Deque<UncheckedConsumer<E>> eventListeners
-                = ConcurrentCollections.concurrentDeque(new ArrayDeque<>());
+        @Getter(AccessLevel.NONE) @NonNull Deque<UncheckedConsumer<E>> eventListeners = new ConcurrentLinkedDeque<>();
 
         /**
          * Adds the listener to the deque of handled listeners for the event.

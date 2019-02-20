@@ -13,8 +13,8 @@ import org.bukkit.plugin.Plugin;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.behaviour.FakeEntityInteraction.Hand;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.management.FakeEntityManager;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import static ru.progrm_jarvis.minecraft.commons.util.hack.PreSuperCheck.beforeSuper;
@@ -27,6 +27,7 @@ public class ProtocolBasedFakeEntityInteractionHandler<P extends Plugin, E exten
 
     P plugin;
     Set<E> entities;
+    Set<E> entitiesView;
 
     public ProtocolBasedFakeEntityInteractionHandler(@NonNull final P plugin, final boolean concurrent) {
         super(
@@ -36,6 +37,7 @@ public class ProtocolBasedFakeEntityInteractionHandler<P extends Plugin, E exten
 
         this.plugin = plugin;
         entities = concurrent ? FakeEntityManager.concurrentWeakEntitySet() : FakeEntityManager.weakEntitySet();
+        entitiesView = Collections.unmodifiableSet(entities);
 
         ProtocolLibrary.getProtocolManager().addPacketListener(this);
     }
@@ -87,11 +89,6 @@ public class ProtocolBasedFakeEntityInteractionHandler<P extends Plugin, E exten
     @Override
     public Collection<E> getManagedEntities() {
         return entities;
-    }
-
-    @Override
-    public Collection<E> getManagedEntitiesCollection() {
-        return new ArrayList<>(entities);
     }
 
     @Override

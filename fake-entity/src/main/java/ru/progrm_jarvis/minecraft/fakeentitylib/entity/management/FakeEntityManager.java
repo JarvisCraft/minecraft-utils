@@ -72,21 +72,9 @@ public interface FakeEntityManager<P extends Plugin, E extends FakeEntity> exten
      *
      * @return all entities managed by this manager
      *
-     * @apiNote implementations may return their real backend collection
-     * modifications to which may have side-effect on this manager so it's a good practice
-     * to copy method call result into a new collection or use
+     * @apiNote the returned collection is immutable and will prohibit any attempts to modify its contents
      */
     Collection<E> getManagedEntities();
-
-    /**
-     * Gets a side-effect-less collection of all entities managed by this manager.
-     *
-     * @return collection of all entities managed by this manager
-     *
-     * @apiNote side-effect-less collection means that modifications to it
-     * will not have any effect on containment of this entities in the manager
-     */
-    Collection<E> getManagedEntitiesCollection();
 
     /**
      * Enables management of specified entity by this manager.

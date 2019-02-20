@@ -7,9 +7,7 @@ import org.bukkit.plugin.Plugin;
 import ru.progrm_jarvis.minecraft.commons.schedule.misc.KeyedSchedulerGroup;
 import ru.progrm_jarvis.minecraft.commons.schedule.misc.SchedulerGroups;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -18,14 +16,14 @@ import java.util.stream.Collectors;
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PROTECTED)
+@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class SingleWorkerLoopPool<T extends Runnable, K> implements KeyedLoopPool<T, K> {
 
     boolean concurrent;
 
     @NonNull @Getter Plugin plugin;
-    KeyedSchedulerGroup<CountingTask<T>, K> asyncWorker;
-    KeyedSchedulerGroup<CountingTask<T>, K> syncWorker;
+    @NonFinal KeyedSchedulerGroup<CountingTask<T>, K> asyncWorker;
+    @NonFinal KeyedSchedulerGroup<CountingTask<T>, K> syncWorker;
 
     protected static <T extends Runnable> Collection<T> mapToTasks(final Collection<CountingTask<T>> tasks) {
         return tasks.stream()
@@ -51,132 +49,64 @@ public class SingleWorkerLoopPool<T extends Runnable, K> implements KeyedLoopPoo
     }
 
     @Override
-    public void addTask(final TaskOptions taskOptions, final T task) {
+    public TaskRemover addTask(@NonNull final TaskOptions taskOptions, @NonNull final T task) {
         if (taskOptions.isAsync()) {
             initAsyncWorker();
 
-            asyncWorker.addTask(new CountingTask<>(task, taskOptions.getInterval()));
+            val countingTask = new CountingTask<>(task, taskOptions.getInterval());
+            asyncWorker.addTask(countingTask);
+
+            return () -> removeTask(countingTask, true);
         } else {
             initSyncWorker();
 
-            syncWorker.addTask(new CountingTask<>(task, taskOptions.getInterval()));
+            val countingTask = new CountingTask<>(task, taskOptions.getInterval());
+            syncWorker.addTask(countingTask);
+
+            return () -> removeTask(countingTask, false);
         }
     }
 
+    protected void removeTask(@NonNull final CountingTask<T> countingTask, final boolean async) {
+        if (async) if (syncWorker != null) syncWorker.removeTask(countingTask);
+        else if (asyncWorker != null) asyncWorker.removeTask(countingTask);
+    }
+
     @Override
-    public void addTask(final TaskOptions taskOptions, final K key, final T task) {
+    public TaskRemover addTask(@NonNull final TaskOptions taskOptions, final K key, @NonNull final T task) {
         if (taskOptions.isAsync()) {
             initAsyncWorker();
 
-            asyncWorker.addTask(key, new CountingTask<>(task, taskOptions.getInterval()));
+            val countingTask = new CountingTask<>(task, taskOptions.getInterval());
+            asyncWorker.addTask(key, countingTask);
+
+            return () -> removeTask(countingTask, true);
         } else {
             initSyncWorker();
 
-            syncWorker.addTask(key, new CountingTask<>(task, taskOptions.getInterval()));
+            val countingTask = new CountingTask<>(task, taskOptions.getInterval());
+            syncWorker.addTask(key, countingTask);
+
+            return () -> removeTask(countingTask, false);
         }
-    }
-
-    @Override
-    public T removeTask(final T task) {
-        final Predicate<CountingTask<T>> predicate = testedTask -> testedTask.task.equals(task);
-
-        var removedTask = asyncWorker.removeTask(predicate);
-        if (removedTask == null) {
-            removedTask = syncWorker.removeTask(predicate);
-            if (removedTask == null) return null;
-
-            checkAsync();
-
-            return removedTask.task;
-        }
-
-        checkAsync();
-        return removedTask.task;
-    }
-
-    @Override
-    public Collection<T> removeTasks(final T task) {
-        final Predicate<CountingTask<T>> predicate = testedTask -> testedTask.task.equals(task);
-        var removedTasks = new ArrayList<CountingTask<T>>(asyncWorker.removeTasks(predicate));
-        checkAsync();
-        removedTasks.addAll(syncWorker.removeTasks(predicate));
-        checkSync();
-
-        return mapToTasks(removedTasks);
-    }
-
-    @Override
-    public Collection<T> removeTasks(final K key) {
-        val tasks = new ArrayList<CountingTask<T>>();
-
-        var removedTasks = asyncWorker.removeTasks(key);
-        if (removedTasks != null) tasks.addAll(removedTasks);
-        checkAsync();
-
-        removedTasks = syncWorker.removeTasks(key);
-        if (removedTasks != null) tasks.addAll(removedTasks);
-        checkSync();
-
-        return mapToTasks(tasks);
-    }
-
-    @Override
-    public T removeTask(final TaskOptions taskOptions, final K key) {
-        val async = taskOptions.isAsync();
-        val tasks = (async ? asyncWorker.tasks() : syncWorker.tasks()).iterator();
-        val interval = taskOptions.getInterval();
-
-        while (tasks.hasNext()) {
-            val task = tasks.next();
-            if (task.interval == interval) {
-                if (async) checkAsync();
-                else checkSync();
-
-                return task.task;
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    public Collection<T> removeTasks(final TaskOptions taskOptions) {
-        val async = taskOptions.isAsync();
-        val interval = taskOptions.getInterval();
-
-        // remove all tasks
-        val removedTasks = new ArrayList<CountingTask<T>>();
-        val tasks = (async ? asyncWorker : syncWorker).tasks().iterator();
-        while (tasks.hasNext()) {
-            val task = tasks.next();
-            if (task.getInterval() == interval) {
-                tasks.remove();
-                removedTasks.add(task);
-            }
-        }
-
-        if (async) checkAsync();
-        else checkSync();
-
-        return mapToTasks(removedTasks);
     }
 
     @Override
     public Collection<T> clearTasks() {
         val tasks = asyncWorker.clearTasks();
-        checkAsync();
+        attemptCancelAsync();
 
         tasks.addAll(syncWorker.clearTasks());
-        checkSync();
+        attemptCancelSync();
 
         return mapToTasks(tasks);
     }
 
-    protected void checkAsync() {
+    protected void attemptCancelAsync() {
         if (asyncWorker.isCancelled()) asyncWorker = null;
     }
 
-    protected void checkSync() {
+    protected void attemptCancelSync() {
         if (syncWorker.size() == 0) syncWorker = null;
     }
 
