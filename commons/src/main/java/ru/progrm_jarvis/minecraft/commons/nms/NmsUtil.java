@@ -8,7 +8,7 @@ import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.bukkit.Bukkit;
 import ru.progrm_jarvis.minecraft.commons.nms.metadata.DataWatcherFactory;
-import ru.progrm_jarvis.minecraft.commons.nms.metadata.LatestDataWatcherFactory;
+import ru.progrm_jarvis.minecraft.commons.nms.metadata.StandardDataWatcherFactory;
 import ru.progrm_jarvis.minecraft.commons.nms.metadata.LegacyDataWatcherFactory;
 import ru.progrm_jarvis.reflector.wrapper.FieldWrapper;
 import ru.progrm_jarvis.reflector.wrapper.fast.FastFieldWrapper;
@@ -43,7 +43,7 @@ public class NmsUtil {
      * DataWatcher factory valid for current server version
      */
     private final DataWatcherFactory DATA_WATCHER_FACTORY = NMS_VERSION.generation < 9
-            ? new LegacyDataWatcherFactory() : new LatestDataWatcherFactory();
+            ? new LegacyDataWatcherFactory() : new StandardDataWatcherFactory();
 
     /**
      * Gets version of the current server.
