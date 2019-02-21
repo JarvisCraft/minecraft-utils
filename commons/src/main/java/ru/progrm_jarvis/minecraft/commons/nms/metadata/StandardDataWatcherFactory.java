@@ -12,7 +12,7 @@ import java.util.UUID;
 /**
  * DataWatcher factory for post 1.9 versions.
  */
-public class LatestDataWatcherFactory implements DataWatcherFactory {
+public class StandardDataWatcherFactory implements DataWatcherFactory {
 
     protected static final WrappedDataWatcher.Serializer
             BYTE_SERIALIZER = Registry.get(Byte.class),
