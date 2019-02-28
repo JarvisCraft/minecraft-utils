@@ -38,10 +38,11 @@ public class FakeEntityManagerGroup<P extends Plugin, E extends FakeEntity>
                                           ? extends FakeEntityManager<P, E>>> managerCreators) {
         super(plugin, entities);
 
-        //noinspection UnstableApiUsage
-        managers = managerCreators.stream()
+        //noinspection unchecked
+        managers = ImmutableList.copyOf(managerCreators.stream()
                 .map(managerCreator -> managerCreator.apply(plugin, entities))
-                .collect(ImmutableList.toImmutableList());
+                .toArray(FakeEntityManager[]::new)
+        );
     }
 
     @SafeVarargs
