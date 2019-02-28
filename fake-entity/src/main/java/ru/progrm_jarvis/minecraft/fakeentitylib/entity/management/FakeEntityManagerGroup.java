@@ -66,4 +66,11 @@ public class FakeEntityManagerGroup<P extends Plugin, E extends FakeEntity>
 
         for (val manager : managers) manager.unmanageEntity(entity);
     }
+
+    @Override
+    public void remove(@NonNull final E entity) {
+        for (val manager : managers) manager.unmanageEntity(entity);
+
+        entity.remove();
+    }
 }
