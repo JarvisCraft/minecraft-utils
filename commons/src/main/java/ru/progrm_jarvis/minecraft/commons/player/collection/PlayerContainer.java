@@ -63,7 +63,7 @@ public interface PlayerContainer {
      *
      * @param players players to remove
      */
-    default void removePlayesr(final Player... players) {
+    default void removePlayers(final Player... players) {
         for (val player : players) removePlayer(player);
     }
 
