@@ -6,7 +6,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.google.common.base.Preconditions;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.plugin.Plugin;
@@ -17,7 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import static ru.progrm_jarvis.minecraft.commons.util.hack.PreSuperCheck.beforeSuper;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 @ToString
 @EqualsAndHashCode(callSuper = true)
@@ -31,7 +30,7 @@ public class ProtocolBasedFakeEntityInteractionHandler<P extends Plugin, E exten
 
     public ProtocolBasedFakeEntityInteractionHandler(@NonNull final P plugin, final boolean concurrent) {
         super(
-                beforeSuper(plugin, () -> Preconditions.checkNotNull(plugin, "plugin should not be null")),
+                checkNotNull(plugin, "plugin should not be null"),
                 PacketType.Play.Client.USE_ENTITY
         );
 
@@ -84,6 +83,11 @@ public class ProtocolBasedFakeEntityInteractionHandler<P extends Plugin, E exten
     @Override
     public int managedEntitiesSize() {
         return entities.size();
+    }
+
+    @Override
+    public boolean isManaged(@NonNull final E entity) {
+        return entities.contains(entity);
     }
 
     @Override
