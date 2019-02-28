@@ -83,7 +83,7 @@ public interface FakeEntityManager<P extends Plugin, E extends FakeEntity> exten
      *
      * @param entity entity to manage
      *
-     * @apiNote Normally management should happen until {@link #unmanageEntity(FakeEntity)} is called with this entity
+     * @apiNote Normally management should happen until {@link #unmanageEntity(E)} is called with this entity
      * or (in most cases) if the entity is no longer non-weakly referenced.
      */
     void manageEntity(@NonNull E entity);
