@@ -419,4 +419,11 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
         if (visible) spawn();
         else despawn();
     }
+
+    @Override
+    public void remove() {
+        despawn();
+
+        players.clear();
+    }
 }

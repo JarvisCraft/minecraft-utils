@@ -51,4 +51,9 @@ public interface FakeEntity extends PlayerContainer {
      * @param visible {@code true} if this fake entity should be visible or {@code false} if it should be invisible
      */
     void setVisible(boolean visible);
+
+    /**
+     * Removes the fake entity which guarantees that no other cleanups will be required.
+     */
+    void remove();
 }
