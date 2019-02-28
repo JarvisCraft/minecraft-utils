@@ -12,6 +12,7 @@ import org.bukkit.plugin.Plugin;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.behaviour.FakeEntityInteraction.Hand;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.management.FakeEntityManager;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -28,7 +29,7 @@ public class ProtocolBasedFakeEntityInteractionHandler<P extends Plugin, E exten
     Set<E> entities;
     Set<E> entitiesView;
 
-    public ProtocolBasedFakeEntityInteractionHandler(@NonNull final P plugin, final boolean concurrent) {
+    public ProtocolBasedFakeEntityInteractionHandler(@Nonnull final P plugin, final boolean concurrent) {
         super(
                 checkNotNull(plugin, "plugin should not be null"),
                 PacketType.Play.Client.USE_ENTITY
