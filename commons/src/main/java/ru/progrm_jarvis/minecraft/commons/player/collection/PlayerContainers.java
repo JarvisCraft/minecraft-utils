@@ -4,7 +4,6 @@ import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
-import ru.progrm_jarvis.minecraft.commons.player.PlayerUtil;
 
 import java.util.Collection;
 import java.util.Map;
@@ -34,7 +33,7 @@ public class PlayerContainers {
             this.collection = collection;
             this.global = global;
 
-            if (global) addPlayers(PlayerUtil.getOnlinePlayers());
+            if (global) addOnlinePlayers();
         }
 
         @Override
@@ -72,7 +71,7 @@ public class PlayerContainers {
             this.defaultValueSupplier = defaultValueSupplier;
             this.global = global;
 
-            if (global) addPlayers(PlayerUtil.getOnlinePlayers());
+            if (global) addOnlinePlayers();
         }
 
         @Override
