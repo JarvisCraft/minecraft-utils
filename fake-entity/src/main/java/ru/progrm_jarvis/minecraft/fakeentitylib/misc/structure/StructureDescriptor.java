@@ -149,9 +149,10 @@ public class StructureDescriptor {
         }
 
         public List<Keyframe> getOrderedKeyframes() {
-            return Arrays.stream(keyframes)
+            return ImmutableList.copyOf(Arrays.stream(keyframes)
                     .sorted(Comparator.comparing(keyframe -> keyframe.tick))
-                    .collect(ImmutableList.toImmutableList());
+                    .toArray(Keyframe[]::new)
+            );
         }
 
         @Data
