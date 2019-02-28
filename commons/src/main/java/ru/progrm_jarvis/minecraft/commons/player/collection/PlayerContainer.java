@@ -1,11 +1,10 @@
 package ru.progrm_jarvis.minecraft.commons.player.collection;
 
 import lombok.val;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import ru.progrm_jarvis.minecraft.commons.player.PlayerUtil;
 
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * An object which may store players.
@@ -49,7 +48,7 @@ public interface PlayerContainer {
     }
 
     default void addOnlinePlayers() {
-        addPlayers(Collections.unmodifiableCollection(Bukkit.getOnlinePlayers()));
+        addPlayers(PlayerUtil.getOnlinePlayers());
     }
 
     /**
