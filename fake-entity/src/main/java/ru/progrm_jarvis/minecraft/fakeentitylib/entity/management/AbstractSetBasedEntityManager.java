@@ -56,6 +56,11 @@ public abstract class AbstractSetBasedEntityManager<P extends Plugin, E extends 
     }
 
     @Override
+    public boolean isManaged(@NonNull final E entity) {
+        return entities.contains(entity);
+    }
+
+    @Override
     public Collection<E> getManagedEntities() {
         return entitiesView;
     }

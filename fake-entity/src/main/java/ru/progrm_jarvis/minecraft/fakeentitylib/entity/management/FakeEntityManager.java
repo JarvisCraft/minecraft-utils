@@ -97,4 +97,27 @@ public interface FakeEntityManager<P extends Plugin, E extends FakeEntity> exten
      * as this interface specification recommends storing entities weakly.
      */
     void unmanageEntity(@NonNull E entity);
+
+    /**
+     * Retrieves whether or not the specified entity is managed by this manager.
+     *
+     * @param entity entity to check
+     * @return {@code true} if this entity manager manages the specified entity and {@code false} otherwise
+     */
+    boolean isManaged(@NonNull final E entity);
+
+    /**
+     * Removes the entity managed by this manager.
+     * This is a logical equivalent of calling {@link #unmanageEntity(E)} and {@link E#remove()}
+     *
+     * @param entity entity to remove
+     *
+     * @apiNote if the entity is not managed by this manager then no exception should be thrown
+     * but the removal should happen
+     */
+    default void remove(@NonNull E entity) {
+        unmanageEntity(entity);
+
+        entity.remove();
+    }
 }
