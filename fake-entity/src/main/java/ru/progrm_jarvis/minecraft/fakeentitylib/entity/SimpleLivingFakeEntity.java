@@ -290,9 +290,9 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
                     movePacket.setEntityID(entityId);
                 }
 
-                movePacket.setDx((int) (dx * 32 * 128));
-                movePacket.setDy((int) (dy * 32 * 128));
-                movePacket.setDz((int) (dz * 32 * 128));
+                movePacket.setDx(dx);
+                movePacket.setDy(dy);
+                movePacket.setDz(dz);
 
                 boolean hasVelocity = hasVelocity();
                 if (hasVelocity) actualizeVelocityPacket();
@@ -309,9 +309,9 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
                     moveLookPacket.setEntityID(entityId);
                 }
 
-                moveLookPacket.setDx((int) (dx * 32 * 128));
-                moveLookPacket.setDy((int) (dy * 32 * 128));
-                moveLookPacket.setDz((int) (dz * 32 * 128));
+                moveLookPacket.setDx(dx);
+                moveLookPacket.setDy(dy);
+                moveLookPacket.setDz(dz);
                 moveLookPacket.setYaw(yaw);
                 moveLookPacket.setPitch(pitch);
 
