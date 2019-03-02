@@ -25,40 +25,42 @@ public interface FakeEntityManager<P extends Plugin, E extends FakeEntity> exten
     /**
      * Creates a new weak {@link Set} valid (and <i>recommended</i>) for storing entities
      *
-     * @param <E> type of entities stored
+     * @param <E> type of value stored
      * @return new weak {@link Set} for storing entities
      */
-    static <E extends FakeEntity> Set<E> weakEntitySet() {
+    static <E> Set<E> weakEntitySet() {
         return Collections.newSetFromMap(new WeakHashMap<>());
     }
 
     /**
      * Creates a new weak concurrent {@link Set} valid (and <i>recommended</i>) for storing entities
      *
-     * @param <E> type of entities stored
+     * @param <E> type of value stored
      * @return new weak concurrent {@link Set} for storing entities
      */
-    static <E extends FakeEntity> Set<E> concurrentWeakEntitySet() {
+    static <E> Set<E> concurrentWeakEntitySet() {
         return ConcurrentCollections.concurrentSetFromMap(new WeakHashMap<>());
     }
 
     /**
      * Creates a new weak {@link Set} valid (and <i>recommended</i>) for storing entities
      *
-     * @param <E> type of entities stored
+     * @param <K> type of key
+     * @param <V> type of value
      * @return new weak {@link Set} for storing entities
      */
-    static <E extends FakeEntity, V> Map<E, V> weakEntityMap() {
+    static <K, V> Map<K, V> weakEntityMap() {
         return new WeakHashMap<>();
     }
 
     /**
      * Creates a new weak concurrent {@link Map} valid (and <i>recommended</i>) for storing entities
      *
-     * @param <E> type of entities stored
+     * @param <K> type of key
+     * @param <V> type of value
      * @return new weak concurrent {@link Map} for storing entities
      */
-    static <E extends FakeEntity, V> Map<E, V> concurrentWeakEntityMap() {
+    static <K, V> Map<K, V> concurrentWeakEntityMap() {
         return ConcurrentCollections.concurrentMap(new WeakHashMap<>());
     }
 
