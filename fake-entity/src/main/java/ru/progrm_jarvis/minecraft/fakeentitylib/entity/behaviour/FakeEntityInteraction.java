@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
+import ru.progrm_jarvis.minecraft.commons.nms.NmsUtil;
 
 public interface FakeEntityInteraction {
 
@@ -116,18 +117,19 @@ public interface FakeEntityInteraction {
 
         @Override
         public Type getType() {
-            return Type.EXACT_INTERACTION;
+            return Type.EXACT_INTERACT;
         }
     }
 
     @RequiredArgsConstructor
     enum Hand {
-        MAIN(EquipmentSlot.HAND), OFF(EquipmentSlot.OFF_HAND);
+        MAIN(EquipmentSlot.HAND),
+        OFF(NmsUtil.getVersion().getGeneration() > 8 ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND);
 
         @Getter final EquipmentSlot slot;
     }
 
     enum Type {
-        INTERACT, ATTACK, EXACT_INTERACTION
+        INTERACT, ATTACK, EXACT_INTERACT
     }
 }
