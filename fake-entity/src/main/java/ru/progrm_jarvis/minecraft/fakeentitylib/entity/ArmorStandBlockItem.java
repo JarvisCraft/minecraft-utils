@@ -82,7 +82,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
         equipmentPacket.setItem(this.item = item);
 
         // actual block-item position (head of armorstand) is one block higher than its coordinate so normalize it
-        yDelta = -1;
+        yLocationOffset = -1;
     }
 
     /**

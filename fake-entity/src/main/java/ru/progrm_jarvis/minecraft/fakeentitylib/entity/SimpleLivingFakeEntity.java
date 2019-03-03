@@ -123,15 +123,15 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     /**
      * Difference between the actual entity <i>x</i> and its visible value
      */
-    double xDelta,
+    double xLocationOffset,
     /**
      * Difference between the actual entity <i>y</i> and its visible value
      */
-    yDelta,
+    yLocationOffset,
     /**
      * Difference between the actual entity <i>z</i> and its visible value
      */
-    zDelta;
+    zLocationOffset;
 
     /**
      * Difference between the actual entity <i>yaw</i> and its visible value
@@ -205,9 +205,9 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     }
 
     protected void actualizeSpawnPacket() {
-        spawnPacket.setX(location.getX() + xDelta);
-        spawnPacket.setY(location.getY() + yDelta);
-        spawnPacket.setZ(location.getZ() + zDelta);
+        spawnPacket.setX(location.getX() + xLocationOffset);
+        spawnPacket.setY(location.getY() + yLocationOffset);
+        spawnPacket.setZ(location.getZ() + zLocationOffset);
 
         spawnPacket.setPitch(location.getPitch() + pitchDelta);
         spawnPacket.setYaw(location.getYaw() + yawDelta);
@@ -348,9 +348,9 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
                 teleportPacket.setEntityID(entityId);
             }
 
-            teleportPacket.setX(x + xDelta);
-            teleportPacket.setY(y + yDelta);
-            teleportPacket.setZ(z + zDelta);
+            teleportPacket.setX(x + xLocationOffset);
+            teleportPacket.setY(y + yLocationOffset);
+            teleportPacket.setZ(z + zLocationOffset);
             teleportPacket.setYaw(yaw + yawDelta);
             teleportPacket.setPitch(pitch + pitchDelta);
 
