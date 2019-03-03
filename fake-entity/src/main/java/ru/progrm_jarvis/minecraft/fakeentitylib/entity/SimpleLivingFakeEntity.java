@@ -123,25 +123,25 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     /**
      * Difference between the actual entity <i>x</i> and its visible value
      */
-    double xLocationOffset,
+    double xOffset,
     /**
      * Difference between the actual entity <i>y</i> and its visible value
      */
-    yLocationOffset,
+    yOffset,
     /**
      * Difference between the actual entity <i>z</i> and its visible value
      */
-    zLocationOffset;
+    zOffset;
 
     /**
      * Difference between the actual entity <i>yaw</i> and its visible value
      */
-    float yawDelta = 0,
+    float yawOffset = 0,
 
     /**
      * Difference between the actual entity <i>pitch</i> and its visible value
      */
-    pitchDelta = 0,
+    pitchOffset = 0,
 
     /**
      * Difference between the actual entity <i>head pitch</i> and its visible value
@@ -205,12 +205,12 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     }
 
     protected void actualizeSpawnPacket() {
-        spawnPacket.setX(location.getX() + xLocationOffset);
-        spawnPacket.setY(location.getY() + yLocationOffset);
-        spawnPacket.setZ(location.getZ() + zLocationOffset);
+        spawnPacket.setX(location.getX() + xOffset);
+        spawnPacket.setY(location.getY() + yOffset);
+        spawnPacket.setZ(location.getZ() + zOffset);
 
-        spawnPacket.setPitch(location.getPitch() + pitchDelta);
-        spawnPacket.setYaw(location.getYaw() + yawDelta);
+        spawnPacket.setPitch(location.getPitch() + pitchOffset);
+        spawnPacket.setYaw(location.getYaw() + yawOffset);
         spawnPacket.setHeadPitch(headPitch + headPitchDelta);
 
         if (velocity != null) {
@@ -348,11 +348,11 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
                 teleportPacket.setEntityID(entityId);
             }
 
-            teleportPacket.setX(x + xLocationOffset);
-            teleportPacket.setY(y + yLocationOffset);
-            teleportPacket.setZ(z + zLocationOffset);
-            teleportPacket.setYaw(yaw + yawDelta);
-            teleportPacket.setPitch(pitch + pitchDelta);
+            teleportPacket.setX(x + xOffset);
+            teleportPacket.setY(y + yOffset);
+            teleportPacket.setZ(z + zOffset);
+            teleportPacket.setYaw(yaw + yawOffset);
+            teleportPacket.setPitch(pitch + pitchOffset);
 
             boolean hasVelocity = hasVelocity();
             if (hasVelocity) actualizeVelocityPacket();
