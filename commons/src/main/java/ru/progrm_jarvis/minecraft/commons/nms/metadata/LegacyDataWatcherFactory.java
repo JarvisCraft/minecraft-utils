@@ -62,7 +62,7 @@ public class LegacyDataWatcherFactory implements DataWatcherFactory {
 
     @Override
     public WrappedWatchableObject createWatchable(final int id, final Boolean value) {
-        return new WrappedWatchableObject(id, value);
+        return createWatchable(id, value ? (byte) 0x1 : (byte) 0x0);
     }
 
     @Override
@@ -179,7 +179,7 @@ public class LegacyDataWatcherFactory implements DataWatcherFactory {
 
         @Override
         public DataWatcherModifier set(final int id, final Boolean value) {
-            dataWatcher.setObject(id, value);
+            dataWatcher.setObject(id, value ? (byte) 0x1 : (byte) 0x0);
 
             return this;
         }
