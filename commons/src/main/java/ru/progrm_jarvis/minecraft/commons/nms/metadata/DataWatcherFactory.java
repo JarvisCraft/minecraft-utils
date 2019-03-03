@@ -114,6 +114,7 @@ public interface DataWatcherFactory {
      * @return created watchable object
      */
     WrappedWatchableObject createWatchableVector3f(int id, Object value);
+
     /**
      * Creates watchable object for {@link Vector3F} value at index specified.
      *
