@@ -30,8 +30,8 @@ public abstract class AbstractSetBasedEntityManager<P extends Plugin, E extends 
         implements FakeEntityManager<P, E> {
 
     @NonNull P plugin;
-    @NonNull Set<E> entities;
-    @NonNull Set<E> entitiesView;
+    @NonNull @ToString.Exclude Set<E> entities;
+    @NonNull @ToString.Exclude Set<E> entitiesView;
 
     @Delegate(types = Shutdownable.class) @NonNull final ShutdownHooks shutdownHooks;
 
