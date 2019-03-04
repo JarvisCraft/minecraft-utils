@@ -2,6 +2,8 @@ package ru.progrm_jarvis.minecraft.commons.util.shutdown;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.bukkit.plugin.Plugin;
+import ru.progrm_jarvis.minecraft.commons.plugin.BukkitPluginShutdownUtil;
 
 import javax.annotation.Nullable;
 import java.util.ArrayDeque;
@@ -30,6 +32,18 @@ public interface ShutdownHooks extends Shutdownable {
      * @return this {@link ShutdownHooks} for chaining
      */
     ShutdownHooks remove(@NonNull Runnable hook);
+
+    /**
+     * Registers these {@link ShutdownHooks} as a Bukkit plugin shutdown hook.
+     *
+     * @param plugin plugin whose shutdown hook this is
+     * @return this {@link ShutdownHooks} for chaining
+     */
+    default ShutdownHooks registerAsBukkitShutdownHook(@NonNull final Plugin plugin) {
+        BukkitPluginShutdownUtil.addShutdownHook(plugin, this::shutdown);
+
+        return this;
+    }
 
     /**
      * Calls all the hooks.
