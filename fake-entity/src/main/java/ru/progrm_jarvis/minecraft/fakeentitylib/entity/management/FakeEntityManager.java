@@ -4,6 +4,7 @@ import lombok.NonNull;
 import org.bukkit.plugin.Plugin;
 import ru.progrm_jarvis.minecraft.commons.util.concurrent.ConcurrentCollections;
 import ru.progrm_jarvis.minecraft.commons.plugin.BukkitPluginContainer;
+import ru.progrm_jarvis.minecraft.commons.util.shutdown.Shutdownable;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.FakeEntity;
 
 import java.util.*;
@@ -18,7 +19,8 @@ import java.util.*;
  * to store managed entities weakly so that un-managing entity manually is not required
  * as if there are no strong references on it the GC should collect it.
  */
-public interface FakeEntityManager<P extends Plugin, E extends FakeEntity> extends BukkitPluginContainer<P> {
+public interface FakeEntityManager<P extends Plugin, E extends FakeEntity>
+        extends BukkitPluginContainer<P>, Shutdownable {
 
     /**
      * Creates a new weak {@link Set} valid (and <i>recommended</i>) for storing entities

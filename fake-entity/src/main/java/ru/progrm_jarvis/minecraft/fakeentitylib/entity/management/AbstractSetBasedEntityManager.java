@@ -1,8 +1,11 @@
 package ru.progrm_jarvis.minecraft.fakeentitylib.entity.management;
 
 import lombok.*;
+import lombok.experimental.Delegate;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.plugin.Plugin;
+import ru.progrm_jarvis.minecraft.commons.util.shutdown.ShutdownHooks;
+import ru.progrm_jarvis.minecraft.commons.util.shutdown.Shutdownable;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.FakeEntity;
 
 import javax.annotation.Nonnull;
@@ -28,11 +31,15 @@ public abstract class AbstractSetBasedEntityManager<P extends Plugin, E extends 
     @NonNull Set<E> entities;
     @NonNull Set<E> entitiesView;
 
-    public AbstractSetBasedEntityManager(@NonNull final P plugin,
-                                         @NonNull final Set<E> entities) {
+    @Delegate(types = Shutdownable.class) @NonNull final ShutdownHooks shutdownHooks;
+
+    public AbstractSetBasedEntityManager(@NonNull final P plugin, @NonNull final Set<E> entities) {
         this.plugin = plugin;
         this.entities = entities;
         this.entitiesView = Collections.unmodifiableSet(entities);
+
+        shutdownHooks = ShutdownHooks.createConcurrent()
+                .registerAsBukkitShutdownHook(plugin);
     }
 
     /**

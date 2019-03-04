@@ -4,7 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import ru.progrm_jarvis.minecraft.commons.plugin.BukkitPluginShutdownUtil;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.ObservableFakeEntity;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.management.AbstractSetBasedEntityManager;
 
@@ -55,7 +54,14 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
 
         this.entitiesSetSupplier = entitiesSetSupplier;
 
-        BukkitPluginShutdownUtil.addShutdownHook(plugin, this::shutdown);
+        shutdownHooks.add(() -> {
+            lock.lock();
+            try {
+                for (val task : tasks) task.cancel();
+            } finally {
+                lock.unlock();
+            }
+        });
     }
 
     protected RedrawEntitiesRunnable getRedrawEntitiesRunnable() {
@@ -112,15 +118,6 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
 
                 break;
             }
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    protected void shutdown() {
-        lock.lock();
-        try {
-            for (val task : tasks) task.cancel();
         } finally {
             lock.unlock();
         }
