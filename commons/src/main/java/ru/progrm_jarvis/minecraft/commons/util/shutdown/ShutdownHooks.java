@@ -11,6 +11,7 @@ import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -36,6 +37,17 @@ public interface ShutdownHooks extends Shutdownable {
      * @apiNote supplier is called instantly, not lazily
      */
     <T> ShutdownHooks add(@NonNull Supplier<Runnable> hookSupplier);
+
+    /**
+     * Adds a shutdown hook.
+     *
+     * @param objectSupplier supplier to create an object which wil be shut down
+     * @param hookCreator function to create a hook
+     * @return this {@link ShutdownHooks} for chaining
+     *
+     * @apiNote supplier and function are called instantly, not lazily
+     */
+    <T> T add(@NonNull Supplier<T> objectSupplier, @NonNull Function<T, Runnable> hookCreator);
 
     /**
      * Removes a shutdown hook.
@@ -150,6 +162,16 @@ public interface ShutdownHooks extends Shutdownable {
         }
 
         @Override
+        public <T> T add(@NonNull final Supplier<T> objectSupplier, @NonNull final Function<T, Runnable> hookCreator) {
+            checkState();
+
+            val object = objectSupplier.get();
+            shutdownHooks.add(hookCreator.apply(object));
+
+            return object;
+        }
+
+        @Override
         public ShutdownHooks remove(@NonNull final Runnable hook) {
             checkState();
 
@@ -235,6 +257,16 @@ public interface ShutdownHooks extends Shutdownable {
             shutdownHooks.add(hookSupplier.get());
 
             return this;
+        }
+
+        @Override
+        public <T> T add(@NonNull final Supplier<T> objectSupplier, @NonNull final Function<T, Runnable> hookCreator) {
+            checkState();
+
+            val object = objectSupplier.get();
+            shutdownHooks.add(hookCreator.apply(object));
+
+            return object;
         }
 
         @Override
