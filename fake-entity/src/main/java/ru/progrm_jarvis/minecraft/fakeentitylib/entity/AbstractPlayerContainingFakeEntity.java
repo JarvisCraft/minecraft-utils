@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import ru.progrm_jarvis.minecraft.commons.player.registry.PlayerRegistryRegistration;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import java.util.Map;
 @ToString
 @EqualsAndHashCode(callSuper = false)
 @FieldDefaults(level = AccessLevel.PROTECTED)
+@PlayerRegistryRegistration(PlayerRegistryRegistration.Policy.MANUAL)
 public abstract class AbstractPlayerContainingFakeEntity extends AbstractObservableFakeEntity {
 
     @NonNull final Map<Player, Boolean> players;

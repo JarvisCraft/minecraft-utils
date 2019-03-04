@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.plugin.Plugin;
+import ru.progrm_jarvis.minecraft.commons.player.registry.PlayerRegistryRegistration;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.FakeEntity;
 
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import java.util.function.BiFunction;
 @ToString
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
+@PlayerRegistryRegistration(PlayerRegistryRegistration.Policy.MANUAL)
 public class FakeEntityManagerGroup<P extends Plugin, E extends FakeEntity>
         extends AbstractSetBasedEntityManager<P, E> {
 

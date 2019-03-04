@@ -2,7 +2,6 @@ package ru.progrm_jarvis.minecraft.fakeentitylib.entity.management;
 
 import lombok.NonNull;
 import org.bukkit.plugin.Plugin;
-import ru.progrm_jarvis.minecraft.commons.player.registry.ShouldBeRegisteredInPlayerRegistry;
 import ru.progrm_jarvis.minecraft.commons.util.concurrent.ConcurrentCollections;
 import ru.progrm_jarvis.minecraft.commons.plugin.BukkitPluginContainer;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.FakeEntity;
@@ -19,7 +18,6 @@ import java.util.*;
  * to store managed entities weakly so that un-managing entity manually is not required
  * as if there are no strong references on it the GC should collect it.
  */
-@ShouldBeRegisteredInPlayerRegistry
 public interface FakeEntityManager<P extends Plugin, E extends FakeEntity> extends BukkitPluginContainer<P> {
 
     /**

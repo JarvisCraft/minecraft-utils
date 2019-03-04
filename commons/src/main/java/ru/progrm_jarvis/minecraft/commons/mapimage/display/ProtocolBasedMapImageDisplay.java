@@ -8,15 +8,15 @@ import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
 import ru.progrm_jarvis.minecraft.commons.mapimage.MapImage;
 import ru.progrm_jarvis.minecraft.commons.player.registry.PlayerRegistries;
-import ru.progrm_jarvis.minecraft.commons.player.registry.RegistersSelfInPlayerRegistry;
+import ru.progrm_jarvis.minecraft.commons.player.registry.PlayerRegistry;
+import ru.progrm_jarvis.minecraft.commons.player.registry.PlayerRegistryRegistration;
 import ru.progrm_jarvis.minecraft.commons.util.MapUtil;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-@RegistersSelfInPlayerRegistry
 @ToString
 @EqualsAndHashCode
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
@@ -26,19 +26,22 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
     @NonNull Map<Player, MapView> playerMaps;
     @Getter boolean global;
 
+    @PlayerRegistryRegistration(PlayerRegistryRegistration.Policy.AUTO)
     public ProtocolBasedMapImageDisplay(@NonNull final MapImage image, @NonNull final Map<Player, MapView> playerMaps,
-                                        @NonNull final Plugin plugin, final boolean global) {
+                                        @NonNull final Plugin plugin, final boolean global,
+                                        @NonNull final PlayerRegistry playerRegistry) {
         this.image = image;
         this.playerMaps = playerMaps;
         this.global = global;
 
-        PlayerRegistries.registerInDefaultRegistry(plugin, this);
+        playerRegistry.register(this);
         image.subscribeOnUpdates(this::sendDeltaToAllPlayers);
     }
 
-    public ProtocolBasedMapImageDisplay(@NonNull final MapImage image, @NonNull final Plugin plugin,
-                                        final boolean global) {
-        this(image, new HashMap<>(), plugin, global);
+    @PlayerRegistryRegistration(PlayerRegistryRegistration.Policy.AUTO)
+    public ProtocolBasedMapImageDisplay(@NonNull final MapImage image, @NonNull final Map<Player, MapView> playerMaps,
+                                        @NonNull final Plugin plugin, final boolean global) {
+        this(image, playerMaps, plugin, global, PlayerRegistries.defaultRegistry(plugin));
     }
 
     @Override

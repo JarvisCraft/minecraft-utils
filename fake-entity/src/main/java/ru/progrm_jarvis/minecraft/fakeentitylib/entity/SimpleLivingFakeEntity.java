@@ -9,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import ru.progrm_jarvis.minecraft.commons.player.registry.ShouldBeRegisteredInPlayerRegistry;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -18,7 +17,6 @@ import java.util.UUID;
 /**
  * A simple living entity self-sustained for direct usage.
  */
-@ShouldBeRegisteredInPlayerRegistry
 @ToString
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PROTECTED)
@@ -213,15 +211,9 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
         spawnPacket.setYaw(location.getYaw() + yawOffset);
         spawnPacket.setHeadPitch(headPitch + headPitchDelta);
 
-        if (velocity != null) {
-            spawnPacket.setVelocityX(velocity.getX());
-            spawnPacket.setVelocityY(velocity.getY());
-            spawnPacket.setVelocityZ(velocity.getZ());
-        } else {
-            spawnPacket.setVelocityX(0);
-            spawnPacket.setVelocityY(0);
-            spawnPacket.setVelocityZ(0);
-        }
+        spawnPacket.setVelocityX(velocity.getX());
+        spawnPacket.setVelocityY(velocity.getY());
+        spawnPacket.setVelocityZ(velocity.getZ());
 
         if (metadata != null) spawnPacket.setMetadata(metadata);
     }
