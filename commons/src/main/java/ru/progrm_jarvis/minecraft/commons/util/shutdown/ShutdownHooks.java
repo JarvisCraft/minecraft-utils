@@ -111,8 +111,8 @@ public interface ShutdownHooks extends Shutdownable {
         return new Concurrent(parent);
     }
 
+    // equals and hashcode are specifically omitted due to object's mutability
     @ToString
-    @EqualsAndHashCode
     @RequiredArgsConstructor
     @FieldDefaults(level = AccessLevel.PROTECTED)
     class Simple implements ShutdownHooks {
@@ -199,8 +199,8 @@ public interface ShutdownHooks extends Shutdownable {
         }
     }
 
+    // equals and hashcode are specifically omitted due to object's mutability
     @ToString
-    @EqualsAndHashCode
     @RequiredArgsConstructor
     @FieldDefaults(level = AccessLevel.PROTECTED)
     class Concurrent implements ShutdownHooks {
