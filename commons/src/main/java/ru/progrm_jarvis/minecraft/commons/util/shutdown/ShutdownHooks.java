@@ -11,6 +11,7 @@ import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 /**
  * An object holding all shutdown hooks of an object which should be called once it should bw shut down.
@@ -25,6 +26,16 @@ public interface ShutdownHooks extends Shutdownable {
      * @return this {@link ShutdownHooks} for chaining
      */
     ShutdownHooks add(@NonNull Runnable hook);
+
+    /**
+     * Adds a shutdown hook.
+     *
+     * @param hookSupplier supplier to be used instantly to create a hook
+     * @return this {@link ShutdownHooks} for chaining
+     *
+     * @apiNote supplier is called instantly, not lazily
+     */
+    <T> ShutdownHooks add(@NonNull Supplier<Runnable> hookSupplier);
 
     /**
      * Removes a shutdown hook.
@@ -130,6 +141,15 @@ public interface ShutdownHooks extends Shutdownable {
         }
 
         @Override
+        public <T> ShutdownHooks add(@NonNull final Supplier<Runnable> hookSupplier) {
+            checkState();
+
+            shutdownHooks.add(hookSupplier.get());
+
+            return null;
+        }
+
+        @Override
         public ShutdownHooks remove(@NonNull final Runnable hook) {
             checkState();
 
@@ -204,6 +224,15 @@ public interface ShutdownHooks extends Shutdownable {
             checkState();
 
             shutdownHooks.add(hook);
+
+            return this;
+        }
+
+        @Override
+        public <T> ShutdownHooks add(@NonNull final Supplier<Runnable> hookSupplier) {
+            checkState();
+
+            shutdownHooks.add(hookSupplier.get());
 
             return this;
         }
