@@ -7,6 +7,7 @@ import ru.progrm_jarvis.minecraft.commons.plugin.BukkitPluginShutdownUtil;
 
 import javax.annotation.Nullable;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -213,7 +214,11 @@ public interface ShutdownHooks extends Shutdownable {
             checkState();
 
             shutDown = true;
-            unregisterBukkitShutdownHook();
+
+            if (bukkitPlugin != null) {
+                BukkitPluginShutdownUtil.removeShutdownHooks(bukkitPlugin, this);
+                bukkitPlugin = null;
+            }
 
             for (val shutdownHook : shutdownHooks) shutdownHook.run();
 
@@ -306,8 +311,15 @@ public interface ShutdownHooks extends Shutdownable {
 
         @Override
         public void shutdown() {
+            System.out.println(Arrays.toString(Thread.currentThread().getStackTrace()));
             if (shutDown.compareAndSet(false, true)) {
-                unregisterBukkitShutdownHook();
+                {
+                    val plugin = bukkitPlugin.get();
+                    if (plugin != null) {
+                        BukkitPluginShutdownUtil.removeShutdownHooks(plugin, this);
+                        bukkitPlugin.set(null);
+                    }
+                }
 
                 for (val shutdownHook : shutdownHooks) shutdownHook.run();
 
