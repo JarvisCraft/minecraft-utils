@@ -18,7 +18,7 @@ import java.util.UUID;
  * A simple living entity self-sustained for direct usage.
  */
 @ToString
-@EqualsAndHashCode(callSuper = true)
+// Entities are seriously mutable and most things may overlap in different cases so JDK hashcode is used
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
 

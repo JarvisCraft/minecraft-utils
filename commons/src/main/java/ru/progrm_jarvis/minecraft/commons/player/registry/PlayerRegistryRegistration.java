@@ -13,7 +13,7 @@ import static java.lang.annotation.ElementType.*;
 @Inherited
 @Documented
 @Target({TYPE, CONSTRUCTOR})
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.CLASS)
 public @interface PlayerRegistryRegistration {
 
     /**
