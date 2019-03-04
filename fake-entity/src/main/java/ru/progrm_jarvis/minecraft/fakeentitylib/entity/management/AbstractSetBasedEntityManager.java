@@ -39,7 +39,7 @@ public abstract class AbstractSetBasedEntityManager<P extends Plugin, E extends 
         this.entitiesView = Collections.unmodifiableSet(entities);
 
         shutdownHooks = ShutdownHooks.createConcurrent()
-                .registerAsBukkitShutdownHook(plugin);
+                .registerBukkitShutdownHook(plugin);
     }
 
     /**

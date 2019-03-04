@@ -10,6 +10,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * An object holding all shutdown hooks of an object which should be called once it should bw shut down.
@@ -39,17 +40,27 @@ public interface ShutdownHooks extends Shutdownable {
      * @param plugin plugin whose shutdown hook this is
      * @return this {@link ShutdownHooks} for chaining
      */
-    default ShutdownHooks registerAsBukkitShutdownHook(@NonNull final Plugin plugin) {
-        BukkitPluginShutdownUtil.addShutdownHook(plugin, this::shutdown);
+    ShutdownHooks registerBukkitShutdownHook(@NonNull Plugin plugin);
 
-        return this;
-    }
+    /**
+     * Unregisters these {@link ShutdownHooks} as a Bukkit plugin shutdown hook.
+     *
+     * @return this {@link ShutdownHooks} for chaining
+     */
+    ShutdownHooks unregisterBukkitShutdownHook();
 
     /**
      * Calls all the hooks.
      */
     @Override
     void shutdown();
+
+    /**
+     * Retrieves whether or not {@link #shutdown()} was called.
+     *
+     * @return {@link true} if this was shut down and {@link false} otherwise
+     */
+    boolean isShutDown();
 
     /**
      * Creates new {@link ShutdownHooks} instance.
@@ -97,15 +108,21 @@ public interface ShutdownHooks extends Shutdownable {
 
         @Nullable final Shutdownable parent;
         @NonNull final Deque<Runnable> shutdownHooks = new ArrayDeque<>();
-        boolean shutDown = false;
+        @Getter boolean shutDown = false;
+
+        @Nullable Plugin bukkitPlugin;
 
         public Simple() {
             this(null);
         }
 
+        protected void checkState() {
+            if (shutDown) throw new ObjectAlreadyShutDownException(parent);
+        }
+
         @Override
         public ShutdownHooks add(@NonNull final Runnable hook) {
-            if (shutDown) throw new ObjectAlreadyShutDownException(parent);
+            checkState();
 
             shutdownHooks.add(hook);
 
@@ -114,7 +131,7 @@ public interface ShutdownHooks extends Shutdownable {
 
         @Override
         public ShutdownHooks remove(@NonNull final Runnable hook) {
-            if (shutDown) throw new ObjectAlreadyShutDownException(parent);
+            checkState();
 
             shutdownHooks.remove(hook);
 
@@ -122,8 +139,39 @@ public interface ShutdownHooks extends Shutdownable {
         }
 
         @Override
+        public ShutdownHooks registerBukkitShutdownHook(@NonNull final Plugin plugin) {
+            checkState();
+
+            if (bukkitPlugin == null) {
+                BukkitPluginShutdownUtil.addShutdownHook(bukkitPlugin = plugin, this);
+
+                return this;
+            } else {
+                BukkitPluginShutdownUtil.removeShutdownHooks(bukkitPlugin, this);
+                BukkitPluginShutdownUtil.addShutdownHook(plugin, this);
+            }
+
+            return this;
+        }
+
+        @Override
+        public ShutdownHooks unregisterBukkitShutdownHook() {
+            checkState();
+
+            if (bukkitPlugin != null) {
+                BukkitPluginShutdownUtil.removeShutdownHooks(bukkitPlugin, this);
+                bukkitPlugin = null;
+            }
+
+            return this;
+        }
+
+        @Override
         public void shutdown() {
+            checkState();
+
             shutDown = true;
+            unregisterBukkitShutdownHook();
 
             for (val shutdownHook : shutdownHooks) shutdownHook.run();
 
@@ -141,13 +189,19 @@ public interface ShutdownHooks extends Shutdownable {
         @NonNull final Deque<Runnable> shutdownHooks = new ConcurrentLinkedDeque<>();
         AtomicBoolean shutDown = new AtomicBoolean();
 
+        @NonNull final AtomicReference<Plugin> bukkitPlugin = new AtomicReference<>();
+
         public Concurrent() {
             this(null);
         }
 
+        protected void checkState() {
+            if (shutDown.get()) throw new ObjectAlreadyShutDownException(parent);
+        }
+
         @Override
         public ShutdownHooks add(@NonNull final Runnable hook) {
-            if (shutDown.get()) throw new ObjectAlreadyShutDownException(parent);
+            checkState();
 
             shutdownHooks.add(hook);
 
@@ -156,7 +210,7 @@ public interface ShutdownHooks extends Shutdownable {
 
         @Override
         public ShutdownHooks remove(@NonNull final Runnable hook) {
-            if (shutDown.get()) throw new ObjectAlreadyShutDownException(parent);
+            checkState();
 
             shutdownHooks.remove(hook);
 
@@ -164,12 +218,45 @@ public interface ShutdownHooks extends Shutdownable {
         }
 
         @Override
+        public ShutdownHooks registerBukkitShutdownHook(@NonNull final Plugin plugin) {
+            checkState();
+
+            if (bukkitPlugin.compareAndSet(null, plugin)) BukkitPluginShutdownUtil.addShutdownHook(plugin, this);
+            else {
+                BukkitPluginShutdownUtil.removeShutdownHooks(bukkitPlugin.get(), this);
+                BukkitPluginShutdownUtil.addShutdownHook(plugin, this);
+            }
+
+            return this;
+        }
+
+        @Override
+        public ShutdownHooks unregisterBukkitShutdownHook() {
+            checkState();
+
+            val plugin = bukkitPlugin.get();
+            if (plugin != null) {
+                BukkitPluginShutdownUtil.removeShutdownHooks(plugin, this);
+                bukkitPlugin.compareAndSet(plugin, null);
+            }
+
+            return this;
+        }
+
+        @Override
         public void shutdown() {
             if (shutDown.compareAndSet(false, true)) {
+                unregisterBukkitShutdownHook();
+
                 for (val shutdownHook : shutdownHooks) shutdownHook.run();
 
                 shutdownHooks.clear();
             } else throw new ObjectAlreadyShutDownException(parent);
+        }
+
+        @Override
+        public boolean isShutDown() {
+            return shutDown.get();
         }
     }
 }
