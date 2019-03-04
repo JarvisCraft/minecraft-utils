@@ -3,12 +3,16 @@ package ru.progrm_jarvis.minecraft.fakeentitylib.entity.behaviour;
 import com.comphenix.packetwrapper.WrapperPlayClientUseEntity;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import lombok.*;
+import lombok.experimental.Delegate;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.plugin.Plugin;
+import ru.progrm_jarvis.minecraft.commons.util.shutdown.ShutdownHooks;
+import ru.progrm_jarvis.minecraft.commons.util.shutdown.Shutdownable;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.behaviour.FakeEntityInteraction.Hand;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.management.FakeEntityManager;
 
@@ -25,9 +29,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class ProtocolBasedFakeEntityInteractionHandler<P extends Plugin, E extends InteractableFakeEntity>
         extends PacketAdapter implements FakeEntityInteractionHandler<P, E> {
 
-    P plugin;
-    Set<E> entities;
-    Set<E> entitiesView;
+    @NonNull final ProtocolManager protocolManager;
+
+    @NonNull P plugin;
+    @NonNull Set<E> entities;
+    @NonNull Set<E> entitiesView;
+
+    @Delegate(types = Shutdownable.class) @NonNull ShutdownHooks shutdownHooks;
 
     public ProtocolBasedFakeEntityInteractionHandler(@Nonnull final P plugin, final boolean concurrent) {
         super(
@@ -35,11 +43,17 @@ public class ProtocolBasedFakeEntityInteractionHandler<P extends Plugin, E exten
                 PacketType.Play.Client.USE_ENTITY
         );
 
+        protocolManager = ProtocolLibrary.getProtocolManager();
+
         this.plugin = plugin;
         entities = concurrent ? FakeEntityManager.concurrentWeakEntitySet() : FakeEntityManager.weakEntitySet();
         entitiesView = Collections.unmodifiableSet(entities);
 
-        ProtocolLibrary.getProtocolManager().addPacketListener(this);
+        protocolManager.addPacketListener(this);
+
+        shutdownHooks = (concurrent ? ShutdownHooks.createConcurrent(this) : ShutdownHooks.create(this))
+                .add(() -> protocolManager.removePacketListener(this))
+                .registerBukkitShutdownHook(plugin);
     }
 
     @Override
