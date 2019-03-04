@@ -13,6 +13,7 @@ import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedConsumer;
+import ru.progrm_jarvis.minecraft.commons.util.shutdown.Shutdownable;
 
 import java.util.Deque;
 import java.util.Map;
@@ -83,6 +84,8 @@ public class FluentBukkitEvents {
          */
         @SuppressWarnings("unchecked")
         private EventListenersGroup<E> getListenersGroup() {
+            checkNotNull(plugin, "plugin has not been set");
+
             return (EventListenersGroup<E>) LISTENERS_GROUPS.computeIfAbsent(
                     new ListenerConfiguration<>(plugin, type, priority),
                     configuration -> new EventListenersGroup<>((ListenerConfiguration<E>) configuration)
@@ -95,25 +98,11 @@ public class FluentBukkitEvents {
          * @param listener listener to use for event handling
          * @return unregister to use for event unregistration
          */
-        public Unregister register(@NonNull final UncheckedConsumer<E> listener) {
-            checkNotNull(plugin, "plugin has not been set");
-
+        public Shutdownable register(@NonNull final UncheckedConsumer<E> listener) {
             val listenersGroup = getListenersGroup();
             listenersGroup.addListener(listener);
 
             return () -> listenersGroup.removeListener(listener);
-        }
-
-        /**
-         * Object used for unregistering the registered event
-         */
-        @FunctionalInterface
-        public interface Unregister {
-
-            /**
-             * Unregisters the registered event
-             */
-            void unregister();
         }
     }
 
