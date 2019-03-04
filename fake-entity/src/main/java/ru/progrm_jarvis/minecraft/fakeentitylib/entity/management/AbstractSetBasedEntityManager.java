@@ -1,6 +1,9 @@
 package ru.progrm_jarvis.minecraft.fakeentitylib.entity.management;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Delegate;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.plugin.Plugin;
@@ -21,7 +24,6 @@ import java.util.Set;
  * @param <E> type of entities stored
  */
 @ToString
-@EqualsAndHashCode
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public abstract class AbstractSetBasedEntityManager<P extends Plugin, E extends FakeEntity>

@@ -15,7 +15,6 @@ import java.util.*;
  * Base for most common implementations of {@link BasicFakeEntity} containing player logic base.
  */
 @ToString
-@EqualsAndHashCode(callSuper = false)
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFakeEntity implements BasicFakeEntity {
 

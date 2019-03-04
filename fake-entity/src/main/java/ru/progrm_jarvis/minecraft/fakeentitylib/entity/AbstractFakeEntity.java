@@ -4,13 +4,14 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.Location;
 import org.bukkit.World;
+import ru.progrm_jarvis.minecraft.commons.annotation.DontOverrideEqualsAndHashCode;
 
 /**
  * Base for most common implementations of {@link FakeEntity}.
  */
+@DontOverrideEqualsAndHashCode("Entities are mutable and have no real IDs in practise")
 @ToString
 @RequiredArgsConstructor
-@EqualsAndHashCode(callSuper = false)
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public abstract class AbstractFakeEntity implements FakeEntity {
 

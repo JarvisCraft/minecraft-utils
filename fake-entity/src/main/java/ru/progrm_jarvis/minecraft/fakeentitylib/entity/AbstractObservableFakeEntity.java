@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
  * Base for most common implementations of {@link ObservableFakeEntity}.
  */
 @ToString
-@EqualsAndHashCode(callSuper = false)
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public abstract class AbstractObservableFakeEntity extends AbstractFakeEntity implements ObservableFakeEntity {
 

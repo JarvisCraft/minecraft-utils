@@ -21,7 +21,6 @@ import java.util.function.BiFunction;
  * @param <E> type of managed entity
  */
 @ToString
-@EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @PlayerRegistryRegistration(PlayerRegistryRegistration.Policy.MANUAL)
 public class FakeEntityManagerGroup<P extends Plugin, E extends FakeEntity>

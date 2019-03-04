@@ -14,7 +14,6 @@ import java.util.Map;
  * Base for most common implementations of {@link ObservableFakeEntity} containing player logic base.
  */
 @ToString
-@EqualsAndHashCode(callSuper = false)
 @FieldDefaults(level = AccessLevel.PROTECTED)
 @PlayerRegistryRegistration(PlayerRegistryRegistration.Policy.MANUAL)
 public abstract class AbstractPlayerContainingFakeEntity extends AbstractObservableFakeEntity {

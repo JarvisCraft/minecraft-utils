@@ -21,7 +21,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static ru.progrm_jarvis.minecraft.commons.util.hack.PreSuperCheck.beforeSuper;
 
 @ToString
-@EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFakeEntity>
         extends AbstractSetBasedEntityManager<P, E> implements FakeEntityObserver<P, E> {

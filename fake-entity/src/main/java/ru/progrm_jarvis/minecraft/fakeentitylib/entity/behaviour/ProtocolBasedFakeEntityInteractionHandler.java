@@ -24,7 +24,6 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @ToString
-@EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class ProtocolBasedFakeEntityInteractionHandler<P extends Plugin, E extends InteractableFakeEntity>
         extends PacketAdapter implements FakeEntityInteractionHandler<P, E> {
