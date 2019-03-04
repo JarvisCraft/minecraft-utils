@@ -10,7 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 import ru.progrm_jarvis.minecraft.commons.util.concurrent.ConcurrentCollections;
-import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedRunnable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,34 +27,34 @@ public class BukkitPluginShutdownUtil {
         return Optional.ofNullable(PLUGIN_SHUTDOWN_HANDLERS.get(plugin));
     }
 
-    public void addShutdownHook(final Plugin plugin, final UncheckedRunnable callback) {
+    public void addShutdownHook(final Plugin plugin, final Runnable callback) {
         getOrCreateShutdownHandler(plugin).callbacks.add(callback);
     }
 
-    public void addShutdownHooks(final Plugin plugin, final UncheckedRunnable... callbacks) {
+    public void addShutdownHooks(final Plugin plugin, final Runnable... callbacks) {
         getOrCreateShutdownHandler(plugin).callbacks.addAll(Arrays.asList(callbacks));
     }
 
-    public void addShutdownHooks(final Plugin plugin, final Collection<UncheckedRunnable> callbacks) {
+    public void addShutdownHooks(final Plugin plugin, final Collection<Runnable> callbacks) {
         getOrCreateShutdownHandler(plugin).callbacks.addAll(callbacks);
     }
 
-    public void removeShutdownHook(final Plugin plugin, final UncheckedRunnable callback) {
+    public void removeShutdownHook(final Plugin plugin, final Runnable callback) {
         getOptionalShutdownHandler(plugin).ifPresent(handler -> handler.callbacks.remove(callback));
     }
 
-    public void removeShutdownHooks(final Plugin plugin, final UncheckedRunnable... callbacks) {
+    public void removeShutdownHooks(final Plugin plugin, final Runnable... callbacks) {
         getOptionalShutdownHandler(plugin).ifPresent(handler -> handler.callbacks.removeAll(Arrays.asList(callbacks)));
     }
 
-    public void removeShutdownHooks(final Plugin plugin, final Collection<UncheckedRunnable> callback) {
+    public void removeShutdownHooks(final Plugin plugin, final Collection<Runnable> callback) {
         getOptionalShutdownHandler(plugin).ifPresent(handler -> handler.callbacks.removeAll(callback));
     }
 
     @Value
     private class PluginShutdownHandler implements Listener {
 
-        private Collection<UncheckedRunnable> callbacks = ConcurrentCollections.concurrentList(new ArrayList<>());
+        private Collection<Runnable> callbacks = ConcurrentCollections.concurrentList(new ArrayList<>());
 
         private PluginShutdownHandler(@NonNull final Plugin plugin) {
             Bukkit.getPluginManager().registerEvents(this, plugin);
