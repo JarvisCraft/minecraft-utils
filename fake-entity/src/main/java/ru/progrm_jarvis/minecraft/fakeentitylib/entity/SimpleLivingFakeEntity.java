@@ -211,9 +211,15 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
         spawnPacket.setYaw(location.getYaw() + yawOffset);
         spawnPacket.setHeadPitch(headPitch + headPitchDelta);
 
-        spawnPacket.setVelocityX(velocity.getX());
-        spawnPacket.setVelocityY(velocity.getY());
-        spawnPacket.setVelocityZ(velocity.getZ());
+        if (velocity != null) {
+            spawnPacket.setVelocityX(velocity.getX());
+            spawnPacket.setVelocityY(velocity.getY());
+            spawnPacket.setVelocityZ(velocity.getZ());
+        } else {
+            spawnPacket.setVelocityX(0);
+            spawnPacket.setVelocityY(0);
+            spawnPacket.setVelocityZ(0);
+        }
 
         if (metadata != null) spawnPacket.setMetadata(metadata);
     }
