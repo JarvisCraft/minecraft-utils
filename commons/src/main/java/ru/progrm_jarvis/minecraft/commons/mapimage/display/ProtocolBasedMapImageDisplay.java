@@ -125,9 +125,9 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
     }
 
     @Override
-    public Integer getMapId(final Player player) {
-        return MapUtil.getOrDefault(
-                playerMaps, player, map -> PlayerMapManager.getMapId(map).intValue(), (Integer) null
+    @NonNull public Optional<Number> getMapId(@NonNull final Player player) {
+        return MapUtil.<Player, MapView, Optional<Number>>getOrDefault(
+                playerMaps, player, map -> Optional.of(PlayerMapManager.getMapId(map)), Optional::empty
         );
     }
 }
