@@ -75,4 +75,11 @@ public class FakeEntityManagerGroup<P extends Plugin, E extends FakeEntity>
 
         entity.remove();
     }
+
+    @Override
+    public void shutdown() {
+        for (val manager : managers) manager.shutdown();
+
+        super.shutdown();
+    }
 }
