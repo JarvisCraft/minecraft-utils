@@ -26,7 +26,7 @@ public interface ShutdownHooks extends Shutdownable {
      * @param hook shutdown hook to add
      * @return this {@link ShutdownHooks} for chaining
      */
-    ShutdownHooks add(@NonNull Runnable hook);
+    @NonNull ShutdownHooks add(@NonNull Runnable hook);
 
     /**
      * Adds a shutdown hook.
@@ -36,7 +36,7 @@ public interface ShutdownHooks extends Shutdownable {
      *
      * @apiNote supplier is called instantly, not lazily
      */
-    <T> ShutdownHooks add(@NonNull Supplier<Runnable> hookSupplier);
+    @NonNull <T> ShutdownHooks add(@NonNull Supplier<Runnable> hookSupplier);
 
     /**
      * Adds a shutdown hook.
@@ -55,7 +55,7 @@ public interface ShutdownHooks extends Shutdownable {
      * @param hook shutdown hook to remove
      * @return this {@link ShutdownHooks} for chaining
      */
-    ShutdownHooks remove(@NonNull Runnable hook);
+    @NonNull ShutdownHooks remove(@NonNull Runnable hook);
 
     /**
      * Registers these {@link ShutdownHooks} as a Bukkit plugin shutdown hook.
@@ -63,14 +63,14 @@ public interface ShutdownHooks extends Shutdownable {
      * @param plugin plugin whose shutdown hook this is
      * @return this {@link ShutdownHooks} for chaining
      */
-    ShutdownHooks registerBukkitShutdownHook(@NonNull Plugin plugin);
+    @NonNull ShutdownHooks registerBukkitShutdownHook(@NonNull Plugin plugin);
 
     /**
      * Unregisters these {@link ShutdownHooks} as a Bukkit plugin shutdown hook.
      *
      * @return this {@link ShutdownHooks} for chaining
      */
-    ShutdownHooks unregisterBukkitShutdownHook();
+    @NonNull ShutdownHooks unregisterBukkitShutdownHook();
 
     /**
      * Calls all the hooks.
@@ -125,8 +125,8 @@ public interface ShutdownHooks extends Shutdownable {
 
     // equals and hashcode are specifically omitted due to object's mutability
     @ToString
-    @RequiredArgsConstructor
     @FieldDefaults(level = AccessLevel.PROTECTED)
+    @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
     class Simple implements ShutdownHooks {
 
         @Nullable final Shutdownable parent;
@@ -135,7 +135,7 @@ public interface ShutdownHooks extends Shutdownable {
 
         @Nullable Plugin bukkitPlugin;
 
-        public Simple() {
+        protected Simple() {
             this(null);
         }
 
@@ -144,7 +144,7 @@ public interface ShutdownHooks extends Shutdownable {
         }
 
         @Override
-        public ShutdownHooks add(@NonNull final Runnable hook) {
+        @NonNull public ShutdownHooks add(@NonNull final Runnable hook) {
             checkState();
 
             shutdownHooks.add(hook);
@@ -153,12 +153,12 @@ public interface ShutdownHooks extends Shutdownable {
         }
 
         @Override
-        public <T> ShutdownHooks add(@NonNull final Supplier<Runnable> hookSupplier) {
+        @NonNull public <T> ShutdownHooks add(@NonNull final Supplier<Runnable> hookSupplier) {
             checkState();
 
             shutdownHooks.add(hookSupplier.get());
 
-            return null;
+            return this;
         }
 
         @Override
@@ -172,7 +172,7 @@ public interface ShutdownHooks extends Shutdownable {
         }
 
         @Override
-        public ShutdownHooks remove(@NonNull final Runnable hook) {
+        @NonNull public ShutdownHooks remove(@NonNull final Runnable hook) {
             checkState();
 
             shutdownHooks.remove(hook);
@@ -181,7 +181,7 @@ public interface ShutdownHooks extends Shutdownable {
         }
 
         @Override
-        public ShutdownHooks registerBukkitShutdownHook(@NonNull final Plugin plugin) {
+        @NonNull public ShutdownHooks registerBukkitShutdownHook(@NonNull final Plugin plugin) {
             checkState();
 
             if (bukkitPlugin == null) {
@@ -197,7 +197,7 @@ public interface ShutdownHooks extends Shutdownable {
         }
 
         @Override
-        public ShutdownHooks unregisterBukkitShutdownHook() {
+        @NonNull public ShutdownHooks unregisterBukkitShutdownHook() {
             checkState();
 
             if (bukkitPlugin != null) {
@@ -227,8 +227,8 @@ public interface ShutdownHooks extends Shutdownable {
 
     // equals and hashcode are specifically omitted due to object's mutability
     @ToString
-    @RequiredArgsConstructor
     @FieldDefaults(level = AccessLevel.PROTECTED)
+    @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
     class Concurrent implements ShutdownHooks {
 
         @Nullable final Shutdownable parent;
@@ -237,7 +237,7 @@ public interface ShutdownHooks extends Shutdownable {
 
         @NonNull final AtomicReference<Plugin> bukkitPlugin = new AtomicReference<>();
 
-        public Concurrent() {
+        protected Concurrent() {
             this(null);
         }
 
@@ -246,7 +246,7 @@ public interface ShutdownHooks extends Shutdownable {
         }
 
         @Override
-        public ShutdownHooks add(@NonNull final Runnable hook) {
+        @NonNull public ShutdownHooks add(@NonNull final Runnable hook) {
             checkState();
 
             shutdownHooks.add(hook);
@@ -255,7 +255,7 @@ public interface ShutdownHooks extends Shutdownable {
         }
 
         @Override
-        public <T> ShutdownHooks add(@NonNull final Supplier<Runnable> hookSupplier) {
+        @NonNull public <T> ShutdownHooks add(@NonNull final Supplier<Runnable> hookSupplier) {
             checkState();
 
             shutdownHooks.add(hookSupplier.get());
@@ -274,7 +274,7 @@ public interface ShutdownHooks extends Shutdownable {
         }
 
         @Override
-        public ShutdownHooks remove(@NonNull final Runnable hook) {
+        @NonNull public ShutdownHooks remove(@NonNull final Runnable hook) {
             checkState();
 
             shutdownHooks.remove(hook);
@@ -283,7 +283,7 @@ public interface ShutdownHooks extends Shutdownable {
         }
 
         @Override
-        public ShutdownHooks registerBukkitShutdownHook(@NonNull final Plugin plugin) {
+        @NonNull public ShutdownHooks registerBukkitShutdownHook(@NonNull final Plugin plugin) {
             checkState();
 
             if (bukkitPlugin.compareAndSet(null, plugin)) BukkitPluginShutdownUtil.addShutdownHook(plugin, this);
@@ -296,7 +296,7 @@ public interface ShutdownHooks extends Shutdownable {
         }
 
         @Override
-        public ShutdownHooks unregisterBukkitShutdownHook() {
+        @NonNull public ShutdownHooks unregisterBukkitShutdownHook() {
             checkState();
 
             val plugin = bukkitPlugin.get();
