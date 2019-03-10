@@ -92,6 +92,8 @@ public class ProtocolBasedFakeEntityInteractionHandler<P extends Plugin, E exten
                 break;
             }
         }
+
+        event.setCancelled(true);
     }
 
     @Override
