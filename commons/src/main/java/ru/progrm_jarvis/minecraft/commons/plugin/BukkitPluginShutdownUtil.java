@@ -65,7 +65,8 @@ public class BukkitPluginShutdownUtil {
         public void onPluginDisable(final PluginDisableEvent event) {
             val handler = PLUGIN_SHUTDOWN_HANDLERS.get(event.getPlugin());
             if (handler != null) {
-                for (val shutdownable : handler.callbacks) shutdownable.shutdown();
+                val callbacks = new ArrayList<>(handler.callbacks);
+                for (val shutdownable : callbacks) shutdownable.shutdown();
                 handler.callbacks.clear();
             }
         }
