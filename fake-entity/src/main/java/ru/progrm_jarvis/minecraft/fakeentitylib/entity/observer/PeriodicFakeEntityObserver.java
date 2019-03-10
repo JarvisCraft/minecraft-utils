@@ -2,6 +2,9 @@ package ru.progrm_jarvis.minecraft.fakeentitylib.entity.observer;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.ObservableFakeEntity;
@@ -18,6 +21,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static ru.progrm_jarvis.minecraft.commons.event.FluentBukkitEvents.on;
 import static ru.progrm_jarvis.minecraft.commons.util.hack.PreSuperCheck.beforeSuper;
 
 @ToString
@@ -28,6 +32,7 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
     Set<RedrawEntitiesRunnable> tasks = new HashSet<>();
     Lock lock = new ReentrantLock();
 
+    boolean global;
     long interval;
     boolean async;
     int minEntitiesForNewThread;
@@ -37,7 +42,7 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
 
     @Builder
     public PeriodicFakeEntityObserver(@Nonnull final P plugin, final boolean concurrent,
-                                      final long interval, final boolean async,
+                                      boolean global, final long interval, final boolean async,
                                       final int minEntitiesForNewThread, final int maxThreads,
                                       @NonNull final Supplier<Set<E>> entitiesSetSupplier) {
         super(plugin, beforeSuper(concurrent,
@@ -46,6 +51,7 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
                 () -> checkArgument(maxThreads > 0, "maxThreads should be positive")
         ));
 
+        this.global = global;
         this.interval = interval;
         this.async = async;
         this.minEntitiesForNewThread = minEntitiesForNewThread;
@@ -61,6 +67,22 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
                 lock.unlock();
             }
         });
+
+        if (global) shutdownHooks
+                .add(on(PlayerJoinEvent.class)
+                        .plugin(plugin)
+                        .register(event -> addPlayer(event.getPlayer()))::shutdown)
+                .add(on(PlayerQuitEvent.class)
+                        .plugin(plugin)
+                        .register(event -> removePlayer(event.getPlayer()))::shutdown);
+    }
+
+    public void addPlayer(@NonNull final Player player) {
+        for (val entity : entities) entity.addPlayer(player);
+    }
+
+    public void removePlayer(@NonNull final Player player) {
+        for (val entity : entities) entity.removePlayer(player);
     }
 
     protected RedrawEntitiesRunnable getRedrawEntitiesRunnable() {
@@ -139,6 +161,7 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
         public void addEntity(final E entity) {
             lock.writeLock().lock();
             try {
+                if (global && entity.isGlobal()) entity.addOnlinePlayers();
                 entities.add(entity);
             } finally {
                 lock.writeLock().unlock();
