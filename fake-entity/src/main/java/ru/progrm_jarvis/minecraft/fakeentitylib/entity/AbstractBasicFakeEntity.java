@@ -167,7 +167,7 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
     @Override
     public void move(final double dx, final double dy, final double dz, final float dYaw, final float dPitch) {
         if (dx == 0 && dy == 0 && dz == 0) {
-            if (dYaw == 0 && dPitch == 0) {
+            if (dYaw != 0 || dPitch != 0) {
                 final float yaw = location.getYaw() + dYaw, pitch = location.getPitch() + dPitch;
 
                 performLook(yaw, pitch);
@@ -199,7 +199,7 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
                     performMoveLook(dx, dy, dz, dYaw, dPitch);
 
                     location.setYaw(location.getYaw() + dYaw);
-                    location.setPitch(location.getPitch());
+                    location.setPitch(location.getPitch() + dPitch);
                 }
 
                 location.setX(location.getX() + dx);
@@ -271,11 +271,10 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
 
                 location.setYaw(yaw);
                 location.setPitch(pitch);
-            }
-            else performMove(dx, dy, dz);
+            } else performMove(dx, dy, dz);
 
             location.setX(x);
-            location.setZ(y);
+            location.setY(y);
             location.setZ(z);
 
             velocity.setX(0);
