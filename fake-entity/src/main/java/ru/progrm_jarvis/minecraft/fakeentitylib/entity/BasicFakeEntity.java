@@ -30,16 +30,6 @@ public interface BasicFakeEntity extends ObservableFakeEntity {
     // Location
     ///////////////////////////////////////////////////////////////////////////
 
-    void teleport(double x, double y, double z, float yaw, float pitch);
-
-    default void teleport(final double x, final double y, final double z) {
-        teleport(x, y, z, 0, 0);
-    }
-
-    default void teleport(@NonNull final Location location) {
-        teleport(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-    }
-
     void move(double dx, double dy, double dz, float dYaw, float dPitch);
 
     default void move(final double dx, final double dy, final double dz) {
@@ -52,6 +42,26 @@ public interface BasicFakeEntity extends ObservableFakeEntity {
 
     default void move(@NonNull final Vector direction) {
         move(direction, 0, 0);
+    }
+
+    void moveTo(double x, double y, double z, float yaw, float pitch);
+
+    default void moveTo(final double x, final double y, final double z) {
+        moveTo(x, y, z, 0, 0);
+    }
+
+    default void moveTo(@NonNull final Location location) {
+        moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+    }
+
+    void teleport(double x, double y, double z, float yaw, float pitch);
+
+    default void teleport(final double x, final double y, final double z) {
+        teleport(x, y, z, 0, 0);
+    }
+
+    default void teleport(@NonNull final Location location) {
+        teleport(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
     }
 
     ///////////////////////////////////////////////////////////////////////////

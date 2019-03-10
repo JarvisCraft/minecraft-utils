@@ -103,6 +103,11 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     WrapperPlayServerRelEntityMove movePacket;
 
     /**
+     * Packet used for modifying entity's  head rotation
+     */
+    WrapperPlayServerEntityLook lookPacket;
+
+    /**
      * Packet used for moving this fake entity (not more than 8 blocks per axis) and modifying head rotation
      */
     WrapperPlayServerRelEntityMoveLook moveLookPacket;
@@ -210,15 +215,9 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
         spawnPacket.setYaw(location.getYaw() + yawOffset);
         spawnPacket.setHeadPitch(headPitch + headPitchDelta);
 
-        if (velocity != null) {
-            spawnPacket.setVelocityX(velocity.getX());
-            spawnPacket.setVelocityY(velocity.getY());
-            spawnPacket.setVelocityZ(velocity.getZ());
-        } else {
-            spawnPacket.setVelocityX(0);
-            spawnPacket.setVelocityY(0);
-            spawnPacket.setVelocityZ(0);
-        }
+        spawnPacket.setVelocityX(velocity.getX());
+        spawnPacket.setVelocityY(velocity.getY());
+        spawnPacket.setVelocityZ(velocity.getZ());
 
         if (metadata != null) spawnPacket.setMetadata(metadata);
     }
@@ -247,6 +246,11 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     // Movement
     ///////////////////////////////////////////////////////////////////////////
 
+    protected boolean isOnGround() {
+        // TODO: 09.03.2019 Consider specific blocks
+        return location.getY() % 1 == 0 && location.subtract(0, 1, 0).getBlock().getType().isSolid();
+    }
+
     protected boolean hasVelocity() {
         return velocity.length() != 0;
     }
@@ -267,78 +271,46 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
         velocityPacket.setVelocityZ(velocity.getZ());
     }
 
-    /**
-     * Performs the movement of this living fake entity by given deltas and yaw and pitch specified
-     * not performing any checks such as 8-block limit of deltas or angle minimization.
-     *
-     * @param dx delta on X-axis
-     * @param dy delta on Y-axis
-     * @param dz delta on Z-axis
-     * @param yaw new yaw
-     * @param pitch new pitch
-     */
     @Override
-    @SuppressWarnings("Duplicates")
-    protected void performMove(final double dx, final double dy, final double dz, final float yaw, final float pitch) {
+    protected void performMoveLook(final double dx, final double dy, final double dz,
+                                   final float yaw, final float pitch) {
         if (visible) {
-            if (pitch == 0 && yaw == 0) {
-                if (movePacket == null) {
-                    movePacket = new WrapperPlayServerRelEntityMove();
-                    movePacket.setEntityID(entityId);
-                }
-
-                movePacket.setDx(dx);
-                movePacket.setDy(dy);
-                movePacket.setDz(dz);
-
-                boolean hasVelocity = hasVelocity();
-                if (hasVelocity) actualizeVelocityPacket();
-
-                for (val entry : players.entrySet()) if (entry.getValue()) {
-                    val player = entry.getKey();
-
-                    if (hasVelocity) velocityPacket.sendPacket(player);
-                        movePacket.sendPacket(player);
-                }
-            } else {
-                if (moveLookPacket == null) {
-                    moveLookPacket = new WrapperPlayServerRelEntityMoveLook();
-                    moveLookPacket.setEntityID(entityId);
-                }
-
-                moveLookPacket.setDx(dx);
-                moveLookPacket.setDy(dy);
-                moveLookPacket.setDz(dz);
-                moveLookPacket.setYaw(yaw);
-                moveLookPacket.setPitch(pitch);
-
-                boolean hasVelocity = hasVelocity();
-                if (hasVelocity) actualizeVelocityPacket();
-
-                for (val entry : players.entrySet()) if (entry.getValue()) {
-                    val player = entry.getKey();
-
-                    if (hasVelocity) velocityPacket.sendPacket(player);
-                    moveLookPacket.sendPacket(player);
-                }
+            if (moveLookPacket == null) {
+                moveLookPacket = new WrapperPlayServerRelEntityMoveLook();
+                moveLookPacket.setEntityID(entityId);
             }
+
+            moveLookPacket.setDx(dx);
+            moveLookPacket.setDy(dy);
+            moveLookPacket.setDz(dz);
+            moveLookPacket.setYaw(yaw);
+            moveLookPacket.setPitch(pitch);
+            moveLookPacket.setOnGround(isOnGround());
+
+            for (val entry : players.entrySet()) if (entry.getValue()) moveLookPacket.sendPacket(entry.getKey());
         }
     }
 
-    /**
-     * Performs the teleportation of this living fake entity to given coordinates changing yaw and pitch
-     * not performing any checks such as using movement for less than 8-block deltas or angle minimization.
-     *
-     * @param x new location on X-axis
-     * @param y new location on Y-axis
-     * @param z new location on Z-axis
-     * @param yaw new yaw
-     * @param pitch new pitch
-     */
     @Override
-    @SuppressWarnings("Duplicates")
+    protected void performMove(final double dx, final double dy, final double dz) {
+        if (visible) {
+            if (movePacket == null) {
+                movePacket = new WrapperPlayServerRelEntityMove();
+                movePacket.setEntityID(entityId);
+            }
+
+            movePacket.setDx(dx);
+            movePacket.setDy(dy);
+            movePacket.setDz(dz);
+            movePacket.setOnGround(isOnGround());
+
+            for (val entry : players.entrySet()) if (entry.getValue()) movePacket.sendPacket(entry.getKey());
+        }
+    }
+
+    @Override
     protected void performTeleportation(final double x, final double y, final double z,
-                                        final float yaw, final float pitch) {
+                                        final float yaw, final float pitch, boolean sendVelocity) {
         if (visible) {
             if (teleportPacket == null) {
                 teleportPacket = new WrapperPlayServerEntityTeleport();
@@ -350,16 +322,33 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
             teleportPacket.setZ(z + zOffset);
             teleportPacket.setYaw(yaw + yawOffset);
             teleportPacket.setPitch(pitch + pitchOffset);
+            teleportPacket.setOnGround(isOnGround());
 
-            boolean hasVelocity = hasVelocity();
-            if (hasVelocity) actualizeVelocityPacket();
+            sendVelocity = sendVelocity && hasVelocity();
+            if (sendVelocity) actualizeVelocityPacket();
 
             for (val entry : players.entrySet()) if (entry.getValue()) {
                 val player = entry.getKey();
 
-                if (hasVelocity) velocityPacket.sendPacket(player);
+                if (sendVelocity) velocityPacket.sendPacket(player);
                 teleportPacket.sendPacket(player);
             }
+        }
+    }
+
+    @Override
+    protected void performLook(final float yaw, final float pitch) {
+        if (visible) {
+            if (lookPacket == null) {
+                lookPacket = new WrapperPlayServerEntityLook();
+                lookPacket.setEntityID(entityId);
+            }
+
+            lookPacket.setYaw(yaw);
+            lookPacket.setPitch(pitch);
+            lookPacket.setOnGround(isOnGround());
+
+            for (val entry : players.entrySet()) if (entry.getValue()) lookPacket.sendPacket(entry.getKey());
         }
     }
 
