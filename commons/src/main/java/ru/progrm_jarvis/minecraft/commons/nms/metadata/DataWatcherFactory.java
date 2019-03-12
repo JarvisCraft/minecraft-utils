@@ -22,6 +22,15 @@ public interface DataWatcherFactory {
     WrappedWatchableObject createWatchable(int id, Byte value);
 
     /**
+     * Creates watchable object for {@link Short} value at index specified.
+     *
+     * @param id id of a value
+     * @param value value
+     * @return created watchable object
+     */
+    WrappedWatchableObject createWatchable(int id, Short value);
+
+    /**
      * Creates watchable object for {@link Integer} value at index specified.
      *
      * @param id id of a value
@@ -226,6 +235,15 @@ public interface DataWatcherFactory {
          * @return this DataWatcher builder
          */
         DataWatcherModifier set(int id, Byte value);
+
+        /**
+         * Sets DataWatcher's modifier to specified {@link Short} value at specified index.
+         *
+         * @param id id of a value
+         * @param value value to set at id
+         * @return this DataWatcher builder
+         */
+        DataWatcherModifier set(int id, Short value);
 
         /**
          * Sets DataWatcher's modifier to specified {@link Integer} value at specified index.

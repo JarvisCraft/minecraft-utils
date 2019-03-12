@@ -16,6 +16,7 @@ public class StandardDataWatcherFactory implements DataWatcherFactory {
 
     protected static final WrappedDataWatcher.Serializer
             BYTE_SERIALIZER = Registry.get(Byte.class),
+            SHORT_SERIALIZER = Registry.get(Short.class),
             INTEGER_SERIALIZER = Registry.get(Integer.class),
             FLOAT_SERIALIZER = Registry.get(Float.class),
             STRING_SERIALIZER = Registry.get(String.class),
@@ -32,6 +33,10 @@ public class StandardDataWatcherFactory implements DataWatcherFactory {
 
     protected WrappedDataWatcher.WrappedDataWatcherObject watcherObjectByte(final int id) {
         return new WrappedDataWatcher.WrappedDataWatcherObject(id, BYTE_SERIALIZER);
+    }
+
+    protected WrappedDataWatcher.WrappedDataWatcherObject watcherObjectShort(final int id) {
+        return new WrappedDataWatcher.WrappedDataWatcherObject(id, SHORT_SERIALIZER);
     }
 
     protected WrappedDataWatcher.WrappedDataWatcherObject watcherObjectInteger(final int id) {
@@ -93,6 +98,11 @@ public class StandardDataWatcherFactory implements DataWatcherFactory {
     @Override
     public WrappedWatchableObject createWatchable(final int id, final Byte value) {
         return new WrappedWatchableObject(watcherObjectByte(id), value);
+    }
+
+    @Override
+    public WrappedWatchableObject createWatchable(final int id, final Short value) {
+        return new WrappedWatchableObject(watcherObjectShort(id), value);
     }
 
     @Override
@@ -193,6 +203,13 @@ public class StandardDataWatcherFactory implements DataWatcherFactory {
         @Override
         public DataWatcherModifier set(final int id, final Byte value) {
             dataWatcher.setObject(watcherObjectByte(id), value);
+
+            return this;
+        }
+
+        @Override
+        public DataWatcherFactory.DataWatcherModifier set(final int id, final Short value) {
+            dataWatcher.setObject(watcherObjectShort(id), value);
 
             return this;
         }

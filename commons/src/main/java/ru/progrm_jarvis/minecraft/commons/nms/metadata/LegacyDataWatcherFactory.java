@@ -31,6 +31,11 @@ public class LegacyDataWatcherFactory implements DataWatcherFactory {
     }
 
     @Override
+    public WrappedWatchableObject createWatchable(final int id, final Short value) {
+        return new WrappedWatchableObject(id, value);
+    }
+
+    @Override
     public WrappedWatchableObject createWatchable(final int id, final Integer value) {
         return new WrappedWatchableObject(id, value);
     }
@@ -122,6 +127,13 @@ public class LegacyDataWatcherFactory implements DataWatcherFactory {
 
         @Override
         public DataWatcherModifier set(final int id, final Byte value) {
+            dataWatcher.setObject(id, value);
+
+            return this;
+        }
+
+        @Override
+        public DataWatcherFactory.DataWatcherModifier set(final int id, final Short value) {
             dataWatcher.setObject(id, value);
 
             return this;
