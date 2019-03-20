@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class ToStringUtil {
 
     String FIELDS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME
-            = ToStringUtil.class.getTypeName().concat(".FIELDS_CACHE_CONCURRENCY_LEVEL");
+            = ToStringUtil.class.getCanonicalName().concat(".FIELDS_CACHE_CONCURRENCY_LEVEL");
 
     int FIELDS_CACHE_CONCURRENCY_LEVEL = Integer.parseInt(MoreObjects.firstNonNull(
             System.getProperty(FIELDS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME), "2")
@@ -36,7 +36,7 @@ public class ToStringUtil {
             .build();
 
     String METHODS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME
-            = ToStringUtil.class.getTypeName().concat(".METHODS_CACHE_CONCURRENCY_LEVEL");
+            = ToStringUtil.class.getCanonicalName().concat(".METHODS_CACHE_CONCURRENCY_LEVEL");
 
     int METHODS_CACHE_CONCURRENCY_LEVEL = Integer.parseInt(MoreObjects.firstNonNull(
             System.getProperty(METHODS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME), "2")
