@@ -3,6 +3,7 @@ package ru.progrm_jarvis.minecraft.commons.mapimage.display;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import lombok.NonNull;
+import lombok.Synchronized;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.bukkit.Bukkit;
@@ -10,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.map.MapView;
 import ru.progrm_jarvis.minecraft.commons.MinecraftCommons;
 import ru.progrm_jarvis.minecraft.commons.util.SystemPropertyUtil;
-import ru.progrm_jarvis.reflector.Reflector;
 import ru.progrm_jarvis.reflector.wrapper.MethodWrapper;
 import ru.progrm_jarvis.reflector.wrapper.fast.FastMethodWrapper;
 
@@ -18,11 +18,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static ru.progrm_jarvis.reflector.Reflector.getDeclaredMethod;
 
 /**
  * Utility responsible to allocate minimal amount of {@link MapView} for internal usage.
@@ -41,17 +44,38 @@ import java.util.stream.Collectors;
 public class PlayerMapManager {
 
     /**
-     * Single lock for all operations.
+     * Flag describing whether {@link int} or {@link short} map IDs are used by current server.
      */
-    private final Lock lock = new ReentrantLock();
+    private final boolean USE_INT_IDS;
 
     /**
      * Method wrapper for {@link MapView#getId()} because it returns
      * {@link short} and {@link int} on different Bukkit API versions.
      */
-    private final MethodWrapper<MapView, Number> MAP_VIEW__GET_ID__METHOD = FastMethodWrapper.from(
-            Reflector.getDeclaredMethod(MapView.class, "getId")
-    );
+    private final MethodWrapper<MapView, ? extends Number> MAP_VIEW__GET_ID__METHOD;
+
+    /**
+     * Method wrapper for {@link Bukkit#getMap(int)} because it consumes
+     * {@link short} and {@link int} on different Bukkit API versions.
+     */
+    @SuppressWarnings("deprecation")
+    private final MethodWrapper<Bukkit, MapView> BUKKIT__GET_MAP__METHOD;
+
+    static {
+        {
+            val method = getDeclaredMethod(MapView.class, "getId");
+            val parameterType = method.getParameterTypes()[0];
+            if (parameterType == int.class) USE_INT_IDS = true;
+            else if (parameterType == short.class) USE_INT_IDS = false;
+            else throw new IllegalStateException(
+                    "Unknown return type of MapView#getId() method (" + parameterType + ")"
+                );
+            MAP_VIEW__GET_ID__METHOD = FastMethodWrapper.from(method);
+        }
+        BUKKIT__GET_MAP__METHOD = FastMethodWrapper.from(
+                getDeclaredMethod(Bukkit.class, "getMap", USE_INT_IDS ? int.class : short.class)
+        );
+    }
 
     /**
      * Root directory of {@link PlayerMapManager} in which internal data is stored between sessions.
@@ -71,13 +95,13 @@ public class PlayerMapManager {
     /**
      * Maps allocated in Bukkit for internal usage.
      */
-    private final Set<MapView> allocatedMaps;
+    private final Set<MapView> ALLOCATED_MAPS;
 
     /**
-     * Maps of {@link #allocatedMaps} available for the player.
+     * Maps of {@link #ALLOCATED_MAPS} available for the player.
      * Similar maps may be related to different players as the image logic doesn't intersect.
      */
-    private final SetMultimap<Player, MapView> playerMaps;
+    private final SetMultimap<Player, MapView> PLAYER_MAPS;
 
     // static initialization of file-related stuff
     static {
@@ -98,14 +122,14 @@ public class PlayerMapManager {
                 );
             }
 
-            allocatedMaps = fileLines.stream()
+            ALLOCATED_MAPS = fileLines.stream()
                     .filter(line -> !line.isEmpty() && line.indexOf('#') != 0)
-                    .map(line -> Bukkit.getMap(Short.parseShort(line)))
+                    .map(line -> getMap(Integer.parseInt(line)))
                     .filter(Objects::nonNull)
                     .collect(Collectors.toSet()); // HashSet is used by default
 
             Bukkit.getLogger().info(
-                    "Loaded " + allocatedMaps.size() + " internally allocated world map IDs: "+ allocatedMaps.toString()
+                    "Loaded " + ALLOCATED_MAPS.size() + " internally allocated world map IDs: "+ ALLOCATED_MAPS.toString()
             );
         } else {
             try {
@@ -115,12 +139,12 @@ public class PlayerMapManager {
                         "Couldn't create file " + IDS_LIST_FILE.getName() + " of PlayerMapManager ", e
                 );
             }
-            allocatedMaps = new HashSet<>();
+            ALLOCATED_MAPS = new HashSet<>();
         }
 
         // use optimal key size for allocatedMap
-        playerMaps = HashMultimap.create(
-                Math.max(8, allocatedMaps.size()), Math.max(16, Bukkit.getOnlinePlayers().size())
+        PLAYER_MAPS = HashMultimap.create(
+                Math.max(8, ALLOCATED_MAPS.size()), Math.max(16, Bukkit.getOnlinePlayers().size())
         );
     }
 
@@ -130,8 +154,18 @@ public class PlayerMapManager {
      * @param mapView {@link MapView} whose {@link MapView#getId()} to invoke
      * @return map view's ID
      */
-    public Number getMapId(@NonNull final MapView mapView) {
-        return MAP_VIEW__GET_ID__METHOD.invoke(mapView);
+    public int getMapId(@NonNull final MapView mapView) {
+        return MAP_VIEW__GET_ID__METHOD.invoke(mapView).intValue();
+    }
+
+    /**
+     * Gets the {@link MapView} from the given ID independently on version.
+     *
+     * @param mapId id of the map to get
+     * @return a map view if it exists, or null otherwise
+     */
+    public MapView getMap(final int mapId) {
+        return BUKKIT__GET_MAP__METHOD.invokeStatic(USE_INT_IDS ? mapId : (short) mapId);
     }
 
     /**
@@ -141,36 +175,32 @@ public class PlayerMapManager {
      *
      * @apiNote should be called only in case of need
      */
+    @Synchronized
     private MapView allocateNewMap() {
-        lock.lock();
-        try {
-            final MapView map;
-            {
-                val worlds = Bukkit.getWorlds();
-                if (worlds.isEmpty()) throw new IllegalStateException("There are no Bukkit worlds available");
-                map = Bukkit.createMap(worlds.get(0));
-            }
-
-            try {
-                Files.write(
-                        IDS_LIST_FILE.toPath(),
-                        (getMapId(map).toString() + System.lineSeparator()).getBytes(),
-                        StandardOpenOption.APPEND
-                );
-            } catch (final IOException e) {
-                throw new RuntimeException(
-                        "Couldn't write newly allocated ID to " + IDS_LIST_FILE.getName() + " of PlayerMapManager", e
-                );
-            }
-
-            // clear renderers for map
-            for (val renderer : map.getRenderers()) map.removeRenderer(renderer);
-            allocatedMaps.add(map);
-
-            return map;
-        } finally {
-            lock.unlock();
+        final MapView map;
+        {
+            val worlds = Bukkit.getWorlds();
+            if (worlds.isEmpty()) throw new IllegalStateException("There are no Bukkit worlds available");
+            map = Bukkit.createMap(worlds.get(0));
         }
+
+        try {
+            Files.write(
+                    IDS_LIST_FILE.toPath(),
+                    (getMapId(map) + System.lineSeparator()).getBytes(),
+                    StandardOpenOption.APPEND
+            );
+        } catch (final IOException e) {
+            throw new RuntimeException(
+                    "Couldn't write newly allocated ID to " + IDS_LIST_FILE.getName() + " of PlayerMapManager", e
+            );
+        }
+
+        // clear renderers for map
+        for (val renderer : map.getRenderers()) map.removeRenderer(renderer);
+        ALLOCATED_MAPS.add(map);
+
+        return map;
     }
 
     /**
@@ -183,34 +213,30 @@ public class PlayerMapManager {
      *
      * @see #freeMap(Player, MapView) should be called whenever the player stops seeing this map or leaves the server
      */
+    @Synchronized
     public MapView allocateMap(@NonNull final Player player) {
-        lock.lock();
-        try {
-            val mapsOfPlayer = playerMaps.get(player);
+        val mapsOfPlayer = PLAYER_MAPS.get(player);
 
-            // if the player has all maps allocated of available than allocate another one (specially for him <3)
-            // this is a fast equivalent of iterating through each allocated map
-            // because only maps from allocatedMaps may be contained in mapsOfPlayers which is a Set
-            if (mapsOfPlayer.size() == allocatedMaps.size()) {
-                val map = allocateNewMap();
-                mapsOfPlayer.add(map);
+        // if the player has all maps allocated of available than allocate another one (specially for him <3)
+        // this is a fast equivalent of iterating through each allocated map
+        // because only maps from allocatedMaps may be contained in mapsOfPlayers which is a Set
+        if (mapsOfPlayer.size() == ALLOCATED_MAPS.size()) {
+            val map = allocateNewMap();
+            mapsOfPlayer.add(map);
 
-                return map;
-            }
-            //otherwise take one of the available maps for him
-            for (val map : allocatedMaps) if (!mapsOfPlayer.contains(map)) {
-                mapsOfPlayer.add(map);
-
-                return map;
-            }
-
-            // this should never be reached
-            throw new IllegalStateException(
-                    "Something went wrong, could not find any allocated map for the player although there should be one"
-            );
-        } finally {
-            lock.unlock();
+            return map;
         }
+        //otherwise take one of the available maps for him
+        for (val map : ALLOCATED_MAPS) if (!mapsOfPlayer.contains(map)) {
+            mapsOfPlayer.add(map);
+
+            return map;
+        }
+
+        // this should never be reached
+        throw new IllegalStateException(
+                "Something went wrong, could not find any allocated map for the player although there should be one"
+        );
     }
 
     /**
@@ -222,13 +248,9 @@ public class PlayerMapManager {
      *
      * @see #allocateMap(Player) only obtained by calling this method should be freed
      */
+    @Synchronized
     public void freeMap(@NonNull final Player player, @NonNull final MapView map) {
-        lock.lock();
-        try {
-            playerMaps.remove(player, map);
-            for (val renderer : map.getRenderers()) map.removeRenderer(renderer);
-        } finally {
-            lock.unlock();
-        }
+        PLAYER_MAPS.remove(player, map);
+        for (val renderer : map.getRenderers()) map.removeRenderer(renderer);
     }
 }

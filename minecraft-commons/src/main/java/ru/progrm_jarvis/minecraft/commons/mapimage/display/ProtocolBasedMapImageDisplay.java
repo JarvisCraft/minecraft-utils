@@ -54,7 +54,7 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
      */
     protected void sendFullImage(@NonNull final Player player) {
         new WrapperPlayServerMap() {{
-            setItemDamage(PlayerMapManager.getMapId(playerMaps.get(player)).intValue());
+            setItemDamage(PlayerMapManager.getMapId(playerMaps.get(player)));
             setScale(image.getDisplay());
             setColumns(image.getWidth());
             setRows(image.getHeight());
@@ -79,7 +79,7 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
         if (delta.isEmpty()) return;
 
         val packet = newDeltaPacket(delta);
-        packet.setItemDamage(PlayerMapManager.getMapId(playerMaps.get(player)).intValue());
+        packet.setItemDamage(PlayerMapManager.getMapId(playerMaps.get(player)));
 
         packet.sendPacket(player);
     }
@@ -90,7 +90,7 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
         val packet = newDeltaPacket(delta);
 
         for (val entry : playerMaps.entrySet()) {
-            packet.setItemDamage(PlayerMapManager.getMapId(entry.getValue()).intValue());
+            packet.setItemDamage(PlayerMapManager.getMapId(entry.getValue()));
             packet.sendPacket(entry.getKey());
         }
     }
