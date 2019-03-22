@@ -272,8 +272,9 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     }
 
     @Override
+    @SuppressWarnings("Duplicates")
     protected void performMoveLook(final double dx, final double dy, final double dz,
-                                   final float yaw, final float pitch) {
+                                   final float yaw, final float pitch, boolean sendVelocity) {
         if (visible) {
             if (moveLookPacket == null) {
                 moveLookPacket = new WrapperPlayServerRelEntityMoveLook();
@@ -287,12 +288,21 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
             moveLookPacket.setPitch(pitch);
             moveLookPacket.setOnGround(isOnGround());
 
-            for (val entry : players.entrySet()) if (entry.getValue()) moveLookPacket.sendPacket(entry.getKey());
+            sendVelocity = sendVelocity && hasVelocity();
+            if (sendVelocity) actualizeVelocityPacket();
+
+            for (val entry : players.entrySet()) if (entry.getValue()) {
+                val player = entry.getKey();
+
+                if (sendVelocity) velocityPacket.sendPacket(player);
+                moveLookPacket.sendPacket(player);
+            }
         }
     }
 
     @Override
-    protected void performMove(final double dx, final double dy, final double dz) {
+    @SuppressWarnings("Duplicates")
+    protected void performMove(final double dx, final double dy, final double dz, boolean sendVelocity) {
         if (visible) {
             if (movePacket == null) {
                 movePacket = new WrapperPlayServerRelEntityMove();
@@ -304,11 +314,20 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
             movePacket.setDz(dz);
             movePacket.setOnGround(isOnGround());
 
-            for (val entry : players.entrySet()) if (entry.getValue()) movePacket.sendPacket(entry.getKey());
+            sendVelocity = sendVelocity && hasVelocity();
+            if (sendVelocity) actualizeVelocityPacket();
+
+            for (val entry : players.entrySet()) if (entry.getValue()) {
+                val player = entry.getKey();
+
+                if (sendVelocity) velocityPacket.sendPacket(player);
+                movePacket.sendPacket(player);
+            }
         }
     }
 
     @Override
+    @SuppressWarnings("Duplicates")
     protected void performTeleportation(final double x, final double y, final double z,
                                         final float yaw, final float pitch, boolean sendVelocity) {
         if (visible) {

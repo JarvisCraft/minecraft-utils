@@ -130,8 +130,10 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
      * @param dz delta on Z-axis
      * @param yaw new yaw
      * @param pitch new pitch
+     * @param sendVelocity {@code true} if velocity should be considered and {@code false} otherwise
      */
-    protected abstract void performMoveLook(double dx, double dy, double dz, final float yaw, final float pitch);
+    protected abstract void performMoveLook(double dx, double dy, double dz,
+                                            float yaw, float pitch, boolean sendVelocity);
     /**
      * Performs the movement of this living fake entity by given deltas and yaw and pitch specified
      * not performing any checks such as 8-block limit of deltas.
@@ -139,8 +141,9 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
      * @param dx delta on X-axis
      * @param dy delta on Y-axis
      * @param dz delta on Z-axis
+     * @param sendVelocity {@code true} if velocity should be considered and {@code false} otherwise
      */
-    protected abstract void performMove(double dx, double dy, double dz);
+    protected abstract void performMove(double dx, double dy, double dz, boolean sendVelocity);
 
     /**
      * Performs the teleportation of this living fake entity to given coordinates changing yaw and pitch
@@ -194,9 +197,9 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
             }
             // otherwise use move
             else {
-                if (dYaw == 0 && dPitch == 0) performMove(dx, dy, dz);
+                if (dYaw == 0 && dPitch == 0) performMove(dx, dy, dz, true);
                 else {
-                    performMoveLook(dx, dy, dz, dYaw, dPitch);
+                    performMoveLook(dx, dy, dz, dYaw, dPitch, true);
 
                     location.setYaw(location.getYaw() + dYaw);
                     location.setPitch(location.getPitch() + dPitch);
@@ -230,13 +233,13 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
             velocity.setY(dy);
             velocity.setZ(dz);
 
-            if (dx > 8 || dy > 8 || dz > 8) performTeleportation(x, y, z, yaw, pitch, false);
+            if (dx > 8 || dy > 8 || dz > 8) performTeleportation(x, y, z, yaw, pitch, true);
             else if (yaw != location.getYaw() || pitch != location.getPitch()) {
-                performMoveLook(dx, dy, dz, yaw, pitch);
+                performMoveLook(dx, dy, dz, yaw, pitch, true);
 
                 location.setYaw(yaw);
                 location.setPitch(pitch);
-            } else performMove(dx, dy, dz);
+            } else performMove(dx, dy, dz, true);
 
             location.setX(x);
             location.setY(y);
@@ -267,11 +270,11 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
 
             if (dx > 8 || dy > 8 || dz > 8) performTeleportation(x, y, z, yaw, pitch, false);
             else if (yaw != location.getYaw() || pitch != location.getPitch()) {
-                performMoveLook(dx, dy, dz, yaw, pitch);
+                performMoveLook(dx, dy, dz, yaw, pitch, false);
 
                 location.setYaw(yaw);
                 location.setPitch(pitch);
-            } else performMove(dx, dy, dz);
+            } else performMove(dx, dy, dz, false);
 
             location.setX(x);
             location.setY(y);
@@ -281,5 +284,14 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
             velocity.setY(0);
             velocity.setZ(0);
         }
+    }
+
+    /**
+     * Performs the location synchronization so that the clients surely have the exact location of the entity.
+     */
+    public void syncLocation() {
+        performTeleportation(
+                location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch(), false
+        );
     }
 }
