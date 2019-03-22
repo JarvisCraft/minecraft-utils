@@ -11,14 +11,13 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.progrm_jarvis.minecraft.commons.util.ObjectUtil;
 import ru.progrm_jarvis.minecraft.commons.util.SystemPropertyUtil;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static ru.progrm_jarvis.minecraft.commons.util.ObjectUtil.mapOnlyNonNull;
 
 @UtilityClass
 public class PlayerUtil {
@@ -55,8 +54,8 @@ public class PlayerUtil {
 
     @SneakyThrows
     public static Optional<String> getPlayerName(@NonNull final UUID uuid) {
-        return Optional.ofNullable(
-                NAMES_CACHE.get(uuid, () -> mapOnlyNonNull(OfflinePlayer::getName, Bukkit.getOfflinePlayer(uuid)))
-        );
+        return Optional.ofNullable(NAMES_CACHE.get(
+                uuid, () -> ObjectUtil.mapOnlyNonNull(OfflinePlayer::getName, Bukkit.getOfflinePlayer(uuid))
+        ));
     }
 }
