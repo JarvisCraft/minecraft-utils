@@ -24,26 +24,21 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ToStringUtil {
 
-    String FIELDS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME
-            = ToStringUtil.class.getCanonicalName().concat(".FIELDS_CACHE_CONCURRENCY_LEVEL");
-
-    int FIELDS_CACHE_CONCURRENCY_LEVEL = Integer.parseInt(MoreObjects.firstNonNull(
-            System.getProperty(FIELDS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME), "2")
-    );
+    private String FIELDS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME
+            = ToStringUtil.class.getCanonicalName().concat(".FIELDS_CACHE_CONCURRENCY_LEVEL"),
+            METHODS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME
+                    = ToStringUtil.class.getCanonicalName().concat(".METHODS_CACHE_CONCURRENCY_LEVEL");
 
     private Cache<Class<?>, Map<String, FieldWrapper<Object, Object>>> FIELDS_CACHE = CacheBuilder.newBuilder()
-            .concurrencyLevel(FIELDS_CACHE_CONCURRENCY_LEVEL)
+            .concurrencyLevel(Integer.parseInt(MoreObjects.firstNonNull(
+                    System.getProperty(FIELDS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME), "2")
+            ))
             .build();
 
-    String METHODS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME
-            = ToStringUtil.class.getCanonicalName().concat(".METHODS_CACHE_CONCURRENCY_LEVEL");
-
-    int METHODS_CACHE_CONCURRENCY_LEVEL = Integer.parseInt(MoreObjects.firstNonNull(
-            System.getProperty(METHODS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME), "2")
-    );
-
     private Cache<Class<?>, Map<String, MethodWrapper<Object, Object>>> METHODS_CACHE = CacheBuilder.newBuilder()
-            .concurrencyLevel(METHODS_CACHE_CONCURRENCY_LEVEL)
+            .concurrencyLevel(Integer.parseInt(MoreObjects.firstNonNull(
+                    System.getProperty(METHODS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME), "2")
+            ))
             .build();
 
     @SneakyThrows
