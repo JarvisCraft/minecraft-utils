@@ -12,9 +12,9 @@
     <version>0.1.0-SNAPSHOT</version>
     <modules>
         <module>mc-unit</module>
-        <module>commons</module>
-        <module>config</module>
-        <module>fake-entity</module>
+        <module>minecraft-commons</module>
+        <module>ez-config</module>
+        <module>fake-entity-lib</module>
         <module>lib-loader</module>
     </modules>
     <packaging>pom</packaging>
