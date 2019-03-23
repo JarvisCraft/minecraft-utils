@@ -46,7 +46,7 @@ public class ChunkUtil {
      *
      * @throws IllegalArgumentException if any of coordinates is out of allowed range
      */
-    public static void rangeCheckChunkLocal(final int x, final int y, final int z) {
+    public void rangeCheckChunkLocal(final int x, final int y, final int z) {
         rangeCheckChunkLocalX(x);
         rangeCheckChunkLocalY(y);
         rangeCheckChunkLocalX(z);
@@ -58,7 +58,7 @@ public class ChunkUtil {
      * @param x chunk-local X-coordinate which should normally be between 0 and 15
      * @throws IllegalArgumentException if {@code x} is not in range between 0 and 15
      */
-    public static void rangeCheckChunkLocalX(final int x) {
+    public void rangeCheckChunkLocalX(final int x) {
         checkArgument(x >= 0 && x <= 15, "x should be between 0 and 15");
     }
 
@@ -68,7 +68,7 @@ public class ChunkUtil {
      * @param y chunk-local Y-coordinate which should normally be between 0 and 255
      * @throws IllegalArgumentException if {@code y} is not in range between 0 and 255
      */
-    public static void rangeCheckChunkLocalY(final int y) {
+    public void rangeCheckChunkLocalY(final int y) {
         checkArgument(y >= 0 && y <= 255, "z should be between 0 and 255");
     }
 
@@ -78,7 +78,7 @@ public class ChunkUtil {
      * @param z chunk-local Z-coordinate which should normally be between 0 and 15
      * @throws IllegalArgumentException if {@code z} is not in range between 0 and 15
      */
-    public static void rangeCheckChunkLocalZ(final int z) {
+    public void rangeCheckChunkLocalZ(final int z) {
         checkArgument(z >= 0 && z <= 15, "z should be between 0 and 15");
     }
 
