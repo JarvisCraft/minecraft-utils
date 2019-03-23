@@ -23,14 +23,14 @@ import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@ToString
+@ToString(onlyExplicitlyIncluded = true)
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class ProtocolBasedFakeEntityInteractionHandler<P extends Plugin, E extends InteractableFakeEntity>
         extends PacketAdapter implements FakeEntityInteractionHandler<P, E> {
 
     @NonNull final ProtocolManager protocolManager;
 
-    @NonNull P plugin;
+    @NonNull @ToString.Include P plugin;
     @NonNull Set<E> entities;
     @NonNull Set<E> entitiesView;
 
