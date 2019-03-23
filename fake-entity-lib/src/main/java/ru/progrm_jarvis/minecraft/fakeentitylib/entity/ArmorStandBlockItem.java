@@ -153,8 +153,9 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param rotation new rotation of this block
      */
     public void setRotation(@NonNull final Vector3F rotation) {
-        addMetadata(headRotation(rotation));
+        if (rotation.equals(this.rotation)) return;
 
+        addMetadata(headRotation(rotation));
         this.rotation = rotation;
     }
 
