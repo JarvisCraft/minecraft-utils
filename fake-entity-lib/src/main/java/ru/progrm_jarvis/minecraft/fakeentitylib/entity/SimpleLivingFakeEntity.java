@@ -247,8 +247,9 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     ///////////////////////////////////////////////////////////////////////////
 
     protected boolean isOnGround() {
-        // TODO: 09.03.2019 Consider specific blocks
-        return location.getY() % 1 == 0 && location.subtract(0, 1, 0).getBlock().getType().isSolid();
+        //noinspection ConstantConditions #getWorld() may but shouldn't retuen null
+        return location.getY() % 1 == 0 && location.getWorld()
+                .getBlockAt(location.getBlockX(), location.getBlockY() - 1, location.getBlockZ()).getType().isSolid();
     }
 
     protected boolean hasVelocity() {
