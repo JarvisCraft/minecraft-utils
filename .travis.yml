@@ -8,9 +8,9 @@ install:
 - mkdir ___locally_built_maven_artifacts___
 - cd ___locally_built_maven_artifacts___/
 - git clone --single-branch --branch legacy-support https://github.com/JarvisCraft/PacketWrapper.git
-- cd PacketWrapper
+- cd PacketWrapper/PacketWrapper/
 - mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-- cd ../../
+- cd ../../../
 # Normal build part
 - mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 # Test project
