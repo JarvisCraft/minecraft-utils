@@ -3,7 +3,16 @@ language: java
 
 ### Maven basic build ###
 # Build project, installing to local repo (skip testing and javadoc generation (if those exist))
-install: mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+install:
+# Temporarily:
+- mkdir ___locally_built_maven_artifacts___
+- cd ___locally_built_maven_artifacts___/
+- git clone --single-branch --branch legacy-support https://github.com/JarvisCraft/PacketWrapper.git
+- cd PacketWrapper
+- mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+- cd ../../
+# Normal build part
+- mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 # Test project
 script: mvn test -B -V
 
