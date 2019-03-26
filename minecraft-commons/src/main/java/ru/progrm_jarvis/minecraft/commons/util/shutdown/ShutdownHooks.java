@@ -189,7 +189,7 @@ public interface ShutdownHooks extends Shutdownable {
 
                 return this;
             } else {
-                BukkitPluginShutdownUtil.removeShutdownHooks(bukkitPlugin, this);
+                BukkitPluginShutdownUtil.removeShutdownHook(bukkitPlugin, this);
                 BukkitPluginShutdownUtil.addShutdownHook(plugin, this);
             }
 
@@ -201,7 +201,7 @@ public interface ShutdownHooks extends Shutdownable {
             checkState();
 
             if (bukkitPlugin != null) {
-                BukkitPluginShutdownUtil.removeShutdownHooks(bukkitPlugin, this);
+                BukkitPluginShutdownUtil.removeShutdownHook(bukkitPlugin, this);
                 bukkitPlugin = null;
             }
 
@@ -215,7 +215,7 @@ public interface ShutdownHooks extends Shutdownable {
             shutDown = true;
 
             if (bukkitPlugin != null) {
-                BukkitPluginShutdownUtil.removeShutdownHooks(bukkitPlugin, this);
+                BukkitPluginShutdownUtil.removeShutdownHook(bukkitPlugin, this);
                 bukkitPlugin = null;
             }
 
@@ -288,7 +288,7 @@ public interface ShutdownHooks extends Shutdownable {
 
             if (bukkitPlugin.compareAndSet(null, plugin)) BukkitPluginShutdownUtil.addShutdownHook(plugin, this);
             else {
-                BukkitPluginShutdownUtil.removeShutdownHooks(bukkitPlugin.get(), this);
+                BukkitPluginShutdownUtil.removeShutdownHook(bukkitPlugin.get(), this);
                 BukkitPluginShutdownUtil.addShutdownHook(plugin, this);
             }
 
@@ -301,7 +301,7 @@ public interface ShutdownHooks extends Shutdownable {
 
             val plugin = bukkitPlugin.get();
             if (plugin != null) {
-                BukkitPluginShutdownUtil.removeShutdownHooks(plugin, this);
+                BukkitPluginShutdownUtil.removeShutdownHook(plugin, this);
                 bukkitPlugin.compareAndSet(plugin, null);
             }
 
@@ -314,7 +314,7 @@ public interface ShutdownHooks extends Shutdownable {
                 {
                     val plugin = bukkitPlugin.get();
                     if (plugin != null) {
-                        BukkitPluginShutdownUtil.removeShutdownHooks(plugin, this);
+                        BukkitPluginShutdownUtil.removeShutdownHook(plugin, this);
                         bukkitPlugin.set(null);
                     }
                 }
