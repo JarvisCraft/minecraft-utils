@@ -9,8 +9,11 @@ import org.bukkit.util.Vector;
  */
 public interface Figure3D {
 
+    /**
+     * A singleton pseudo-figure not containing any possible points of a 3D-space.
+     */
     Figure3D EMPTY = new Figure3D() {
-        //<editor-fold desc="Empty figure singleton class" defaultstate="collapsed">
+        //<editor-fold desc="Empty pseudo-figure singleton class" defaultstate="collapsed">
 
         @Override
         public double getMinX() {
@@ -55,6 +58,59 @@ public interface Figure3D {
         @Override
         public boolean contains(final @NonNull Location point) {
             return false;
+        }
+        //</editor-fold>
+    };
+
+    /**
+     * A singleton pseudo-figure containing all possible points of a 3D-space.
+     */
+    Figure3D WHOLE = new Figure3D() {
+        //<editor-fold desc="Whole pseudo-figure singleton class" defaultstate="collapsed">
+
+        @Override
+        public double getMinX() {
+            return Double.NEGATIVE_INFINITY;
+        }
+
+        @Override
+        public double getMaxX() {
+            return Double.POSITIVE_INFINITY;
+        }
+
+        @Override
+        public double getMinY() {
+            return Double.NEGATIVE_INFINITY;
+        }
+
+        @Override
+        public double getMaxY() {
+            return Double.POSITIVE_INFINITY;
+        }
+
+        @Override
+        public double getMinZ() {
+            return Double.NEGATIVE_INFINITY;
+        }
+
+        @Override
+        public double getMaxZ() {
+            return Double.POSITIVE_INFINITY;
+        }
+
+        @Override
+        public boolean contains(final double x, final double y, final double z) {
+            return true;
+        }
+
+        @Override
+        public boolean contains(final @NonNull Vector point) {
+            return true;
+        }
+
+        @Override
+        public boolean contains(final @NonNull Location point) {
+            return true;
         }
         //</editor-fold>
     };
