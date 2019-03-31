@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import ru.progrm_jarvis.minecraft.commons.math.dimensional.CuboidFigure;
 import ru.progrm_jarvis.minecraft.commons.nms.NmsUtil;
 import ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator;
 import ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand;
@@ -82,6 +83,10 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
         equipmentPacket.setItem(this.item = item);
 
         // actual block-item position (head of armorstand) is one block higher than its coordinate so normalize it
+        {
+            final double x = location.getX(), y = location.getY(), z = location.getZ();
+            hitbox = new CuboidFigure(0.25, 0.25, 0.25);
+        }
         yOffset = -1;
     }
 

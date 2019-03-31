@@ -5,6 +5,7 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
+import ru.progrm_jarvis.minecraft.commons.math.dimensional.Figure3D;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -27,8 +28,10 @@ public interface BasicFakeEntity extends ObservableFakeEntity {
     void despawn();
 
     ///////////////////////////////////////////////////////////////////////////
-    // Location
+    // Dimensional
     ///////////////////////////////////////////////////////////////////////////
+
+    Figure3D getHitbox();
 
     void move(double dx, double dy, double dz, float dYaw, float dPitch);
 

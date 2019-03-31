@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import ru.progrm_jarvis.minecraft.commons.math.dimensional.Figure3D;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -27,6 +28,8 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
      * Velocity of this fake entity
      */
     @NonNull Vector velocity;
+
+    @NonNull @Getter Figure3D hitbox;
 
     public AbstractBasicFakeEntity(final boolean global, final int viewDistance,
                                    @NonNull final Location location,
