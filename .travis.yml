@@ -18,9 +18,6 @@ jobs:
     - stage: test
       jdk: oraclejdk8
       script: mvn -q verify
-    - stage: test
-      jdk: oraclejdk11
-      script: mvn -q verify
 
       # 2. Deploy
     - stage: deploy
@@ -30,7 +27,6 @@ jobs:
       - chmod +x ./project-version.sh
       - chmod +x ./.travis/perform-deploy.sh
       - ./deploy.sh
-#    mvn test -B -V
 
 # Cached directories
 cache:
