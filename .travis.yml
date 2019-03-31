@@ -21,6 +21,7 @@ jobs:
 
       # 2. Deploy
     - stage: deploy
+      if: repo = JarvisCraft/minecraft-utils AND type != pull_request
       jdk: openjdk8
       script:
       - chmod +x ./deploy.sh
