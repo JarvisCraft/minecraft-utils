@@ -5,7 +5,7 @@ language: java
 # Build project, installing to local repo (skip testing and javadoc generation (if those exist))
 install:
 # Give required permissions to used shell scripts
-- chmod +x ./.travis/perform-deploy.sh
+- chmod +x ./install-git-dependencies.sh
 - ./install-git-dependencies.sh
 # Normal build part
 - mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
@@ -26,9 +26,9 @@ jobs:
     - stage: deploy
       jdk: openjdk8
       script:
-      - chmod +x ./install-git-dependencies.sh
       - chmod +x ./deploy.sh
       - chmod +x ./project-version.sh
+      - chmod +x ./.travis/perform-deploy.sh
       - ./deploy.sh
 #    mvn test -B -V
 
