@@ -13,6 +13,9 @@ jobs:
   # Test project against multiple JDK versions and then deploy
   include:
     - stage: test
+      jdk: oraclejdk11
+      script: mvn -q verify
+    - stage: test
       jdk: openjdk8
       script: mvn -q verify
     - stage: test
