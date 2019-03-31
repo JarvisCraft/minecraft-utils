@@ -5,12 +5,8 @@ language: java
 # Build project, installing to local repo (skip testing and javadoc generation (if those exist))
 install:
 # Temporarily:
-- mkdir ___locally_built_maven_artifacts___
-- cd ___locally_built_maven_artifacts___/
-- git clone --single-branch --branch legacy-support https://github.com/JarvisCraft/PacketWrapper.git
-- cd PacketWrapper/PacketWrapper/
-- mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-- cd ../../../
+- chmod +x ./install-git-dependencies.sh
+- ./install-git-dependencies.sh
 # Normal build part
 - mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 # Test project
