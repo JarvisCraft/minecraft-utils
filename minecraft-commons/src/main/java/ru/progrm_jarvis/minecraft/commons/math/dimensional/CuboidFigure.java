@@ -1,9 +1,6 @@
 package ru.progrm_jarvis.minecraft.commons.math.dimensional;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Value;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.bukkit.Location;
@@ -17,6 +14,37 @@ import org.bukkit.util.Vector;
 @NonFinal public class CuboidFigure implements Figure3D {
 
     @Getter double minX, minY, minZ, maxX, maxY, maxZ;
+
+    public CuboidFigure(final double x1, final double y1, final double z1,
+                        final double x2, final double y2, final double z2) {
+        if (x1 < x2) {
+            minX = x1;
+            maxX = x2;
+        } else {
+            minX = x2;
+            maxX = x1;
+        }
+
+        if (y1 < y2) {
+            minY = y1;
+            maxY = y2;
+        } else {
+            minY = y2;
+            maxY = y1;
+        }
+
+        if (z1 < z2) {
+            minZ = z1;
+            maxZ = z2;
+        } else {
+            minZ = z2;
+            maxZ = z1;
+        }
+    }
+
+    public CuboidFigure(final double x, final double y, final double z) {
+        this(0, 0, 0, x, y, z);
+    }
 
     @Override
     public boolean contains(final double x, final double y, final double z) {
