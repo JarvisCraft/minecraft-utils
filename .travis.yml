@@ -4,24 +4,35 @@ language: java
 ### Maven basic build ###
 # Build project, installing to local repo (skip testing and javadoc generation (if those exist))
 install:
-# Temporarily:
-- chmod +x ./install-git-dependencies.sh
+# Give required permissions to used shell scripts
+- chmod +x ./.travis/perform-deploy.sh
 - ./install-git-dependencies.sh
 # Normal build part
 - mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-# Test project
-script: mvn test -B -V
+jobs:
+  # Test project against multiple JDK versions and then deploy
+  include:
+    - stage: test
+      jdk: openjdk8
+      script: mvn -q verify
+    - stage: test
+      jdk: oraclejdk8
+      script: mvn -q verify
+    - stage: test
+      jdk: oraclejdk11
+      script: mvn -q verify
+
+      # 2. Deploy
+    - stage: deploy
+      jdk: openjdk8
+      script:
+      - chmod +x ./install-git-dependencies.sh
+      - chmod +x ./deploy.sh
+      - chmod +x ./project-version.sh
+      - ./deploy.sh
+#    mvn test -B -V
 
 # Cached directories
 cache:
   directories:
   - ~/.m2/repository
-
-# After success scripts
-after_success:
-# Give required permissions to used shell scripts
-- chmod +x ./deploy.sh
-- chmod +x ./project-version.sh
-- chmod +x ./.travis/deploy.sh
-# Deploy to OSSRH repository if possible
-- ./deploy.sh
