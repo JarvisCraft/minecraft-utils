@@ -633,7 +633,7 @@ public class MetadataGenerator {
         @Deprecated
         public static WrappedWatchableObject owner(final String ownerName) {
             if (VERSION >= 9) return FACTORY.createWatchableOptionalUUID(
-                    14, Optional.ofNullable(Bukkit.getOfflinePlayer(ownerName).getUniqueId())
+                    14, Optional.of(Bukkit.getOfflinePlayer(ownerName).getUniqueId())
             );
             return FACTORY.createWatchable(21, ownerName);
         }
