@@ -32,6 +32,11 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
 
     @NonNull @Getter Figure3D hitbox;
 
+    /**
+     * Whether optimized packets should use for moving the entity or not
+     */
+    boolean compactMoving;
+
     public AbstractBasicFakeEntity(final boolean global, final int viewDistance,
                                    @NonNull final Location location,
                                    @NonNull final Map<Player, Boolean> players,
@@ -175,120 +180,225 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
 
     @Override
     public void move(final double dx, final double dy, final double dz, final float dYaw, final float dPitch) {
-        if (dx == 0 && dy == 0 && dz == 0) {
-            if (dYaw != 0 || dPitch != 0) {
-                final float yaw = location.getYaw() + dYaw, pitch = location.getPitch() + dPitch;
+        if (compactMoving) {
+            if (dx == 0 && dy == 0 && dz == 0) {
+                if (dYaw != 0 || dPitch != 0) {
+                    final float yaw = location.getYaw() + dYaw, pitch = location.getPitch() + dPitch;
 
-                performLook(yaw, pitch);
+                    performLook(yaw, pitch);
 
-                location.setYaw(yaw);
-                location.setPitch(pitch);
-            }
-        } else {
-            velocity.setX(dx);
-            velocity.setY(dy);
-            velocity.setZ(dz);
-            // use teleportation if any of axises is above 8 blocks limit
-            if (dx > 8 || dy > 8 || dz > 8) {
-                final double x = location.getX() + dx, y = location.getY() + dy, z = location.getZ() + dz;
-                final float yaw = location.getYaw() + dYaw, pitch = location.getPitch() + dPitch;
+                    location.setYaw(yaw);
+                    location.setPitch(pitch);
+                }
+            } else {
+                velocity.setX(dx);
+                velocity.setY(dy);
+                velocity.setZ(dz);
+                // use teleportation if any of axises is above 8 blocks limit
+                if (dx > 8 || dy > 8 || dz > 8) {
+                    final double x = location.getX() + dx, y = location.getY() + dy, z = location.getZ() + dz;
+                    final float yaw = location.getYaw() + dYaw, pitch = location.getPitch() + dPitch;
 
-                performTeleportation(x, y, z, pitch, yaw, true);
+                    performTeleportation(x, y, z, pitch, yaw, true);
 
-                location.setX(x);
-                location.setY(y);
-                location.setZ(z);
-                location.setYaw(yaw);
-                location.setPitch(pitch);
-            }
-            // otherwise use move
-            else {
-                if (dYaw == 0 && dPitch == 0) performMove(dx, dy, dz, true);
+                    location.setX(x);
+                    location.setY(y);
+                    location.setZ(z);
+                    location.setYaw(yaw);
+                    location.setPitch(pitch);
+                }
+                // otherwise use move
                 else {
-                    performMoveLook(dx, dy, dz, dYaw, dPitch, true);
+                    if (dYaw == 0 && dPitch == 0) performMove(dx, dy, dz, true);
+                    else {
+                        performMoveLook(dx, dy, dz, dYaw, dPitch, true);
 
-                    location.setYaw(location.getYaw() + dYaw);
-                    location.setPitch(location.getPitch() + dPitch);
+                        location.setYaw(location.getYaw() + dYaw);
+                        location.setPitch(location.getPitch() + dPitch);
+                    }
+
+                    location.setX(location.getX() + dx);
+                    location.setY(location.getY() + dy);
+                    location.setZ(location.getZ() + dz);
                 }
 
-                location.setX(location.getX() + dx);
-                location.setY(location.getY() + dy);
-                location.setZ(location.getZ() + dz);
+                velocity.setX(0);
+                velocity.setY(0);
+                velocity.setZ(0);
+            }
+        } else {
+            var changeLocation = false;
+            double x = Double.NaN;
+            if (dx != 0) {
+                changeLocation = true;
+
+                location.setX(x = (location.getX() + dx));
+            }
+            double y = Double.NaN;
+            if (dy != 0) {
+                changeLocation = true;
+
+                location.setY(y = (location.getY() + dy));
+            }
+            double z = Double.NaN;
+            if (dz != 0) {
+                changeLocation = true;
+
+                location.setZ(z = (location.getZ() + dz));
             }
 
-            velocity.setX(0);
-            velocity.setY(0);
-            velocity.setZ(0);
+            var changeLook = false;
+            float yaw = Float.NaN;
+            if (dYaw != 0) {
+                changeLook = true;
+
+                location.setYaw(yaw = (location.getYaw() + dYaw));
+            }
+            float pitch = Float.NaN;
+            if (dPitch != 0) {
+                changeLook = true;
+
+                location.setPitch(pitch = (location.getPitch() + dPitch));
+            }
+
+            if (changeLocation) performTeleportation(x, y, z, yaw, pitch, false);
+            else if (changeLook) performLook(yaw, pitch);
         }
     }
 
     @Override
     @SuppressWarnings("Duplicates")
     public void moveTo(final double x, final double y, final double z, final float yaw, final float pitch) {
-        final double dx = x - location.getX(), dy = y - location.getY(), dz = z - location.getZ();
+        if (compactMoving) {
+            final double dx = x - location.getX(), dy = y - location.getY(), dz = z - location.getZ();
 
-        if (dx == 0 && dy == 0 && dz == 0) {
-            if (yaw != location.getYaw() || pitch != location.getPitch()) {
-                performLook(yaw, pitch);
+            if (dx == 0 && dy == 0 && dz == 0) {
+                if (yaw != location.getYaw() || pitch != location.getPitch()) {
+                    performLook(yaw, pitch);
 
-                location.setYaw(yaw);
-                location.setPitch(pitch);
+                    location.setYaw(yaw);
+                    location.setPitch(pitch);
+                }
+            } else {
+                velocity.setX(dx);
+                velocity.setY(dy);
+                velocity.setZ(dz);
+
+                if (dx > 8 || dy > 8 || dz > 8) performTeleportation(x, y, z, yaw, pitch, true);
+                else if (yaw != location.getYaw() || pitch != location.getPitch()) {
+                    performMoveLook(dx, dy, dz, yaw, pitch, true);
+
+                    location.setYaw(yaw);
+                    location.setPitch(pitch);
+                } else performMove(dx, dy, dz, true);
+
+                location.setX(x);
+                location.setY(y);
+                location.setZ(z);
+
+                velocity.setX(0);
+                velocity.setY(0);
+                velocity.setZ(0);
             }
         } else {
-            velocity.setX(dx);
-            velocity.setY(dy);
-            velocity.setZ(dz);
+            var changeLocation = false;
+            if (x != location.getX()) {
+                changeLocation = true;
 
-            if (dx > 8 || dy > 8 || dz > 8) performTeleportation(x, y, z, yaw, pitch, true);
-            else if (yaw != location.getYaw() || pitch != location.getPitch()) {
-                performMoveLook(dx, dy, dz, yaw, pitch, true);
+                location.setX(x);
+            }
+            if (y != location.getY()) {
+                changeLocation = true;
+
+                location.setY(y);
+            }
+            if (z != location.getZ()) {
+                changeLocation = true;
+
+                location.setZ(z);
+            }
+            var changeLook = false;
+            if (yaw != location.getYaw()) {
+                changeLook = true;
 
                 location.setYaw(yaw);
+            }
+            if (pitch != location.getPitch()) {
+                changeLook = true;
+
                 location.setPitch(pitch);
-            } else performMove(dx, dy, dz, true);
+            }
 
-            location.setX(x);
-            location.setY(y);
-            location.setZ(z);
-
-            velocity.setX(0);
-            velocity.setY(0);
-            velocity.setZ(0);
+            if (changeLocation) performTeleportation(x, y, z, yaw, pitch, false);
+            else if (changeLook) performLook(yaw, pitch);
         }
     }
 
     @Override
     @SuppressWarnings("Duplicates")
     public void teleport(final double x, final double y, final double z, final float yaw, final float pitch) {
-        final double dx = x - location.getX(), dy = y - location.getY(), dz = z - location.getZ();
+        if (compactMoving) {
+            final double dx = x - location.getX(), dy = y - location.getY(), dz = z - location.getZ();
 
-        if (dx == 0 && dy == 0 && dz == 0) {
-            if (yaw != location.getYaw() || pitch != location.getPitch()) {
-                performLook(yaw, pitch);
+            if (dx == 0 && dy == 0 && dz == 0) {
+                if (yaw != location.getYaw() || pitch != location.getPitch()) {
+                    performLook(yaw, pitch);
 
-                location.setYaw(yaw);
-                location.setPitch(pitch);
+                    location.setYaw(yaw);
+                    location.setPitch(pitch);
+                }
+            } else {
+                velocity.setX(dx);
+                velocity.setY(dy);
+                velocity.setZ(dz);
+
+                if (dx > 8 || dy > 8 || dz > 8) performTeleportation(x, y, z, yaw, pitch, false);
+                else if (yaw != location.getYaw() || pitch != location.getPitch()) {
+                    performMoveLook(dx, dy, dz, yaw, pitch, false);
+
+                    location.setYaw(yaw);
+                    location.setPitch(pitch);
+                } else performMove(dx, dy, dz, false);
+
+                location.setX(x);
+                location.setY(y);
+                location.setZ(z);
+
+                velocity.setX(0);
+                velocity.setY(0);
+                velocity.setZ(0);
             }
         } else {
-            velocity.setX(dx);
-            velocity.setY(dy);
-            velocity.setZ(dz);
+            var changeLocation = false;
+            if (x != location.getX()) {
+                changeLocation = true;
 
-            if (dx > 8 || dy > 8 || dz > 8) performTeleportation(x, y, z, yaw, pitch, false);
-            else if (yaw != location.getYaw() || pitch != location.getPitch()) {
-                performMoveLook(dx, dy, dz, yaw, pitch, false);
+                location.setX(x);
+            }
+            if (y != location.getY()) {
+                changeLocation = true;
+
+                location.setY(y);
+            }
+            if (z != location.getZ()) {
+                changeLocation = true;
+
+                location.setZ(z);
+            }
+            var changeLook = false;
+            if (yaw != location.getYaw()) {
+                changeLook = true;
 
                 location.setYaw(yaw);
+            }
+            if (pitch != location.getPitch()) {
+                changeLook = true;
+
                 location.setPitch(pitch);
-            } else performMove(dx, dy, dz, false);
+            }
 
-            location.setX(x);
-            location.setY(y);
-            location.setZ(z);
-
-            velocity.setX(0);
-            velocity.setY(0);
-            velocity.setZ(0);
+            if (changeLocation) performTeleportation(x, y, z, yaw, pitch, false);
+            else if (changeLook) performLook(yaw, pitch);
         }
     }
 
