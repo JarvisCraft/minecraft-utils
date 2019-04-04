@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import ru.progrm_jarvis.minecraft.commons.math.dimensional.Figure3D;
+import ru.progrm_jarvis.minecraft.commons.math.dimensional.PointFigure;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -39,6 +40,8 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
 
         this.velocity = velocity == null ? new Vector() : velocity;
         this.metadata = metadata;
+
+        hitbox = PointFigure.from(location);
     }
 
     ///////////////////////////////////////////////////////////////////////////
