@@ -210,7 +210,7 @@ public interface ShutdownHooks extends Shutdownable {
 
         @Override
         public void shutdown() {
-            checkState();
+            if (shutDown) return;
 
             shutDown = true;
 
@@ -322,7 +322,7 @@ public interface ShutdownHooks extends Shutdownable {
                 for (val shutdownHook : shutdownHooks) shutdownHook.run();
 
                 shutdownHooks.clear();
-            } else throw new ObjectAlreadyShutDownException(parent);
+            }
         }
 
         @Override
