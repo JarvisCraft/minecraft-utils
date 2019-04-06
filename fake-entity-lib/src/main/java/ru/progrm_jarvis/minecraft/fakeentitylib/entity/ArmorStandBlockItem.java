@@ -132,24 +132,9 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
     }
 
     @Override
-    public void spawn() {
-        actualizeSpawnPacket();
-
-        for (val entry : players.entrySet()) if (entry.getValue()) {
-            val player = entry.getKey();
-
-            spawnPacket.sendPacket(player);
-            equipmentPacket.sendPacket(player);
-        }
-    }
-
-    @Override
-    public void render(final Player player) {
-        actualizeSpawnPacket();
-        spawnPacket.sendPacket(player);
+    protected void performSpawnNoChecks(final Player player) {
+        super.performSpawnNoChecks(player);
         equipmentPacket.sendPacket(player);
-
-        players.put(player, true);
     }
 
     /**
