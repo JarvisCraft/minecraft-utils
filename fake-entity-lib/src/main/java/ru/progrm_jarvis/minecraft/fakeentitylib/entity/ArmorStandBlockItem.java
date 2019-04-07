@@ -180,4 +180,9 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
 
         return degrees;
     }
+
+    public void setItem(@NonNull final ItemStack item) {
+        equipmentPacket.setItem(this.item = item);
+        for (val entry : players.entrySet()) if (entry.getValue()) equipmentPacket.sendPacket(entry.getKey());
+    }
 }
