@@ -53,6 +53,8 @@
     </developers>
 
     <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- JUnit -->
         <version.junit>5.4.1</version.junit>
@@ -348,7 +350,7 @@
 
     <profiles>
         <!-- Version specific build profiles -->
-        <profile>
+        <!-- <profile>
             <id>java-8</id>
             <activation>
                 <jdk>[1.8,9)</jdk>
@@ -393,7 +395,7 @@
             <properties>
                 <maven.compiler.release>12</maven.compiler.release>
             </properties>
-        </profile>
+        </profile> -->
         <!-- Special build profiles -->
         <profile>
             <id>ossrh-deploy</id>
