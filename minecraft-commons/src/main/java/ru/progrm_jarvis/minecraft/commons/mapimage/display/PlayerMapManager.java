@@ -64,11 +64,11 @@ public class PlayerMapManager {
     static {
         {
             val method = getDeclaredMethod(MapView.class, "getId");
-            val parameterType = method.getParameterTypes()[0];
-            if (parameterType == int.class) USE_INT_IDS = true;
-            else if (parameterType == short.class) USE_INT_IDS = false;
+            val returnType = method.getReturnType();
+            if (returnType == int.class) USE_INT_IDS = true;
+            else if (returnType == short.class) USE_INT_IDS = false;
             else throw new IllegalStateException(
-                    "Unknown return type of MapView#getId() method (" + parameterType + ")"
+                    "Unknown return type of MapView#getId() method (" + returnType + ")"
                 );
             MAP_VIEW__GET_ID__METHOD = FastMethodWrapper.from(method);
         }
@@ -165,7 +165,9 @@ public class PlayerMapManager {
      * @return a map view if it exists, or null otherwise
      */
     public MapView getMap(final int mapId) {
-        return BUKKIT__GET_MAP__METHOD.invokeStatic(USE_INT_IDS ? mapId : (short) mapId);
+        return USE_INT_IDS
+                ? BUKKIT__GET_MAP__METHOD.invokeStatic(mapId)
+                : BUKKIT__GET_MAP__METHOD.invokeStatic((short) mapId);
     }
 
     /**
