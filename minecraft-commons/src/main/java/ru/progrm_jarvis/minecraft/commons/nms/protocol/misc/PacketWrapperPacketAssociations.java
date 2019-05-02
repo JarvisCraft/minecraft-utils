@@ -42,7 +42,7 @@ public class PacketWrapperPacketAssociations {
     /**
      * Immutable bi-directional map of packet types and their IDs
      */
-    @NonNull private final BiMap<PacketType, PacketTypeId> PACKET_TYPES = ImmutableBiMap.copyOf(
+    @NonNull public final BiMap<PacketType, PacketTypeId> PACKET_TYPES = ImmutableBiMap.copyOf(
             MapUtil.mapFiller(new HashMap<PacketType, PacketTypeId>())
                     .fill(fieldPacketTypes(PacketType.Handshake.Client.class, "Handshake", PacketDirection.CLIENT))
                     .fill(fieldPacketTypes(PacketType.Handshake.Server.class, "Handshake", PacketDirection.SERVER))

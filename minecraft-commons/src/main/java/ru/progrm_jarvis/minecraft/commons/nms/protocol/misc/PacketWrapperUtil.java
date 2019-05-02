@@ -1,16 +1,15 @@
-package ru.progrm_jarvis.minecraft.commons.nms;
+package ru.progrm_jarvis.minecraft.commons.nms.protocol.misc;
 
 import com.comphenix.packetwrapper.AbstractPacket;
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.jetbrains.annotations.Nullable;
 import ru.progrm_jarvis.reflector.wrapper.FieldWrapper;
 import ru.progrm_jarvis.reflector.wrapper.MethodWrapper;
 import ru.progrm_jarvis.reflector.wrapper.fast.FastMethodWrapper;
@@ -21,28 +20,27 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @UtilityClass
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class ToStringUtil {
+public class PacketWrapperUtil {
 
-    private String FIELDS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME
-            = ToStringUtil.class.getCanonicalName().concat(".FIELDS_CACHE_CONCURRENCY_LEVEL"),
+    private final String FIELDS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME
+            = PacketWrapperUtil.class.getCanonicalName().concat(".FIELDS_CACHE_CONCURRENCY_LEVEL"),
             METHODS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME
-                    = ToStringUtil.class.getCanonicalName().concat(".METHODS_CACHE_CONCURRENCY_LEVEL");
+                    = PacketWrapperUtil.class.getCanonicalName().concat(".METHODS_CACHE_CONCURRENCY_LEVEL");
 
-    private Cache<Class<?>, Map<String, FieldWrapper<Object, Object>>> FIELDS_CACHE = CacheBuilder.newBuilder()
+    private final Cache<Class<?>, Map<String, FieldWrapper<Object, Object>>> FIELDS_CACHE = CacheBuilder.newBuilder()
             .concurrencyLevel(Integer.parseInt(MoreObjects.firstNonNull(
                     System.getProperty(FIELDS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME), "2")
             ))
             .build();
 
-    private Cache<Class<?>, Map<String, MethodWrapper<Object, Object>>> METHODS_CACHE = CacheBuilder.newBuilder()
+    private final Cache<Class<?>, Map<String, MethodWrapper<Object, Object>>> METHODS_CACHE = CacheBuilder.newBuilder()
             .concurrencyLevel(Integer.parseInt(MoreObjects.firstNonNull(
                     System.getProperty(METHODS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME), "2")
             ))
             .build();
 
     @SneakyThrows
-    public String toString(final AbstractPacket packet) {
+    public String toString(@Nullable final AbstractPacket packet) {
         if (packet == null) return "null";
 
         final Map<String, MethodWrapper<Object, Object>> methods;
@@ -57,7 +55,6 @@ public class ToStringUtil {
                     )));
             className = clazz.getName();
         }
-
 
         if (methods.isEmpty()) return className + "{}";
 
@@ -92,8 +89,10 @@ public class ToStringUtil {
         if (getterName.startsWith("get")) {
             val name = getterName.substring(3);
             if (name.length() == 0) return "get";
-            else return name.substring(0, 1).toLowerCase() + name.substring(1);
-        } else return getterName;
+
+            return name.substring(0, 1).toLowerCase() + name.substring(1);
+        }
+        return getterName;
     }
 
 }
