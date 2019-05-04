@@ -1,4 +1,4 @@
-package ru.progrm_jarvis.minecraft.commons.util.number;
+package ru.progrm_jarvis.minecraft.commons.util.primitive;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
