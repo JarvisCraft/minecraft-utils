@@ -25,10 +25,17 @@ public class ChatComponentUtil {
         return WrappedChatComponentGsonSerializer.INSTANCE;
     }
 
+    /**
+     * {@link JsonSerializer<WrappedChatComponent>} and {@link JsonDeserializer<WrappedChatComponent>}
+     * for use with {@link GsonBuilder#registerTypeAdapter(Type, Object)}.
+     */
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class WrappedChatComponentGsonSerializer
             implements JsonSerializer<WrappedChatComponent>, JsonDeserializer<WrappedChatComponent> {
 
+        /**
+         * Singleton instance of {@link WrappedChatComponentGsonSerializer}.
+         */
         private static final WrappedChatComponentGsonSerializer INSTANCE = new WrappedChatComponentGsonSerializer();
 
         @Override
