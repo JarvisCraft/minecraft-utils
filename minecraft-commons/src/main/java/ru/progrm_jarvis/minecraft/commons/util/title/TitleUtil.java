@@ -197,27 +197,6 @@ public class TitleUtil {
     }
 
     /**
-     * Sends the title-time to the players.
-     *
-     * @param fadeIn time for the title to fade in
-     * @param stay time for the title to stay
-     * @param fadeOut time for the title to fade in
-     * @param player player to whom to send the subtitle
-     *
-     * @apiNote subtitle won't display until title-time is sent
-     */
-    public void sendSubtitle(final int fadeIn, final int stay, final int fadeOut,
-                             @NonNull final Player player) {
-        val packet = new WrapperPlayServerTitle();
-        packet.setAction(EnumWrappers.TitleAction.TIMES);
-        packet.setFadeIn(fadeIn);
-        packet.setStay(stay);
-        packet.setFadeOut(fadeOut);
-
-        packet.sendPacket(player);
-    }
-
-    /**
      * Sends the title-time to the player.
      *
      * @param fadeIn time for the title to fade in
