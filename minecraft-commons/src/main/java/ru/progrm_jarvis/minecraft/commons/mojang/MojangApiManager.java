@@ -14,13 +14,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import ru.progrm_jarvis.javacommons.lazy.Lazy;
 import ru.progrm_jarvis.minecraft.commons.annotation.AsyncExpected;
 import ru.progrm_jarvis.minecraft.commons.async.AsyncRunner;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedConsumer;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedFunction;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedSupplier;
-import ru.progrm_jarvis.minecraft.commons.util.function.lazy.Lazies;
-import ru.progrm_jarvis.minecraft.commons.util.function.lazy.Lazy;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -58,21 +57,21 @@ public class MojangApiManager implements AutoCloseable {
     Lazy<Cache<UUID, GameProfile>> profilesCache;
 
     public MojangApiManager(final Configuration configuration) {
-        httpConnectionManager = Lazies.concurrentLazy(configuration.httpConnectionManager);
+        httpConnectionManager = Lazy.createThreadSafe(configuration.httpConnectionManager);
         {
             val httpClientFunction = configuration.httpClient;
-            this.httpClient = Lazies.concurrentLazy(() -> httpClientFunction.apply(httpConnectionManager.get()));
+            this.httpClient = Lazy.createThreadSafe(() -> httpClientFunction.apply(httpConnectionManager.get()));
         }
 
-        asyncRunner = Lazies.concurrentLazy(configuration.asyncRunner);
+        asyncRunner = Lazy.createThreadSafe(configuration.asyncRunner);
 
-        uuidsCache = Lazies.concurrentLazy(configuration.uuidsCache);
-        profilesCache = Lazies.concurrentLazy(configuration.profilesCache);
+        uuidsCache = Lazy.createThreadSafe(configuration.uuidsCache);
+        profilesCache = Lazy.createThreadSafe(configuration.profilesCache);
     }
 
     @Override
     public void close() {
-        httpConnectionManager.getIfInitialized().ifPresent(HttpClientConnectionManager::shutdown);
+        if (httpConnectionManager.isInitialized()) httpConnectionManager.get().shutdown();
     }
 
     ///////////////////////////////////////////////////////////////////////////

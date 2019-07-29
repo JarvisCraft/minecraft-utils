@@ -31,7 +31,11 @@
         </dependency>
 
         <dependency>
-            <groupId>ru.progrm-jarvis.reflector</groupId>
+            <groupId>ru.progrm-jarvis</groupId>
+            <artifactId>java-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ru.progrm-jarvis</groupId>
             <artifactId>reflector</artifactId>
         </dependency>
         <dependency>

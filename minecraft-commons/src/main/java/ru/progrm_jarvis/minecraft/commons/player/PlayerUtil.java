@@ -11,7 +11,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.progrm_jarvis.minecraft.commons.util.ObjectUtil;
+import ru.progrm_jarvis.javacommons.object.ObjectUtil;
 import ru.progrm_jarvis.minecraft.commons.util.SystemPropertyUtil;
 
 import java.util.Collection;

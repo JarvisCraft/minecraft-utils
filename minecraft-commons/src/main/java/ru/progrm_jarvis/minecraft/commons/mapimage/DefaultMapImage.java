@@ -2,9 +2,8 @@ package ru.progrm_jarvis.minecraft.commons.mapimage;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.progrm_jarvis.javacommons.lazy.Lazy;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedConsumer;
-import ru.progrm_jarvis.minecraft.commons.util.function.lazy.Lazies;
-import ru.progrm_jarvis.minecraft.commons.util.function.lazy.Lazy;
 import ru.progrm_jarvis.minecraft.commons.util.hack.PreSuperCheck;
 
 import java.awt.image.BufferedImage;
@@ -36,12 +35,12 @@ public class DefaultMapImage implements MapImage {
     /**
      * Lazily initialized non-buffered drawer
      */
-    Lazy<Drawer> drawer = Lazies.lazy(Drawer::new);
+    Lazy<Drawer> drawer = Lazy.create(Drawer::new);
 
     /**
      * Lazily initialized buffered drawer
      */
-    Lazy<BufferedDrawer> bufferedDrawer = Lazies.lazy(BufferedDrawer::new);
+    Lazy<BufferedDrawer> bufferedDrawer = Lazy.create(BufferedDrawer::new);
 
     /**
      * All subscribers active.

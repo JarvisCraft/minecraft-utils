@@ -9,9 +9,9 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import ru.progrm_jarvis.minecraft.commons.util.MapUtil;
+import ru.progrm_jarvis.javacommons.map.MapUtil;
+import ru.progrm_jarvis.javacommons.pair.Pair;
+import ru.progrm_jarvis.javacommons.pair.SimplePair;
 import ru.progrm_jarvis.minecraft.commons.util.SystemPropertyUtil;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedFunction;
 
@@ -64,7 +64,7 @@ public class PacketWrapperPacketAssociations {
         return Arrays.stream(packetType.getDeclaredFields())
                 .filter(field -> PacketType.class.isAssignableFrom(field.getType()))
                 //.filter(field -> field.isAnnotationPresent(Deprecated.class))
-                .map((UncheckedFunction<Field, Pair<PacketType, PacketTypeId>>) field -> ImmutablePair.of(
+                .map((UncheckedFunction<Field, Pair<PacketType, PacketTypeId>>) field -> SimplePair.of(
                         (PacketType) field.get(null),
                         PacketTypeId.of(group, direction, upperCaseNameToUpperCamelCase(field.getName()))
                 ));

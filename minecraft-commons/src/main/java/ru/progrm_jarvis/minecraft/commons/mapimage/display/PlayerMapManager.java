@@ -3,6 +3,7 @@ package ru.progrm_jarvis.minecraft.commons.mapimage.display;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -11,11 +12,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.map.MapView;
 import ru.progrm_jarvis.minecraft.commons.MinecraftCommons;
 import ru.progrm_jarvis.minecraft.commons.util.SystemPropertyUtil;
-import ru.progrm_jarvis.reflector.wrapper.MethodWrapper;
-import ru.progrm_jarvis.reflector.wrapper.fast.FastMethodWrapper;
+import ru.progrm_jarvis.reflector.invoke.InvokeUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandle;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
@@ -24,8 +26,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static ru.progrm_jarvis.reflector.Reflector.getDeclaredMethod;
 
 /**
  * Utility responsible to allocate minimal amount of {@link MapView} for internal usage.
@@ -49,32 +49,40 @@ public class PlayerMapManager {
     private final boolean USE_INT_IDS;
 
     /**
-     * Method wrapper for {@link MapView#getId()} because it returns
+     * Method handle for {@link MapView#getId()} because it returns
      * {@link short} and {@link int} on different Bukkit API versions.
      */
-    private final MethodWrapper<MapView, ? extends Number> MAP_VIEW__GET_ID__METHOD;
-
+    private final MethodHandle MAP_VIEW__GET_ID__METHOD,
     /**
-     * Method wrapper for {@link Bukkit#getMap(int)} because it consumes
+     * Method handle for {@link Bukkit#getMap(int)} because it consumes
      * {@link short} and {@link int} on different Bukkit API versions.
      */
-    @SuppressWarnings("deprecation")
-    private final MethodWrapper<Bukkit, MapView> BUKKIT__GET_MAP__METHOD;
+     BUKKIT__GET_MAP__METHOD;
 
     static {
         {
-            val method = getDeclaredMethod(MapView.class, "getId");
+            final Method method;
+            try {
+                method = MapView.class.getDeclaredMethod("getId");
+            } catch (final NoSuchMethodException e) {
+                throw new IllegalStateException("Cannot find method " + MapView.class.getCanonicalName() + "#getId()");
+            }
             val returnType = method.getReturnType();
             if (returnType == int.class) USE_INT_IDS = true;
             else if (returnType == short.class) USE_INT_IDS = false;
             else throw new IllegalStateException(
                     "Unknown return type of MapView#getId() method (" + returnType + ")"
                 );
-            MAP_VIEW__GET_ID__METHOD = FastMethodWrapper.from(method);
+            MAP_VIEW__GET_ID__METHOD = InvokeUtil.toMethodHandle(method);
         }
-        BUKKIT__GET_MAP__METHOD = FastMethodWrapper.from(
-                getDeclaredMethod(Bukkit.class, "getMap", USE_INT_IDS ? int.class : short.class)
-        );
+        try {
+            BUKKIT__GET_MAP__METHOD = InvokeUtil.toMethodHandle(
+                    Bukkit.class.getDeclaredMethod("getMap", USE_INT_IDS ? int.class : short.class)
+            );
+        } catch (final NoSuchMethodException e) {
+            throw new IllegalStateException("Cannot find method " + Bukkit.class.getCanonicalName()
+                    + "#getMap(" + (USE_INT_IDS ? "int" : "short") + ")");
+        }
     }
 
     /**
@@ -154,8 +162,10 @@ public class PlayerMapManager {
      * @param mapView {@link MapView} whose {@link MapView#getId()} to invoke
      * @return map view's ID
      */
+    @SneakyThrows
     public int getMapId(@NonNull final MapView mapView) {
-        return MAP_VIEW__GET_ID__METHOD.invoke(mapView).intValue();
+        if (USE_INT_IDS) return (int) MAP_VIEW__GET_ID__METHOD.invokeExact(mapView);
+        return (int) (short) MAP_VIEW__GET_ID__METHOD.invokeExact(mapView);
     }
 
     /**
@@ -164,10 +174,13 @@ public class PlayerMapManager {
      * @param mapId id of the map to get
      * @return a map view if it exists, or null otherwise
      */
+    @SneakyThrows
     public MapView getMap(final int mapId) {
-        return USE_INT_IDS
-                ? BUKKIT__GET_MAP__METHOD.invokeStatic(mapId)
-                : BUKKIT__GET_MAP__METHOD.invokeStatic((short) mapId);
+        return (MapView) (
+                USE_INT_IDS
+                        ? BUKKIT__GET_MAP__METHOD.invokeExact(mapId)
+                        : BUKKIT__GET_MAP__METHOD.invokeExact((short) mapId)
+        );
     }
 
     /**

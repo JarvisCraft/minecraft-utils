@@ -2,8 +2,8 @@ package ru.progrm_jarvis.minecraft.fakeentitylib.entity.management;
 
 import lombok.NonNull;
 import org.bukkit.plugin.Plugin;
+import ru.progrm_jarvis.javacommons.collection.concurrent.ConcurrentCollections;
 import ru.progrm_jarvis.minecraft.commons.annotation.DontOverrideEqualsAndHashCode;
-import ru.progrm_jarvis.minecraft.commons.util.concurrent.ConcurrentCollections;
 import ru.progrm_jarvis.minecraft.commons.plugin.BukkitPluginContainer;
 import ru.progrm_jarvis.minecraft.commons.util.shutdown.Shutdownable;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.FakeEntity;

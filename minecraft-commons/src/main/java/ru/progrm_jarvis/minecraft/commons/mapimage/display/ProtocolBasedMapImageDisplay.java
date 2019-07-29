@@ -10,7 +10,7 @@ import ru.progrm_jarvis.minecraft.commons.mapimage.MapImage;
 import ru.progrm_jarvis.minecraft.commons.player.registry.PlayerRegistries;
 import ru.progrm_jarvis.minecraft.commons.player.registry.PlayerRegistry;
 import ru.progrm_jarvis.minecraft.commons.player.registry.PlayerRegistryRegistration;
-import ru.progrm_jarvis.minecraft.commons.util.MapUtil;
+import ru.progrm_jarvis.javacommons.map.MapUtil;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;

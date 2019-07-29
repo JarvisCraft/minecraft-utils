@@ -1,20 +1,16 @@
 package ru.progrm_jarvis.minecraft.commons.nms;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import lombok.*;
 import lombok.experimental.UtilityClass;
-import lombok.val;
 import org.bukkit.Bukkit;
 import ru.progrm_jarvis.minecraft.commons.nms.metadata.DataWatcherFactory;
-import ru.progrm_jarvis.minecraft.commons.nms.metadata.StandardDataWatcherFactory;
 import ru.progrm_jarvis.minecraft.commons.nms.metadata.LegacyDataWatcherFactory;
-import ru.progrm_jarvis.reflector.wrapper.FieldWrapper;
-import ru.progrm_jarvis.reflector.wrapper.fast.FastFieldWrapper;
+import ru.progrm_jarvis.minecraft.commons.nms.metadata.StandardDataWatcherFactory;
+import ru.progrm_jarvis.reflector.invoke.InvokeUtil;
 
-import static ru.progrm_jarvis.reflector.Reflector.classForName;
-import static ru.progrm_jarvis.reflector.Reflector.getDeclaredField;
+import java.lang.invoke.MethodHandle;
+import java.lang.reflect.Field;
 
 /**
  * Utility for NMS-related features
@@ -33,11 +29,36 @@ public class NmsUtil {
             CRAFT_BUKKIT_PACKAGE = "org.bukkit.craftbukkit." + NMS_VERSION.name;
 
     /**
-     * Field of <i>{nms}.Entity</i> class field responsible for entity <i>int-UID</i> generation.
+     * Field access method-handle of <i>{nms}.Entity</i> class field responsible for entity <i>int-UID</i> generation.
      */
-    private final FieldWrapper<?, Integer> ENTITY_COUNT_FIELD = FastFieldWrapper.from(getDeclaredField(
-            classForName(getNmsPackage().concat(".Entity")), "entityCount"
-    ));
+    private final MethodHandle ENTITY_COUNT_FIELD__GETTER, ENTITY_COUNT_FIELD__SETTER;
+
+    private final Object ENTITY_COUNT_FIELD_MUTEX = new Object[0];
+
+    static {
+        final Class<?> nmsEntityClass;
+        try {
+            nmsEntityClass = Class.forName(getNmsPackage().concat(".Entity"));
+        } catch (final ClassNotFoundException e) {
+            throw new IllegalStateException("Cannot find NMS-entity class", e);
+        }
+        final Field entityCountField;
+        try {
+            entityCountField = nmsEntityClass.getDeclaredField("entityCount");
+        } catch (NoSuchFieldException e) {
+            throw new IllegalStateException(
+                    "Cannot find field " + nmsEntityClass.getCanonicalName() + "#entityCount", e
+            );
+        }
+        val accessible = entityCountField.isAccessible();
+        entityCountField.setAccessible(true);
+        try {
+            ENTITY_COUNT_FIELD__GETTER = InvokeUtil.toGetterMethodHandle(entityCountField);
+            ENTITY_COUNT_FIELD__SETTER = InvokeUtil.toSetterMethodHandle(entityCountField);
+        } finally {
+            entityCountField.setAccessible(accessible);
+        }
+    }
 
     /**
      * DataWatcher factory valid for current server version
@@ -105,10 +126,13 @@ public class NmsUtil {
      *
      * @return new ID for an entity
      */
+    @SneakyThrows
+    @Synchronized("ENTITY_COUNT_FIELD_MUTEX")
     public int nextEntityId() {
-        synchronized (ENTITY_COUNT_FIELD) {
-            return ENTITY_COUNT_FIELD.getAndCompute(id -> id + 1);
-        }
+        val id = (int) ENTITY_COUNT_FIELD__GETTER.invokeExact();
+        ENTITY_COUNT_FIELD__SETTER.invokeExact(id + 1);
+
+        return id;
     }
 
     /**

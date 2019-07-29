@@ -6,12 +6,13 @@ import lombok.val;
 import org.apache.commons.lang.math.RandomUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import ru.progrm_jarvis.javacommons.util.function.ThrowingFunction;
 import ru.progrm_jarvis.minecraft.commons.nms.protocol.misc.PacketWrapperUtil;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedFunction;
-import ru.progrm_jarvis.reflector.Reflector;
-import ru.progrm_jarvis.reflector.wrapper.fast.FastConstructorWrapper;
+import ru.progrm_jarvis.reflector.wrapper.invoke.InvokeConstructorWrapper;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -46,13 +47,14 @@ class PacketWrapperUtilTest {
                 .map(ClassPath.ClassInfo::getName)
                 .map((UncheckedFunction<String, Class<? extends AbstractPacket>>) className
                         -> (Class<? extends AbstractPacket>) classLoader.loadClass(className))
-                .map(Reflector::getDeclaredConstructor)
-                .map(FastConstructorWrapper::from)
+                .map((ThrowingFunction<Class<? extends AbstractPacket>, Constructor<? extends AbstractPacket>,
+                        NoSuchMethodException>) aClass -> aClass.getDeclaredConstructor())
+                .map(InvokeConstructorWrapper::from)
                 .collect(Collectors.toSet())
                 .forEach(constructor -> {
                     System.out.println("Testing: " + constructor);
                     for (int i = 0; i < 3 + RandomUtils.nextInt(3); i++) assertDoesNotThrow(
-                            () -> PacketWrapperUtil.toString(constructor.construct())
+                            () -> PacketWrapperUtil.toString(constructor.invoke())
                     );
                 });
     }

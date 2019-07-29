@@ -11,7 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
-import ru.progrm_jarvis.minecraft.commons.util.concurrent.ConcurrentCollections;
+import ru.progrm_jarvis.javacommons.collection.concurrent.ConcurrentCollections;
 import ru.progrm_jarvis.minecraft.commons.util.shutdown.Shutdownable;
 
 import java.util.*;

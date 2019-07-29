@@ -11,7 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.material.MaterialData;
-import ru.progrm_jarvis.minecraft.commons.util.MapUtil;
+import ru.progrm_jarvis.javacommons.map.MapUtil;
 
 import java.util.HashMap;
 import java.util.Map;
