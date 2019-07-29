@@ -4,7 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.Location;
 import org.bukkit.World;
-import ru.progrm_jarvis.minecraft.commons.annotation.DontOverrideEqualsAndHashCode;
+import ru.progrm_jarvis.javacommons.annotation.DontOverrideEqualsAndHashCode;
 
 /**
  * Base for most common implementations of {@link FakeEntity}.
