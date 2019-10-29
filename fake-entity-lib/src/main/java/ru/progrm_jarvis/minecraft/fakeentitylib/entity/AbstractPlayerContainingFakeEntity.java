@@ -6,9 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import ru.progrm_jarvis.minecraft.commons.player.registry.PlayerRegistryRegistration;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Base for most common implementations of {@link ObservableFakeEntity} containing player logic base.
@@ -19,6 +17,7 @@ import java.util.Map;
 public abstract class AbstractPlayerContainingFakeEntity extends AbstractObservableFakeEntity {
 
     @NonNull Map<Player, Boolean> players;
+    @NonNull Set<Player> playersView;
 
     public AbstractPlayerContainingFakeEntity(final int viewDistance, final boolean global,
                                               @NonNull final Location location,
@@ -26,12 +25,14 @@ public abstract class AbstractPlayerContainingFakeEntity extends AbstractObserva
         super(global, viewDistance, location);
 
         if (!players.isEmpty()) players.clear();
+
         this.players = players;
+        playersView = Collections.unmodifiableSet(players.keySet());
     }
 
     @Override
     public Collection<? extends Player> getPlayers() {
-        return players.keySet();
+        return playersView;
     }
 
     @Override
