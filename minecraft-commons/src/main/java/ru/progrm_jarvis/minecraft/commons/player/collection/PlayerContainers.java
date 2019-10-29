@@ -6,7 +6,9 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 @UtilityClass
@@ -61,6 +63,7 @@ public class PlayerContainers {
     protected class PlayerContainerMapWrapper<T> implements PlayerContainer {
 
         @NonNull private Map<Player, T> map;
+        @NonNull private Set<Player> playersView;
         @NonNull private Function<Player, T> defaultValueSupplier;
         boolean global;
 
@@ -68,6 +71,7 @@ public class PlayerContainers {
                                          @NonNull final Function<Player, T> defaultValueSupplier,
                                          final boolean global) {
             this.map = map;
+            playersView = Collections.unmodifiableSet(map.keySet());
             this.defaultValueSupplier = defaultValueSupplier;
             this.global = global;
 
@@ -91,7 +95,7 @@ public class PlayerContainers {
 
         @Override
         public Collection<? extends Player> getPlayers() {
-            return map.keySet();
+            return playersView;
         }
     }
 }

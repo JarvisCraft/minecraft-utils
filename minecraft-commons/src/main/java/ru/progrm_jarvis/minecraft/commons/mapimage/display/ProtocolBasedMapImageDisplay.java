@@ -13,9 +13,7 @@ import ru.progrm_jarvis.minecraft.commons.player.registry.PlayerRegistryRegistra
 import ru.progrm_jarvis.javacommons.map.MapUtil;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @ToString
 @EqualsAndHashCode
@@ -24,6 +22,7 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
 
     @NonNull MapImage image;
     @NonNull Map<Player, MapView> playerMaps;
+    @NonNull Set<Player> playersView;
     @Getter boolean global;
 
     @PlayerRegistryRegistration(PlayerRegistryRegistration.Policy.AUTO)
@@ -32,6 +31,7 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
                                         @NonNull final PlayerRegistry playerRegistry) {
         this.image = image;
         this.playerMaps = playerMaps;
+        playersView = Collections.unmodifiableSet(playerMaps.keySet());
         this.global = global;
 
         playerRegistry.register(this);
@@ -121,7 +121,7 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
 
     @Override
     public Collection<? extends Player> getPlayers() {
-        return playerMaps.keySet();
+        return playersView;
     }
 
     @Override
