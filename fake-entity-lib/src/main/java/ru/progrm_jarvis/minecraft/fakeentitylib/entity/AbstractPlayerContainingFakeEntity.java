@@ -14,11 +14,11 @@ import java.util.Map;
  * Base for most common implementations of {@link ObservableFakeEntity} containing player logic base.
  */
 @ToString
-@FieldDefaults(level = AccessLevel.PROTECTED)
+@FieldDefaults(makeFinal = true, level = AccessLevel.PROTECTED)
 @PlayerRegistryRegistration(PlayerRegistryRegistration.Policy.MANUAL)
 public abstract class AbstractPlayerContainingFakeEntity extends AbstractObservableFakeEntity {
 
-    @NonNull final Map<Player, Boolean> players;
+    @NonNull Map<Player, Boolean> players;
 
     public AbstractPlayerContainingFakeEntity(final int viewDistance, final boolean global,
                                               @NonNull final Location location,
