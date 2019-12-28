@@ -67,6 +67,11 @@ public interface BasicFakeEntity extends ObservableFakeEntity {
         teleport(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
     }
 
+    /**
+     * Performs the location synchronization so that the clients surely have the exact location of the entity.
+     */
+    void syncLocation();
+
     ///////////////////////////////////////////////////////////////////////////
     // Metadata
     ///////////////////////////////////////////////////////////////////////////
