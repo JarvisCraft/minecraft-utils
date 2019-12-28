@@ -20,22 +20,20 @@ import java.util.Set;
 /**
  * Simple abstract {@link FakeEntityManager} storing entities in a weak, optionally concurrent set.
  *
- * @param <P> type of parent plugin
  * @param <E> type of entities stored
  */
 @ToString
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
-public abstract class AbstractSetBasedEntityManager<P extends Plugin, E extends FakeEntity>
-        implements FakeEntityManager<P, E> {
+public abstract class AbstractSetBasedEntityManager<E extends FakeEntity> implements FakeEntityManager<E> {
 
-    @NonNull P plugin;
+    @NonNull Plugin plugin;
     @NonNull @ToString.Exclude Set<E> entities;
     @NonNull @ToString.Exclude Set<E> entitiesView;
 
     @Delegate(types = Shutdownable.class) @NonNull final ShutdownHooks shutdownHooks;
 
-    public AbstractSetBasedEntityManager(@NonNull final P plugin, @NonNull final Set<E> entities) {
+    public AbstractSetBasedEntityManager(@NonNull final Plugin plugin, @NonNull final Set<E> entities) {
         this.plugin = plugin;
         this.entities = entities;
         this.entitiesView = Collections.unmodifiableSet(entities);
@@ -50,12 +48,12 @@ public abstract class AbstractSetBasedEntityManager<P extends Plugin, E extends 
      * @param plugin parent plugin of this manager
      * @param concurrent whether or not this map should be thread-safe
      */
-    public AbstractSetBasedEntityManager(@Nonnull final P plugin, final boolean concurrent) {
+    public AbstractSetBasedEntityManager(@Nonnull final Plugin plugin, final boolean concurrent) {
         this(plugin, concurrent ? FakeEntityManager.concurrentWeakEntitySet() : FakeEntityManager.weakEntitySet());
     }
 
     @Override
-    public P getBukkitPlugin() {
+    public Plugin getBukkitPlugin() {
         return plugin;
     }
 

@@ -59,7 +59,7 @@ public class BukkitPluginShutdownUtil {
 
     @Value
     @FieldDefaults(level = AccessLevel.PRIVATE)
-    private class PluginShutdownHandler implements Listener {
+    private static class PluginShutdownHandler implements Listener {
 
         @NonNull Plugin plugin;
         @NonNull List<Shutdownable> shutdownHooks = ConcurrentCollections.concurrentList(new ArrayList<>());

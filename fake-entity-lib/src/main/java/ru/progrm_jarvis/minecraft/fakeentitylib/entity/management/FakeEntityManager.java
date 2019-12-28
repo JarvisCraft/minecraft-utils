@@ -13,7 +13,6 @@ import java.util.*;
 /**
  * Basic class for entity management providing basic general functionality for it.
  *
- * @param <P> type of parent plugin
  * @param <E> type of managed entity
  *
  * @implSpec its highly recommended (read <b>necessary</b>) for implementations
@@ -21,8 +20,7 @@ import java.util.*;
  * as if there are no strong references on it the GC should collect it.
  */
 @DontOverrideEqualsAndHashCode("EntityManagers are not data objects")
-public interface FakeEntityManager<P extends Plugin, E extends FakeEntity>
-        extends BukkitPluginContainer<P>, Shutdownable {
+public interface FakeEntityManager<E extends FakeEntity> extends BukkitPluginContainer, Shutdownable {
 
     /**
      * Creates a new weak {@link Set} valid (and <i>recommended</i>) for storing entities
