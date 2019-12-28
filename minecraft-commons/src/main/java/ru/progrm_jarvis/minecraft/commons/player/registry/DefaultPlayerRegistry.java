@@ -51,8 +51,7 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
             playerContainersWriteLock = playerContainersLock.writeLock();
         }
 
-        Bukkit.getPluginManager().registerEvents(listener = global
-                ? new Listener() {
+        plugin.getServer().getPluginManager().registerEvents(listener = global ? new Listener() {
             @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
             public final void onPlayerJoin(final PlayerJoinEvent event) {
                 addPlayer(event.getPlayer(), false);
@@ -62,8 +61,7 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
             public final void onPlayerQuit(final PlayerQuitEvent event) {
                 removePlayer(event.getPlayer());
             }
-        }
-        : new Listener() {
+        } : new Listener() {
 
             @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
             public final void onPlayerQuit(final PlayerQuitEvent event) {
