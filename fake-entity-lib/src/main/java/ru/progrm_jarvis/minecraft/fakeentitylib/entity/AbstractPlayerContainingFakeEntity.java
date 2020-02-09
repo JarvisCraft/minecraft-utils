@@ -58,7 +58,7 @@ public abstract class AbstractPlayerContainingFakeEntity extends AbstractObserva
         val canSee = players.get(player);
         if (canSee != null) {
             if (canSee) unrender(player);
-            else players.remove(player);
+            players.remove(player);
         }
     }
 
@@ -102,8 +102,8 @@ public abstract class AbstractPlayerContainingFakeEntity extends AbstractObserva
         if (sees == null) return;
 
         if (sees) {
-            if (!shouldSee(player)) render(player);
-        } else if (shouldSee(player)) unrender(player);
+            if (!shouldSee(player)) unrender(player);
+        } else if (shouldSee(player)) render(player);
     }
 
 
