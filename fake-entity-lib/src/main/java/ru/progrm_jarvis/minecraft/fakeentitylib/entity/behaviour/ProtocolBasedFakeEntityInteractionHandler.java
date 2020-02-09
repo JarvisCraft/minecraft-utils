@@ -25,18 +25,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @ToString(onlyExplicitlyIncluded = true)
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
-public class ProtocolBasedFakeEntityInteractionHandler<P extends Plugin, E extends InteractableFakeEntity>
-        extends PacketAdapter implements FakeEntityInteractionHandler<P, E> {
+public class ProtocolBasedFakeEntityInteractionHandler<E extends InteractableFakeEntity>
+        extends PacketAdapter implements FakeEntityInteractionHandler<E> {
 
     @NonNull final ProtocolManager protocolManager;
 
-    @NonNull @ToString.Include P plugin;
+    @NonNull @ToString.Include Plugin plugin;
     @NonNull Set<E> entities;
     @NonNull Set<E> entitiesView;
 
     @Delegate(types = Shutdownable.class) @NonNull ShutdownHooks shutdownHooks;
 
-    public ProtocolBasedFakeEntityInteractionHandler(@Nonnull final P plugin, final boolean concurrent) {
+    public ProtocolBasedFakeEntityInteractionHandler(@Nonnull final Plugin plugin, final boolean concurrent) {
         super(
                 checkNotNull(plugin, "plugin should not be null"),
                 PacketType.Play.Client.USE_ENTITY
@@ -56,7 +56,7 @@ public class ProtocolBasedFakeEntityInteractionHandler<P extends Plugin, E exten
     }
 
     @Override
-    public P getBukkitPlugin() {
+    public Plugin getBukkitPlugin() {
         return plugin;
     }
 

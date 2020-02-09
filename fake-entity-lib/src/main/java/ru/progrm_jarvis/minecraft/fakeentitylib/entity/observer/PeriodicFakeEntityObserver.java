@@ -26,8 +26,8 @@ import static ru.progrm_jarvis.minecraft.commons.util.hack.PreSuperCheck.beforeS
 
 @ToString
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
-public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFakeEntity>
-        extends AbstractSetBasedEntityManager<P, E> implements FakeEntityObserver<P, E> {
+public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
+        extends AbstractSetBasedEntityManager<E> implements FakeEntityObserver<E> {
 
     Set<RedrawEntitiesRunnable> tasks = new HashSet<>();
     Lock lock = new ReentrantLock();
@@ -41,7 +41,7 @@ public class PeriodicFakeEntityObserver<P extends Plugin, E extends ObservableFa
     Supplier<Set<E>> entitiesSetSupplier;
 
     @Builder
-    public PeriodicFakeEntityObserver(@Nonnull final P plugin, final boolean concurrent,
+    public PeriodicFakeEntityObserver(@Nonnull final Plugin plugin, final boolean concurrent,
                                       boolean global, final long interval, final boolean async,
                                       final int minEntitiesForNewThread, final int maxThreads,
                                       @NonNull final Supplier<Set<E>> entitiesSetSupplier) {

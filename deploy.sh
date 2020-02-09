@@ -6,7 +6,7 @@ echo 'Attempting to deploy artifacts if needed'
 echo "Branch: $TRAVIS_BRANCH"
 if [[ -z ${TRAVIS_BRANCH} ]]; then # Exit if $TRAVIS_BRANCH is unset
     echo 'Not Travis or branch undetected, exiting'
-    exit -1
+    exit 1
 else
     echo 'Valid branch'
 fi
@@ -15,7 +15,7 @@ fi
 echo "Pull-request status: $TRAVIS_PULL_REQUEST"
 if [[ ${TRAVIS_PULL_REQUEST} != 'false' ]]; then # Exit if TRAVIS_PULL_REQUEST is not 'false'
     echo "Pull-request status should be 'false'"
-    exit -1
+    exit 1
 else
     echo 'Valid pull-request status'
 fi
@@ -23,7 +23,7 @@ fi
 # Verify that JAVA_HOME is set
 if [[ -z ${JAVA_HOME} ]]; then # Exit if JAVA_HOME is unset
     echo 'JAVA_HOME variable is unset, exiting'
-    exit -1;
+    exit 1;
 fi
 
 # Get project version using special script

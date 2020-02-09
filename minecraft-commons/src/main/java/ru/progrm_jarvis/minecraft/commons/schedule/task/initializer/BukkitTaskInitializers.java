@@ -97,7 +97,7 @@ public class BukkitTaskInitializers {
 
     @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
     @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
-    private abstract class AbstractBukkitTaskInitializer implements BukkitTaskInitializer {
+    private abstract static class AbstractBukkitTaskInitializer implements BukkitTaskInitializer {
 
         @NonFinal BukkitTask task;
 

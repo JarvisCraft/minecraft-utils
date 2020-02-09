@@ -12,7 +12,7 @@ import java.util.Iterator;
  * A chain of operations of {@link org.bukkit.block.Block}s in some {@link org.bukkit.World}.
  * The chain of operations
  */
-public interface BlocksChain<P extends Plugin> extends BukkitPluginContainer<P>, Iterator<Block> {
+public interface BlocksChain extends BukkitPluginContainer, Iterator<Block> {
 
     /**
      * Gets the world in which this blocks chain exists.

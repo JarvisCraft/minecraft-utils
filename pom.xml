@@ -59,8 +59,8 @@
         <!-- JUnit -->
         <version.padla>1.0-SNAPSHOT</version.padla>
         <version.junit>5.5.2</version.junit>
-        <version.junit.platform>1.5.2</version.junit.platform>
-        <version.mockito>3.1.0</version.mockito>
+        <version.junit.platform>1.6.0</version.junit.platform>
+        <version.mockito>3.2.4</version.mockito>
     </properties>
 
     <distributionManagement>
@@ -174,7 +174,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -278,7 +278,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.10</version>
+                <version>4.5.11</version>
             </dependency>
 
             <!-- Code generation and analysis -->
@@ -291,7 +291,7 @@
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
-                <version>17.0.0</version>
+                <version>18.0.0</version>
                 <optional>true</optional>
             </dependency>
             <dependency>

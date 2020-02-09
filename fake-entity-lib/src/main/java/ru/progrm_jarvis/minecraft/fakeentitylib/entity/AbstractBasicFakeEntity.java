@@ -267,7 +267,6 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
     }
 
     @Override
-    @SuppressWarnings("Duplicates")
     public void moveTo(final double x, final double y, final double z, final float yaw, final float pitch) {
         if (compactMoving) {
             final double dx = x - location.getX(), dy = y - location.getY(), dz = z - location.getZ();
@@ -300,42 +299,10 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
                 velocity.setY(0);
                 velocity.setZ(0);
             }
-        } else {
-            var changeLocation = false;
-            if (x != location.getX()) {
-                changeLocation = true;
-
-                location.setX(x);
-            }
-            if (y != location.getY()) {
-                changeLocation = true;
-
-                location.setY(y);
-            }
-            if (z != location.getZ()) {
-                changeLocation = true;
-
-                location.setZ(z);
-            }
-            var changeLook = false;
-            if (yaw != location.getYaw()) {
-                changeLook = true;
-
-                location.setYaw(yaw);
-            }
-            if (pitch != location.getPitch()) {
-                changeLook = true;
-
-                location.setPitch(pitch);
-            }
-
-            if (changeLocation) performTeleportation(x, y, z, yaw, pitch, false);
-            else if (changeLook) performLook(yaw, pitch);
-        }
+        } else performNonCompactTeleportation(x, y, z, yaw, pitch);
     }
 
     @Override
-    @SuppressWarnings("Duplicates")
     public void teleport(final double x, final double y, final double z, final float yaw, final float pitch) {
         if (compactMoving) {
             final double dx = x - location.getX(), dy = y - location.getY(), dz = z - location.getZ();
@@ -368,43 +335,44 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
                 velocity.setY(0);
                 velocity.setZ(0);
             }
-        } else {
-            var changeLocation = false;
-            if (x != location.getX()) {
-                changeLocation = true;
-
-                location.setX(x);
-            }
-            if (y != location.getY()) {
-                changeLocation = true;
-
-                location.setY(y);
-            }
-            if (z != location.getZ()) {
-                changeLocation = true;
-
-                location.setZ(z);
-            }
-            var changeLook = false;
-            if (yaw != location.getYaw()) {
-                changeLook = true;
-
-                location.setYaw(yaw);
-            }
-            if (pitch != location.getPitch()) {
-                changeLook = true;
-
-                location.setPitch(pitch);
-            }
-
-            if (changeLocation) performTeleportation(x, y, z, yaw, pitch, false);
-            else if (changeLook) performLook(yaw, pitch);
-        }
+        } else performNonCompactTeleportation(x, y, z, yaw, pitch);
     }
 
-    /**
-     * Performs the location synchronization so that the clients surely have the exact location of the entity.
-     */
+    protected void performNonCompactTeleportation(final double x, final double y, final double z,
+                                                  final float yaw, final float pitch) {
+        var changeLocation = false;
+        if (x != location.getX()) {
+            changeLocation = true;
+
+            location.setX(x);
+        }
+        if (y != location.getY()) {
+            changeLocation = true;
+
+            location.setY(y);
+        }
+        if (z != location.getZ()) {
+            changeLocation = true;
+
+            location.setZ(z);
+        }
+        var changeLook = false;
+        if (yaw != location.getYaw()) {
+            changeLook = true;
+
+            location.setYaw(yaw);
+        }
+        if (pitch != location.getPitch()) {
+            changeLook = true;
+
+            location.setPitch(pitch);
+        }
+
+        if (changeLocation) performTeleportation(x, y, z, yaw, pitch, false);
+        else if (changeLook) performLook(yaw, pitch);
+    }
+
+    @Override
     public void syncLocation() {
         performTeleportation(
                 location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch(), false
