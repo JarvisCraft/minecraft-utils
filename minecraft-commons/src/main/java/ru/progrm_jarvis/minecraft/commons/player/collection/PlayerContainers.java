@@ -26,7 +26,7 @@ public class PlayerContainers {
     }
 
     @Value
-    protected class PlayerContainerCollectionWrapper implements PlayerContainer {
+    protected static class PlayerContainerCollectionWrapper implements PlayerContainer {
 
         @NonNull private Collection<Player> collection;
         boolean global;
@@ -60,7 +60,7 @@ public class PlayerContainers {
     }
 
     @Value
-    protected class PlayerContainerMapWrapper<T> implements PlayerContainer {
+    protected static class PlayerContainerMapWrapper<T> implements PlayerContainer {
 
         @NonNull private Map<Player, T> map;
         @NonNull private Set<Player> playersView;

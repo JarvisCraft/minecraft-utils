@@ -23,20 +23,14 @@ import java.util.function.BiFunction;
 @ToString
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @PlayerRegistryRegistration(PlayerRegistryRegistration.Policy.MANUAL)
-public class FakeEntityManagerGroup<P extends Plugin, E extends FakeEntity>
-        extends AbstractSetBasedEntityManager<P, E> {
+public class FakeEntityManagerGroup<E extends FakeEntity> extends AbstractSetBasedEntityManager<E> {
 
-    @NonNull Collection<FakeEntityManager<P, E>> managers;
+    @NonNull Collection<FakeEntityManager<E>> managers;
 
-    @Override
-    public P getBukkitPlugin() {
-        return plugin;
-    }
-
-    public FakeEntityManagerGroup(@NonNull final P plugin,
+    public FakeEntityManagerGroup(@NonNull final Plugin plugin,
                                   @NonNull final Set<E> entities,
-                                  @NonNull final Collection<BiFunction<P, Set<E>,
-                                          ? extends FakeEntityManager<P, E>>> managerCreators) {
+                                  @NonNull final Collection<BiFunction<Plugin, Set<E>,
+                                          ? extends FakeEntityManager<E>>> managerCreators) {
         super(plugin, entities);
 
         //noinspection unchecked
@@ -47,10 +41,10 @@ public class FakeEntityManagerGroup<P extends Plugin, E extends FakeEntity>
     }
 
     @SafeVarargs
-    public FakeEntityManagerGroup(@NonNull final P plugin,
+    public FakeEntityManagerGroup(@NonNull final Plugin plugin,
                                   @NonNull final Set<E> entities,
-                                  @NonNull final BiFunction<P, Set<E>,
-                                          ? extends FakeEntityManager<P, E>>... managerCreators) {
+                                  @NonNull final BiFunction<Plugin, Set<E>,
+                                          ? extends FakeEntityManager<E>>... managerCreators) {
         this(plugin, entities, Arrays.asList(managerCreators));
     }
 

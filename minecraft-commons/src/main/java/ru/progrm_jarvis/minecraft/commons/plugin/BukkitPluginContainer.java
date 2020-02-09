@@ -4,15 +4,13 @@ import org.bukkit.plugin.Plugin;
 
 /**
  * An object which contains a bukkit plugin instance.
- *
- * @param <P> plugin on which this object depends
  */
-public interface BukkitPluginContainer<P extends Plugin> {
+public interface BukkitPluginContainer {
 
     /**
      * Gets the bukkit plugin contained by this object.
      *
      * @return bukkit plugin of this object
      */
-    P getBukkitPlugin();
+    Plugin getBukkitPlugin();
 }

@@ -11,9 +11,9 @@ import java.util.*;
 @ToString
 @EqualsAndHashCode
 @FieldDefaults(level = AccessLevel.PROTECTED)
-public abstract class SnakyBlockChain<P extends Plugin> implements BlocksChain<P> {
+public abstract class SnakyBlockChain implements BlocksChain {
 
-    @NonNull final P plugin;
+    @NonNull final Plugin plugin;
     @NonNull final @Getter World world;
     @NonNull final @Getter Block initialBlock;
 
@@ -32,7 +32,7 @@ public abstract class SnakyBlockChain<P extends Plugin> implements BlocksChain<P
      */
     @NonNull final Set<Block> handledBlocks;
 
-    protected SnakyBlockChain(@NonNull final P plugin, final @NonNull Block initialBlock,
+    protected SnakyBlockChain(@NonNull final Plugin plugin, final @NonNull Block initialBlock,
                               @NonNull final Queue<Block> blocks, final @NonNull Queue<Block> nextBlocks,
                               @NonNull final Set<Block> handledBlocks) {
         this.plugin = plugin;
@@ -45,14 +45,14 @@ public abstract class SnakyBlockChain<P extends Plugin> implements BlocksChain<P
         blocks.add(initialBlock);
     }
 
-    protected SnakyBlockChain(@NonNull final P plugin, @NonNull final Block initialBlock) {
+    protected SnakyBlockChain(@NonNull final Plugin plugin, @NonNull final Block initialBlock) {
         this(plugin, initialBlock, new ArrayDeque<>(), new ArrayDeque<>(), new HashSet<>());
     }
 
-    public static <P extends Plugin> SnakyBlockChain<P> create(@NonNull final P plugin,
-                                                               @NonNull final Block initialBlock,
-                                                               @NonNull final BlockHandler blockHandler) {
-        return new SnakyBlockChain<P>(plugin, initialBlock) {
+    public static SnakyBlockChain create(@NonNull final Plugin plugin,
+                                         @NonNull final Block initialBlock,
+                                         @NonNull final BlockHandler blockHandler) {
+        return new SnakyBlockChain(plugin, initialBlock) {
             @Override
             protected Collection<Block> handle(final Block block) {
                 return blockHandler.handle(block);
@@ -107,7 +107,7 @@ public abstract class SnakyBlockChain<P extends Plugin> implements BlocksChain<P
      * @return bukkit plugin of this object
      */
     @Override
-    public P getBukkitPlugin() {
+    public Plugin getBukkitPlugin() {
         return plugin;
     }
 

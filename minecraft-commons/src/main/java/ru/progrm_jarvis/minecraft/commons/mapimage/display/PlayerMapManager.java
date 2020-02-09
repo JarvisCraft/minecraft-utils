@@ -10,9 +10,9 @@ import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapView;
+import ru.progrm_jarvis.javacommons.invoke.InvokeUtil;
 import ru.progrm_jarvis.minecraft.commons.MinecraftCommons;
 import ru.progrm_jarvis.minecraft.commons.util.SystemPropertyUtil;
-import ru.progrm_jarvis.reflector.invoke.InvokeUtil;
 
 import java.io.File;
 import java.io.IOException;
