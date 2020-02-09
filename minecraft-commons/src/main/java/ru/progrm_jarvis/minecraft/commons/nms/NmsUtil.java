@@ -4,10 +4,10 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import lombok.*;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
+import ru.progrm_jarvis.javacommons.invoke.InvokeUtil;
 import ru.progrm_jarvis.minecraft.commons.nms.metadata.DataWatcherFactory;
 import ru.progrm_jarvis.minecraft.commons.nms.metadata.LegacyDataWatcherFactory;
 import ru.progrm_jarvis.minecraft.commons.nms.metadata.StandardDataWatcherFactory;
-import ru.progrm_jarvis.reflector.invoke.InvokeUtil;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
