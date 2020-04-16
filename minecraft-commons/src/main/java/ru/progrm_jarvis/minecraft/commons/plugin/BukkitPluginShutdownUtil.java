@@ -6,7 +6,6 @@ import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -66,7 +65,7 @@ public class BukkitPluginShutdownUtil {
 
         private PluginShutdownHandler(@NonNull final Plugin plugin) {
             this.plugin = plugin;
-            Bukkit.getPluginManager().registerEvents(this, plugin);
+            plugin.getServer().getPluginManager().registerEvents(this, plugin);
         }
 
         @EventHandler(ignoreCancelled = true)

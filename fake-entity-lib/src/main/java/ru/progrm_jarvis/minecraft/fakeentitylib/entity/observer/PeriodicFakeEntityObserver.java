@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
+import ru.progrm_jarvis.minecraft.commons.schedule.task.AbstractSchedulerRunnable;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.ObservableFakeEntity;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.management.AbstractSetBasedEntityManager;
 
@@ -137,7 +137,7 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
             while (iterator.hasNext()) {
                 val task = iterator.next();
                 if (task.removeEntity(entity)) {
-                    if (task.entities.size() == 0) iterator.remove();
+                    if (task.entities.isEmpty()) iterator.remove();
 
                     break;
                 }
@@ -149,7 +149,7 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
 
     @ToString
     @EqualsAndHashCode(callSuper = true)
-    protected class RedrawEntitiesRunnable extends BukkitRunnable {
+    protected class RedrawEntitiesRunnable extends AbstractSchedulerRunnable {
 
         protected final Collection<E> entities = entitiesSetSupplier.get();
         private final ReadWriteLock lock = new ReentrantReadWriteLock();

@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.jetbrains.annotations.NotNull;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedConsumer;
 import ru.progrm_jarvis.minecraft.commons.util.shutdown.Shutdownable;
 
@@ -113,7 +114,7 @@ public class FluentBukkitEvents {
      */
     @Value
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-    private static final class EventListenersGroup<E extends Event> implements Listener, EventExecutor {
+    private static class EventListenersGroup<E extends Event> implements Listener, EventExecutor {
 
         /**
          * Plugin managing these event listeners
@@ -155,7 +156,7 @@ public class FluentBukkitEvents {
         }
 
         @Override
-        public void execute(final Listener listener, final Event event) {
+        public void execute(@NotNull final Listener listener, final Event event) {
             if (configuration.type.isAssignableFrom(event.getClass())) {
                 @SuppressWarnings("unchecked") val castEvent = (E) event;
                 for (val eventListener : eventListeners) eventListener.accept(castEvent);
@@ -164,7 +165,7 @@ public class FluentBukkitEvents {
     }
 
     @Value
-    private static final class ListenerConfiguration<E> {
+    private static class ListenerConfiguration<E> {
         @NonNull final Plugin plugin;
         @NonNull final Class<E> type;
         @NonNull final EventPriority priority;

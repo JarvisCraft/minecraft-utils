@@ -1,30 +1,35 @@
 package ru.progrm_jarvis.minecraft.commons.schedule.task.counter;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
-import lombok.val;
-import org.bukkit.scheduler.BukkitRunnable;
+import ru.progrm_jarvis.minecraft.commons.schedule.task.AbstractSchedulerRunnable;
+import ru.progrm_jarvis.minecraft.commons.schedule.task.SchedulerRunnable;
 
 import java.util.function.LongConsumer;
 
 /**
- * A {@link BukkitRunnable} which is run for a specified amount of times after which it is cancelled.
+ * A {@link ru.progrm_jarvis.minecraft.commons.schedule.task.SchedulerRunnable}
+ * which is run for a specified amount of times after which it is cancelled.
  */
-@RequiredArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
-public class BukkitCallbackTimer extends BukkitRunnable {
+public class BukkitCallbackTimer extends AbstractSchedulerRunnable {
 
-    @NonNull LongConsumer callback;
+    @NonNull LongConsumer task;
     @NonFinal long counter;
 
     @Override
     public void run() {
-        val value = --counter;
+        final long value;
 
-        if (value == 0) cancel();
-        callback.accept(value);
+        if ((value = --counter) == 0) cancel();
+        task.accept(value);
+    }
+
+    public static SchedulerRunnable create(@NonNull final LongConsumer task, final long counter) {
+        return new BukkitCallbackTimer(task, counter);
     }
 }

@@ -2,13 +2,13 @@ package ru.progrm_jarvis.minecraft.commons.schedule.misc;
 
 import lombok.NonNull;
 import lombok.val;
-import org.bukkit.scheduler.BukkitRunnable;
+import ru.progrm_jarvis.minecraft.commons.schedule.task.AbstractSchedulerRunnable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Predicate;
 
-public abstract class SchedulerGroup<T extends Runnable> extends BukkitRunnable {
+public abstract class SchedulerGroup<T extends Runnable> extends AbstractSchedulerRunnable {
 
     public abstract int size();
 

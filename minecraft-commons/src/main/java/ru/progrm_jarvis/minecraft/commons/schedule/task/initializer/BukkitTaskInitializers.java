@@ -6,10 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.experimental.UtilityClass;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import ru.progrm_jarvis.minecraft.commons.schedule.task.SchedulerRunnable;
 
 @UtilityClass
 public class BukkitTaskInitializers {
@@ -21,14 +20,14 @@ public class BukkitTaskInitializers {
             @Override
             public BukkitTask init() {
                 return async
-                        ? Bukkit.getScheduler().runTaskAsynchronously(plugin, runnable)
-                        : Bukkit.getScheduler().runTask(plugin, runnable);
+                        ? plugin.getServer().getScheduler().runTaskAsynchronously(plugin, runnable)
+                        : plugin.getServer().getScheduler().runTask(plugin, runnable);
             }
         };
     }
 
     public BukkitTaskInitializer createTaskInitializer(@NonNull final Plugin plugin, final boolean async,
-                                                       @NonNull final BukkitRunnable runnable) {
+                                                       @NonNull final SchedulerRunnable runnable) {
         return new AbstractBukkitTaskInitializer() {
 
             @Override
@@ -46,15 +45,15 @@ public class BukkitTaskInitializers {
             @Override
             public BukkitTask init() {
                 return task = async
-                        ? Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, delay, period)
-                        : Bukkit.getScheduler().runTaskTimer(plugin, runnable, delay, period);
+                        ? plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, runnable, delay, period)
+                        : plugin.getServer().getScheduler().runTaskTimer(plugin, runnable, delay, period);
             }
         };
     }
 
     public BukkitTaskInitializer createTimerTaskInitializer(@NonNull final Plugin plugin, final boolean async,
                                                             final long delay, final long period,
-                                                            @NonNull final BukkitRunnable runnable) {
+                                                            @NonNull final SchedulerRunnable runnable) {
         return new AbstractBukkitTaskInitializer() {
 
             @Override
@@ -74,15 +73,15 @@ public class BukkitTaskInitializers {
             @Override
             public BukkitTask init() {
                 return task = async
-                        ? Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, runnable, delay)
-                        : Bukkit.getScheduler().runTaskLater(plugin, runnable, delay);
+                        ? plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, runnable, delay)
+                        : plugin.getServer().getScheduler().runTaskLater(plugin, runnable, delay);
             }
         };
     }
 
     public BukkitTaskInitializer createDelayedTaskInitializer(@NonNull final Plugin plugin, final boolean async,
                                                               final long delay,
-                                                              @NonNull final BukkitRunnable runnable) {
+                                                              @NonNull final SchedulerRunnable runnable) {
 
         return new AbstractBukkitTaskInitializer() {
 
