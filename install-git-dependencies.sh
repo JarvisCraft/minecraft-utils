@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 
-
 readonly ROOT_DIRECTORY=$(pwd)
 readonly DIRECTORY='___locally_built_dependencies___'
 
 # Resets the selected directory to the ROOT_DIRECTORY
 function reset_directory() {
-    cd $ROOT_DIRECTORY
+    cd "$ROOT_DIRECTORY" || exit
 }
 
 # Installs dependency using HTTPS-Git and Maven
@@ -17,10 +16,10 @@ function reset_directory() {
 function install_dependency() {
     local url="https://$1/$2.git"
     echo "Installing dependency from $url ($3)"
-    git clone --single-branch --branch $3 $url
-    cd $2
-    if [ ! -z $4 ]; then
-        cd $4
+    git clone --single-branch --branch "$3" "$url"
+    cd "$2" || exit
+    if [ -n "$4" ]; then
+        cd $4 || exit
     fi
 
     echo "Building..."
@@ -34,8 +33,8 @@ echo 'Installing special dependencies'
 echo "Root directory set to $ROOT_DIRECTORY"
 
 echo "Creating directory $DIRECTORY"
-mkdir $DIRECTORY
+mkdir -p $DIRECTORY
 echo 'Directory created'
-cd $DIRECTORY
+cd $DIRECTORY || exit
 
 install_dependency "github.com/JarvisCraft" "PacketWrapper" "legacy-support" "PacketWrapper"
