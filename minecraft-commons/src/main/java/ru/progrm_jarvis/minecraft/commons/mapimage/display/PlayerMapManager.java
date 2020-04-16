@@ -137,7 +137,7 @@ public class PlayerMapManager {
                     .collect(Collectors.toSet()); // HashSet is used by default
 
             Bukkit.getLogger().info(
-                    "Loaded " + ALLOCATED_MAPS.size() + " internally allocated world map IDs: "+ ALLOCATED_MAPS.toString()
+                    "Loaded " + ALLOCATED_MAPS.size() + " internally allocated world map IDs: " + ALLOCATED_MAPS
             );
         } else {
             try {

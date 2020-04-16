@@ -3,7 +3,6 @@ package ru.progrm_jarvis.minecraft.commons.player.registry;
 import com.google.common.base.Preconditions;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -81,7 +80,7 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
     public void addPlayer(final Player player, final boolean force) {
         players.add(player);
 
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
             playerContainersReadLock.lock();
             try {
                 for (val playerContainer : playerContainers) if (force || playerContainer.isGlobal()) playerContainer
@@ -101,7 +100,7 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
     public void removePlayer(final Player player) {
         players.remove(player);
 
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
             playerContainersReadLock.lock();
             try {
                 for (val playerContainer : playerContainers) playerContainer.removePlayer(player);

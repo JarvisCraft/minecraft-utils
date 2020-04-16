@@ -6,7 +6,6 @@ import com.google.common.collect.Multimaps;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -58,7 +57,7 @@ public class SchedulerGroups {
             this.tasks = tasks;
 
             // set up plugin disable hook
-            Bukkit.getPluginManager().registerEvents(new Listener() {
+            plugin.getServer().getPluginManager().registerEvents(new Listener() {
 
                 @EventHandler
                 public void onPluginDisable(final PluginDisableEvent event) {
