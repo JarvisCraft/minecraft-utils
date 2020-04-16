@@ -1,4 +1,4 @@
-package ru.progrm_jarvis.minecraft.commons.schedule.task.counter;
+package ru.progrm_jarvis.minecraft.commons.schedule.task.timer;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
