@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 readonly ROOT_DIRECTORY=$(pwd)
 readonly DIRECTORY='___locally_built_dependencies___'
 
@@ -34,7 +33,7 @@ echo 'Installing special dependencies'
 echo "Root directory set to $ROOT_DIRECTORY"
 
 echo "Creating directory $DIRECTORY"
-mkdir $DIRECTORY
+mkdir -p $DIRECTORY
 echo 'Directory created'
 cd $DIRECTORY || exit
 
