@@ -3,14 +3,11 @@ package ru.progrm_jarvis.minecraft.commons.schedule.task.counter;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.bukkit.scheduler.BukkitRunnable;
 import ru.progrm_jarvis.minecraft.commons.schedule.task.AbstractSchedulerRunnable;
 import ru.progrm_jarvis.minecraft.commons.schedule.task.SchedulerRunnable;
 
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.LongConsumer;
 
 /**
  * A {@link ru.progrm_jarvis.minecraft.commons.schedule.task.SchedulerRunnable}

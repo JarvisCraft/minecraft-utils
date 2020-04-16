@@ -1,8 +1,10 @@
 package ru.progrm_jarvis.minecraft.commons.schedule.task.counter;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
-import org.bukkit.scheduler.BukkitRunnable;
+import lombok.val;
 import ru.progrm_jarvis.minecraft.commons.schedule.task.AbstractSchedulerRunnable;
 import ru.progrm_jarvis.minecraft.commons.schedule.task.SchedulerRunnable;
 
