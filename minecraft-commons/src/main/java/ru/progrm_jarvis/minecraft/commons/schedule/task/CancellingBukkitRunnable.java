@@ -21,11 +21,12 @@ public abstract class CancellingBukkitRunnable extends AbstractSchedulerRunnable
 
     protected abstract boolean tick();
 
-    public static SchedulerRunnable create(@NonNull BooleanSupplier task) {
+    public static SchedulerRunnable create(@NonNull final BooleanSupplier task) {
         return new FunctionalCancellingBukkitRunnable(task);
     }
 
-    @AllArgsConstructor(access = AccessLevel.PRIVATE) // `RequiredArgsConstructor` is not used as field is `@NotNull`
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
     private static final class FunctionalCancellingBukkitRunnable extends CancellingBukkitRunnable {
 
         @NotNull BooleanSupplier task;
