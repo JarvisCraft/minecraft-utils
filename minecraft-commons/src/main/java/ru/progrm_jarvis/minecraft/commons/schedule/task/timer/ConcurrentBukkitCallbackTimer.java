@@ -23,33 +23,50 @@ public abstract class ConcurrentBukkitCallbackTimer extends AbstractSchedulerRun
     public void run() {
         final long value;
 
-        if ((value = counter.decrementAndGet()) == 0) cancel();
-        tick(value);
+        if ((value = counter.decrementAndGet()) == 0) {
+            cancelTask();
+            onOver();
+        }
+        onTick(value);
     }
 
-    protected abstract void tick(long counter);
+    protected final void cancelTask() {
+        super.cancel();
+    }
+
+    @Override
+    public void cancel() {
+        cancelTask();
+        onAbort();
+    }
+
+    protected void onTick(long counter) {}
+
+    protected void onAbort() {}
+
+    protected void onOver() {}
 
     public static SchedulerRunnable create(@NonNull final LongConsumer task, final long counter) {
-        return new FunctionalConcurrentBukkitCallbackTimer(task, new AtomicLong(counter));
+        return new CompactConcurrentBukkitCallbackTimer(task, new AtomicLong(counter));
     }
 
     public static SchedulerRunnable create(@NonNull final LongConsumer task, @NonNull final AtomicLong counter) {
-        return new FunctionalConcurrentBukkitCallbackTimer(task, counter);
+        return new CompactConcurrentBukkitCallbackTimer(task, counter);
     }
 
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-    private static final class FunctionalConcurrentBukkitCallbackTimer extends ConcurrentBukkitCallbackTimer {
+    private static final class CompactConcurrentBukkitCallbackTimer extends ConcurrentBukkitCallbackTimer {
 
         @NotNull LongConsumer task;
 
-        public FunctionalConcurrentBukkitCallbackTimer(@NotNull final LongConsumer task,
-                                                       @NotNull final AtomicLong counter) {
+        public CompactConcurrentBukkitCallbackTimer(@NotNull final LongConsumer task,
+                                                    @NotNull final AtomicLong counter) {
             super(counter);
             this.task = task;
         }
 
         @Override
-        protected void tick(final long counter) {
+        protected void onTick(final long counter) {
             task.accept(counter);
         }
     }

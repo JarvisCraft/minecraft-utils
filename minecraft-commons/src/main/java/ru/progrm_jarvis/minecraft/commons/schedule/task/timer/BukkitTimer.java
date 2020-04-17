@@ -20,29 +20,46 @@ public abstract class BukkitTimer extends AbstractSchedulerRunnable {
 
     @Override
     public void run() {
-        if (--counter == 0) cancel();
-        tick();
+        if (--counter == 0) {
+            cancelTask();
+            onOver();
+        }
+        onTick();
     }
 
-    protected abstract void tick();
+    protected final void cancelTask() {
+        super.cancel();
+    }
+
+    @Override
+    public void cancel() {
+        cancelTask();
+        onAbort();
+    }
+
+    protected void onTick() {}
+
+    protected void onAbort() {}
+
+    protected void onOver() {}
 
     public static SchedulerRunnable create(@NonNull final Runnable task, final long counter) {
-        return new FunctionalBukkitTimer(task, counter);
+        return new CompactBukkitTimer(task, counter);
     }
 
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-    private static final class FunctionalBukkitTimer extends BukkitTimer {
+    private static final class CompactBukkitTimer extends BukkitTimer {
 
         @NotNull Runnable task;
 
-        public FunctionalBukkitTimer(@NotNull final Runnable task,
-                                     final long counter) {
+        public CompactBukkitTimer(@NotNull final Runnable task,
+                                  final long counter) {
             super(counter);
             this.task = task;
         }
 
         @Override
-        protected void tick() {
+        protected void onTick() {
             task.run();
         }
     }

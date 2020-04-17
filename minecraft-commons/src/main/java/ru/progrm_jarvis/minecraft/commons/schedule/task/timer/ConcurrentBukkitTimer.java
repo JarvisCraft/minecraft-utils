@@ -22,27 +22,44 @@ public abstract class ConcurrentBukkitTimer extends AbstractSchedulerRunnable {
 
     @Override
     public void run() {
-        if (counter.decrementAndGet() == 0) cancel();
+        if (counter.decrementAndGet() == 0) {
+            cancelTask();
+            onOver();
+        }
         tick();
     }
 
-    protected abstract void tick();
+    protected final void cancelTask() {
+        super.cancel();
+    }
+
+    @Override
+    public void cancel() {
+        cancelTask();
+        onAbort();
+    }
+
+    protected void tick() {}
+
+    protected void onAbort() {}
+
+    protected void onOver() {}
 
     public static SchedulerRunnable create(@NonNull final Runnable task, final long counter) {
-        return new FunctionalAbstractSchedulerRunnable(task, new AtomicLong(counter));
+        return new CompactAbstractSchedulerRunnable(task, new AtomicLong(counter));
     }
 
     public static SchedulerRunnable create(@NonNull final Runnable task, @NonNull final AtomicLong counter) {
-        return new FunctionalAbstractSchedulerRunnable(task, counter);
+        return new CompactAbstractSchedulerRunnable(task, counter);
     }
 
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-    private static final class FunctionalAbstractSchedulerRunnable extends ConcurrentBukkitTimer {
+    private static final class CompactAbstractSchedulerRunnable extends ConcurrentBukkitTimer {
 
         @NotNull Runnable task;
 
-        public FunctionalAbstractSchedulerRunnable(@NotNull final Runnable task,
-                                                   @NotNull final AtomicLong counter) {
+        public CompactAbstractSchedulerRunnable(@NotNull final Runnable task,
+                                                @NotNull final AtomicLong counter) {
             super(counter);
             this.task = task;
         }

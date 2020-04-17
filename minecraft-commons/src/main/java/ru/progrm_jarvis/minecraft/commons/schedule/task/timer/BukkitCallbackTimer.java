@@ -24,29 +24,46 @@ public abstract class BukkitCallbackTimer extends AbstractSchedulerRunnable {
     public void run() {
         final long value;
 
-        if ((value = --counter) == 0) cancel();
-        tick(value);
+        if ((value = --counter) == 0) {
+            cancelTask();
+            onOver();
+        }
+        onTick(value);
     }
 
-    protected abstract void tick(long counter);
+    protected final void cancelTask() {
+        super.cancel();
+    }
+
+    @Override
+    public void cancel() {
+        cancelTask();
+        onAbort();
+    }
+
+    protected void onTick(long counter) {}
+
+    protected void onAbort() {}
+
+    protected void onOver() {}
 
     public static SchedulerRunnable create(@NonNull final LongConsumer task, final long counter) {
-        return new FunctionalBukkitCallbackTimer(task, counter);
+        return new CompactCallbackTimer(task, counter);
     }
 
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-    private static final class FunctionalBukkitCallbackTimer extends BukkitCallbackTimer {
+    private static final class CompactCallbackTimer extends BukkitCallbackTimer {
 
         @NotNull LongConsumer task;
 
-        public FunctionalBukkitCallbackTimer(@NotNull final LongConsumer task,
-                                             final long counter) {
+        public CompactCallbackTimer(@NotNull final LongConsumer task,
+                                    final long counter) {
             super(counter);
             this.task = task;
         }
 
         @Override
-        protected void tick(final long counter) {
+        protected void onTick(final long counter) {
             task.accept(counter);
         }
     }
