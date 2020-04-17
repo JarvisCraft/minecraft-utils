@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.NotNull;
 import ru.progrm_jarvis.minecraft.commons.schedule.task.AbstractSchedulerRunnable;
 import ru.progrm_jarvis.minecraft.commons.schedule.task.SchedulerRunnable;
 
@@ -15,27 +16,40 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
-public class ConcurrentBukkitTimer extends AbstractSchedulerRunnable {
+public abstract class ConcurrentBukkitTimer extends AbstractSchedulerRunnable {
 
-    @NonNull Runnable task;
     @NonNull AtomicLong counter;
-
-    public ConcurrentBukkitTimer(@NonNull final Runnable task, final long counter) {
-        this.task = task;
-        this.counter = new AtomicLong(counter);
-    }
 
     @Override
     public void run() {
         if (counter.decrementAndGet() == 0) cancel();
-        task.run();
+        tick();
     }
 
+    protected abstract void tick();
+
     public static SchedulerRunnable create(@NonNull final Runnable task, final long counter) {
-        return new ConcurrentBukkitTimer(task, new AtomicLong(counter));
+        return new FunctionalAbstractSchedulerRunnable(task, new AtomicLong(counter));
     }
 
     public static SchedulerRunnable create(@NonNull final Runnable task, @NonNull final AtomicLong counter) {
-        return new ConcurrentBukkitTimer(task, counter);
+        return new FunctionalAbstractSchedulerRunnable(task, counter);
+    }
+
+    @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+    private static final class FunctionalAbstractSchedulerRunnable extends ConcurrentBukkitTimer {
+
+        @NotNull Runnable task;
+
+        public FunctionalAbstractSchedulerRunnable(@NotNull final Runnable task,
+                                                   @NotNull final AtomicLong counter) {
+            super(counter);
+            this.task = task;
+        }
+
+        @Override
+        protected void tick() {
+            task.run();
+        }
     }
 }

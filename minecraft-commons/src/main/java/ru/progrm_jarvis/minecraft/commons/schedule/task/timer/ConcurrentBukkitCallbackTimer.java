@@ -1,10 +1,8 @@
 package ru.progrm_jarvis.minecraft.commons.schedule.task.timer;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
-import lombok.val;
+import org.jetbrains.annotations.NotNull;
 import ru.progrm_jarvis.minecraft.commons.schedule.task.AbstractSchedulerRunnable;
 import ru.progrm_jarvis.minecraft.commons.schedule.task.SchedulerRunnable;
 
@@ -17,24 +15,42 @@ import java.util.function.LongConsumer;
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
-public class ConcurrentBukkitCallbackTimer extends AbstractSchedulerRunnable {
+public abstract class ConcurrentBukkitCallbackTimer extends AbstractSchedulerRunnable {
 
-    @NonNull LongConsumer task;
     @NonNull AtomicLong counter;
 
     @Override
     public void run() {
-        val value = counter.decrementAndGet();
+        final long value;
 
-        if (counter.decrementAndGet() == 0) cancel();
-        task.accept(value);
+        if ((value = counter.decrementAndGet()) == 0) cancel();
+        tick(value);
     }
 
+    protected abstract void tick(long counter);
+
     public static SchedulerRunnable create(@NonNull final LongConsumer task, final long counter) {
-        return new ConcurrentBukkitCallbackTimer(task, new AtomicLong(counter));
+        return new FunctionalConcurrentBukkitCallbackTimer(task, new AtomicLong(counter));
     }
 
     public static SchedulerRunnable create(@NonNull final LongConsumer task, @NonNull final AtomicLong counter) {
-        return new ConcurrentBukkitCallbackTimer(task, counter);
+        return new FunctionalConcurrentBukkitCallbackTimer(task, counter);
+    }
+
+    @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+    private static final class FunctionalConcurrentBukkitCallbackTimer extends ConcurrentBukkitCallbackTimer {
+
+        @NotNull LongConsumer task;
+
+        public FunctionalConcurrentBukkitCallbackTimer(@NotNull final LongConsumer task,
+                                                       @NotNull final AtomicLong counter) {
+            super(counter);
+            this.task = task;
+        }
+
+        @Override
+        protected void tick(final long counter) {
+            task.accept(counter);
+        }
     }
 }
