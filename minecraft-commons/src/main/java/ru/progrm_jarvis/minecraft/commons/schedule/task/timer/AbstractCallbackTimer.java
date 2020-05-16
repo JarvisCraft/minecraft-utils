@@ -16,7 +16,7 @@ import java.util.function.LongConsumer;
  */
 @FieldDefaults(level = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class BukkitCallbackTimer extends AbstractSchedulerRunnable {
+public abstract class AbstractCallbackTimer extends AbstractSchedulerRunnable {
 
     long counter;
 
@@ -48,16 +48,16 @@ public abstract class BukkitCallbackTimer extends AbstractSchedulerRunnable {
     protected void onOver() {}
 
     public static SchedulerRunnable create(@NonNull final LongConsumer task, final long counter) {
-        return new CompactCallbackTimer(task, counter);
+        return new SimpleCallbackTimer(task, counter);
     }
 
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-    private static final class CompactCallbackTimer extends BukkitCallbackTimer {
+    private static final class SimpleCallbackTimer extends AbstractCallbackTimer {
 
         @NotNull LongConsumer task;
 
-        public CompactCallbackTimer(@NotNull final LongConsumer task,
-                                    final long counter) {
+        public SimpleCallbackTimer(@NotNull final LongConsumer task,
+                                   final long counter) {
             super(counter);
             this.task = task;
         }

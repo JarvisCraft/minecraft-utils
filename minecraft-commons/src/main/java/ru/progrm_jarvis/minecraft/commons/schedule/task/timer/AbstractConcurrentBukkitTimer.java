@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
-public abstract class ConcurrentBukkitTimer extends AbstractSchedulerRunnable {
+public abstract class AbstractConcurrentBukkitTimer extends AbstractSchedulerRunnable {
 
     @NonNull AtomicLong counter;
 
@@ -46,20 +46,20 @@ public abstract class ConcurrentBukkitTimer extends AbstractSchedulerRunnable {
     protected void onOver() {}
 
     public static SchedulerRunnable create(@NonNull final Runnable task, final long counter) {
-        return new CompactAbstractSchedulerRunnable(task, new AtomicLong(counter));
+        return new SimpleConcurrentBukkitTimer(task, new AtomicLong(counter));
     }
 
     public static SchedulerRunnable create(@NonNull final Runnable task, @NonNull final AtomicLong counter) {
-        return new CompactAbstractSchedulerRunnable(task, counter);
+        return new SimpleConcurrentBukkitTimer(task, counter);
     }
 
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-    private static final class CompactAbstractSchedulerRunnable extends ConcurrentBukkitTimer {
+    private static final class SimpleConcurrentBukkitTimer extends AbstractConcurrentBukkitTimer {
 
         @NotNull Runnable task;
 
-        public CompactAbstractSchedulerRunnable(@NotNull final Runnable task,
-                                                @NotNull final AtomicLong counter) {
+        public SimpleConcurrentBukkitTimer(@NotNull final Runnable task,
+                                           @NotNull final AtomicLong counter) {
             super(counter);
             this.task = task;
         }

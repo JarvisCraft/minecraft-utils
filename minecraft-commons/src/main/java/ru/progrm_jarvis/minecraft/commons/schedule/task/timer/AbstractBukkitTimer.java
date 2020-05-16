@@ -14,7 +14,7 @@ import ru.progrm_jarvis.minecraft.commons.schedule.task.SchedulerRunnable;
  */
 @FieldDefaults(level = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class BukkitTimer extends AbstractSchedulerRunnable {
+public abstract class AbstractBukkitTimer extends AbstractSchedulerRunnable {
 
     long counter;
 
@@ -44,16 +44,16 @@ public abstract class BukkitTimer extends AbstractSchedulerRunnable {
     protected void onOver() {}
 
     public static SchedulerRunnable create(@NonNull final Runnable task, final long counter) {
-        return new CompactBukkitTimer(task, counter);
+        return new SimpleBukkitTimer(task, counter);
     }
 
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-    private static final class CompactBukkitTimer extends BukkitTimer {
+    private static final class SimpleBukkitTimer extends AbstractBukkitTimer {
 
         @NotNull Runnable task;
 
-        public CompactBukkitTimer(@NotNull final Runnable task,
-                                  final long counter) {
+        public SimpleBukkitTimer(@NotNull final Runnable task,
+                                 final long counter) {
             super(counter);
             this.task = task;
         }
