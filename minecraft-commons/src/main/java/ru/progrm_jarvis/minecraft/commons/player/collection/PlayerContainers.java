@@ -3,6 +3,7 @@ package ru.progrm_jarvis.minecraft.commons.player.collection;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.UtilityClass;
+import lombok.val;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -22,13 +23,27 @@ public class PlayerContainers {
     public <T> PlayerContainer wrap(@NonNull final Map<Player, T> mapOfPlayers,
                                     @NonNull final Function<Player, T> defaultValueSupplier,
                                     final boolean global) {
-        return new PlayerContainerMapWrapper<>(mapOfPlayers, defaultValueSupplier, global);
+        if (global) {
+            val container = new PlayerContainerMapWrapper<>(mapOfPlayers, defaultValueSupplier, true);
+            container.addOnlinePlayers();
+
+            return container;
+        }
+
+        return new PlayerContainerMapWrapper<>(mapOfPlayers, defaultValueSupplier, false);
+    }
+
+    // non-global
+    public <T> PlayerContainer wrap(@NonNull final Map<Player, T> mapOfPlayers) {
+        return new PlayerContainerMapWrapper<>(mapOfPlayers, player -> {
+            throw new UnsupportedOperationException("Players cannot be directly added to this non-global player-map");
+        }, false);
     }
 
     @Value
-    protected static class PlayerContainerCollectionWrapper implements PlayerContainer {
+    private static class PlayerContainerCollectionWrapper implements PlayerContainer {
 
-        @NonNull private Collection<Player> collection;
+        @NonNull Collection<Player> collection;
         boolean global;
 
         public PlayerContainerCollectionWrapper(@NonNull final Collection<Player> collection, final boolean global) {
@@ -60,22 +75,20 @@ public class PlayerContainers {
     }
 
     @Value
-    protected static class PlayerContainerMapWrapper<T> implements PlayerContainer {
+    private static class PlayerContainerMapWrapper<T> implements PlayerContainer {
 
-        @NonNull private Map<Player, T> map;
-        @NonNull private Set<Player> playersView;
-        @NonNull private Function<Player, T> defaultValueSupplier;
+        @NonNull Map<Player, T> map;
+        @NonNull Set<Player> playersView;
+        @NonNull Function<Player, T> defaultValueSupplier;
         boolean global;
 
         public PlayerContainerMapWrapper(@NonNull final Map<Player, T> map,
-                                         @NonNull final Function<Player, T> defaultValueSupplier,
-                                         final boolean global) {
+                                               @NonNull final Function<Player, T> defaultValueSupplier,
+                                               final boolean global) {
             this.map = map;
             playersView = Collections.unmodifiableSet(map.keySet());
             this.defaultValueSupplier = defaultValueSupplier;
             this.global = global;
-
-            if (global) addOnlinePlayers();
         }
 
         @Override
