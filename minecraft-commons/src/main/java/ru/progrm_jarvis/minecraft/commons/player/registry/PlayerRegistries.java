@@ -38,4 +38,9 @@ public class PlayerRegistries {
                                                          final boolean global) {
         return registerInDefaultRegistry(plugin, PlayerContainers.wrap(mapOfPlayers, defaultValueSupplier, global));
     }
+
+    public <T> PlayerContainer registerInDefaultRegistry(@NonNull final Plugin plugin,
+                                                         @NonNull final Map<Player, T> mapOfPlayers) {
+        return registerInDefaultRegistry(plugin, PlayerContainers.wrap(mapOfPlayers));
+    }
 }
