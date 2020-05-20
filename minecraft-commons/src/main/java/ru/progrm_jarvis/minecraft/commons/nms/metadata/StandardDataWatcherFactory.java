@@ -16,7 +16,7 @@ public class StandardDataWatcherFactory implements DataWatcherFactory {
 
     protected static final WrappedDataWatcher.Serializer
             BYTE_SERIALIZER = Registry.get(Byte.class),
-            SHORT_SERIALIZER = Registry.get(Short.class),
+            SHORT_SERIALIZER,
             INTEGER_SERIALIZER = Registry.get(Integer.class),
             FLOAT_SERIALIZER = Registry.get(Float.class),
             STRING_SERIALIZER = Registry.get(String.class),
@@ -31,11 +31,22 @@ public class StandardDataWatcherFactory implements DataWatcherFactory {
             OPTIONAL_UUID_SERIALIZER = Registry.getUUIDSerializer(true),
             NBT_TAG_COMPOUND_SERIALIZER = Registry.getNBTCompoundSerializer();
 
+    static {
+        WrappedDataWatcher.Serializer shortSerializer;
+        try {
+            shortSerializer = Registry.get(Short.class);
+        } catch (final IllegalArgumentException e) {
+            shortSerializer = null;
+        }
+        SHORT_SERIALIZER = shortSerializer;
+    }
+
     protected WrappedDataWatcher.WrappedDataWatcherObject watcherObjectByte(final int id) {
         return new WrappedDataWatcher.WrappedDataWatcherObject(id, BYTE_SERIALIZER);
     }
 
     protected WrappedDataWatcher.WrappedDataWatcherObject watcherObjectShort(final int id) {
+        if (SHORT_SERIALIZER == null) throw new UnsupportedOperationException("Short serialization is unavailable");
         return new WrappedDataWatcher.WrappedDataWatcherObject(id, SHORT_SERIALIZER);
     }
 
