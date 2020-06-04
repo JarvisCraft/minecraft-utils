@@ -7,11 +7,16 @@
         <groupId>ru.progrm-jarvis.minecraft</groupId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>mc-unit</artifactId>
+    <artifactId>ez-cfg</artifactId>
 
-    <description>
-        Utilities useful for JUnit testing minecraft-related functionality
-    </description>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
@@ -19,12 +24,12 @@
             <artifactId>spigot-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
+            <groupId>ru.progrm-jarvis.minecraft</groupId>
+            <artifactId>minecraft-commons</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
+            <groupId>ru.progrm-jarvis</groupId>
+            <artifactId>reflector</artifactId>
         </dependency>
 
         <dependency>
@@ -34,22 +39,6 @@
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

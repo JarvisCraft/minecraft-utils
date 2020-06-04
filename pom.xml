@@ -12,16 +12,9 @@
     <version>0.1.0-SNAPSHOT</version>
     <modules>
         <module>mc-unit</module>
-
-        <module>commons</module>
-        <module>commons-dep</module>
-
-        <module>config</module>
-        <module>config-dep</module>
-
-        <module>fake-entity</module>
-        <module>fake-entity-dep</module>
-
+        <module>minecraft-commons</module>
+        <module>ez-config</module>
+        <module>fake-entity-lib</module>
         <module>lib-loader</module>
     </modules>
     <packaging>pom</packaging>
@@ -60,13 +53,14 @@
     </developers>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- JUnit -->
-        <version.junit>5.3.2</version.junit>
-        <version.junit.platform>1.3.2</version.junit.platform>
-        <version.mockito>2.23.0</version.mockito>
+        <version.padla>1.0-SNAPSHOT</version.padla>
+        <version.junit>5.5.2</version.junit>
+        <version.junit.platform>1.6.2</version.junit.platform>
+        <version.mockito>3.3.3</version.mockito>
     </properties>
 
     <distributionManagement>
@@ -95,7 +89,7 @@
         <!-- Dmulloy2 repo -->
         <repository>
             <id>dmulloy2-repo</id>
-            <url>http://repo.dmulloy2.net/nexus/repository/public/</url>
+            <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
         </repository>
     </repositories>
 
@@ -107,22 +101,25 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M2</version>
+                    <version>3.0.0-M3</version>
                     <configuration>
                         <forkCount>0</forkCount>
-                        <reuseForks>true</reuseForks>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.2.1</version>
+                    <version>3.2.4</version>
                     <executions>
                         <execution>
                             <phase>package</phase>
                             <goals>
                                 <goal>shade</goal>
                             </goals>
+                            <configuration>
+                                <shadedArtifactAttached>true</shadedArtifactAttached>
+                                <shadedClassifierName>with-dependencies</shadedClassifierName>
+                            </configuration>
                         </execution>
                     </executions>
                     <configuration>
@@ -177,12 +174,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.2.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.2.0</version>
                     <configuration>
                         <doclint>none</doclint>
                     </configuration>
@@ -231,6 +228,16 @@
 
             <!-- Main dependencies -->
             <dependency>
+                <groupId>ru.progrm-jarvis</groupId>
+                <artifactId>java-commons</artifactId>
+                <version>${version.padla}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.progrm-jarvis</groupId>
+                <artifactId>reflector</artifactId>
+                <version>${version.padla}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.spigotmc</groupId>
                 <artifactId>spigot-api</artifactId>
                 <version>1.13.2-R0.1-SNAPSHOT</version>
@@ -244,8 +251,8 @@
             </dependency>
             <dependency>
                 <groupId>com.comphenix.protocol</groupId>
-                <artifactId>ProtocolLib-API</artifactId>
-                <version>4.4.0</version>
+                <artifactId>ProtocolLib</artifactId>
+                <version>4.5.1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -259,14 +266,9 @@
                 <version>1.13-R0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>ru.progrm-jarvis.reflector</groupId>
-                <artifactId>reflector</artifactId>
-                <version>1.2.2</version>
-            </dependency>
-            <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.6</version>
+                <version>2.7</version>
             </dependency>
             <dependency>
                 <groupId>net.sf.trove4j</groupId>
@@ -276,20 +278,20 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.6</version>
+                <version>4.5.12</version>
             </dependency>
 
             <!-- Code generation and analysis -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.4</version>
+                <version>1.18.12</version>
                 <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
-                <version>16.0.3</version>
+                <version>19.0.0</version>
                 <optional>true</optional>
             </dependency>
             <dependency>
@@ -352,6 +354,54 @@
     </dependencyManagement>
 
     <profiles>
+        <!-- Version specific build profiles -->
+        <!-- <profile>
+            <id>java-8</id>
+            <activation>
+                <jdk>[1.8,9)</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.source>1.8</maven.compiler.source>
+                <maven.compiler.target>1.8</maven.compiler.target>
+            </properties>
+        </profile>
+        <profile>
+            <id>java-9</id>
+            <activation>
+                <jdk>9</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.release>9</maven.compiler.release>
+            </properties>
+        </profile>
+        <profile>
+            <id>java-10</id>
+            <activation>
+                <jdk>10</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.release>10</maven.compiler.release>
+            </properties>
+        </profile>
+        <profile>
+            <id>java-11</id>
+            <activation>
+                <jdk>11</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.release>11</maven.compiler.release>
+            </properties>
+        </profile>
+        <profile>
+            <id>java-12</id>
+            <activation>
+                <jdk>12</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.release>12</maven.compiler.release>
+            </properties>
+        </profile> -->
+        <!-- Special build profiles -->
         <profile>
             <id>ossrh-deploy</id>
             <build>

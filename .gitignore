@@ -99,3 +99,6 @@ buildNumber.properties
 
 ### Security ###
 *.asc
+
+### BuildTools-generated ###
+.nms/**
