@@ -64,7 +64,7 @@ public class FakeEntityManagerGroup<E extends FakeEntity> extends AbstractSetBas
 
     @Override
     public void remove(@NonNull final E entity) {
-        for (val manager : managers) manager.unmanageEntity(entity);
+        for (val manager : managers) manager.remove(entity);
 
         entity.remove();
     }

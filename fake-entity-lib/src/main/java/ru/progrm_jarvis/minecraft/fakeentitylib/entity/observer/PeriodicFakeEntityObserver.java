@@ -77,11 +77,11 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
                         .register(event -> removePlayer(event.getPlayer()))::shutdown);
     }
 
-    public void addPlayer(@NonNull final Player player) {
+    protected void addPlayer(@NonNull final Player player) {
         for (val entity : entities) entity.addPlayer(player);
     }
 
-    public void removePlayer(@NonNull final Player player) {
+    protected void removePlayer(@NonNull final Player player) {
         for (val entity : entities) entity.removePlayer(player);
     }
 
@@ -93,7 +93,7 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
                 RedrawEntitiesRunnable minRunnable = null;
                 Integer minEntitiesInRunnable = null;
                 for (val task : tasks) {
-                    val taskEntitiesSize = task.entities.size();
+                    val taskEntitiesSize = task.size();
 
                     // if task has no even reached its entity minimum then use it
                     if (taskEntitiesSize < minEntitiesForNewThread) return task;
@@ -137,7 +137,10 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
             while (iterator.hasNext()) {
                 val task = iterator.next();
                 if (task.removeEntity(entity)) {
-                    if (task.entities.isEmpty()) iterator.remove();
+                    if (task.isEmpty()) {
+                        iterator.remove();
+                        task.cancel();
+                    }
 
                     break;
                 }
@@ -156,6 +159,10 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
 
         public int size() {
             return entities.size();
+        }
+
+        public boolean isEmpty() {
+            return entities.isEmpty();
         }
 
         public void addEntity(final E entity) {

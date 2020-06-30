@@ -15,9 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import ru.progrm_jarvis.minecraft.commons.math.dimensional.CuboidFigure;
 import ru.progrm_jarvis.minecraft.commons.nms.NmsUtil;
-import ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator;
 import ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand;
-import ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.Entity;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -28,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand.armorStandFlags;
 import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand.headRotation;
-import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.Entity.entityFlags;
+import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.Entity.*;
 
 /**
  * A fake small (or very small) movable block-item which can be normally rotated over all axises
@@ -69,10 +67,10 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
                                final Map<Player, Boolean> playersMap,
                                final boolean global, final int viewDistance, final boolean visible,
                                final Location location, @Nullable final Vector3F rotation,
-                               final boolean small, @NonNull final ItemStack item) {
+                               final boolean small, final boolean marker, @NonNull final ItemStack item) {
         super(
                 NmsUtil.nextEntityId(), uuid, EntityType.ARMOR_STAND,
-                playersMap, global, viewDistance, visible, location, 0, null, createMetadata(rotation, small)
+                playersMap, global, viewDistance, visible, location, 0, null, createMetadata(rotation, small, marker)
         );
 
         this.rotation = rotation;
@@ -90,6 +88,11 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
         yOffset = -1;
     }
 
+    @Override
+    public void spawn() {
+        super.spawn();
+    }
+
     /**
      * Creates new armor stand block-item by parameters specified.
      *
@@ -102,14 +105,15 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param item item to be displayed by this block-item
      * @return newly created armor stand block-item
      */
-    public static ArmorStandBlockItem create(final boolean concurrent,
+    public static ArmorStandBlockItem create(@Nullable final UUID uuid,
+                                             final boolean concurrent,
                                              final boolean global, final int viewDistance, final boolean visible,
                                              final Location location,
-                                             final Vector3F rotation, final boolean small,
+                                             final Vector3F rotation, final boolean small, final boolean marker,
                                              @NonNull final ItemStack item) {
         return new ArmorStandBlockItem(
-                null, concurrent ? new ConcurrentHashMap<>() : new HashMap<>(),
-                global, viewDistance, visible, location, rotation, small, item
+                uuid, concurrent ? new ConcurrentHashMap<>() : new HashMap<>(),
+                global, viewDistance, visible, location, rotation, small, marker, item
         );
     }
 
@@ -120,12 +124,25 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param small whether this block-item is small
      * @return created metadata object
      */
-    protected static WrappedDataWatcher createMetadata(@Nullable final Vector3F rotation, final boolean small) {
+    protected static WrappedDataWatcher createMetadata(@Nullable final Vector3F rotation,
+                                                       final boolean small, final boolean marker) {
         val metadata = new ArrayList<WrappedWatchableObject>();
-        metadata.add(entityFlags(Entity.Flag.INVISIBLE));
-        metadata.add(armorStandFlags(small
-                ? new ArmorStand.Flag[]{ArmorStand.Flag.SMALL, ArmorStand.Flag.MARKER}
-                : new ArmorStand.Flag[]{MetadataGenerator.ArmorStand.Flag.MARKER}));
+
+        metadata.add(air(300));
+        metadata.add(noGravity(true));
+        if (marker) {
+            metadata.add(entityFlags(Flag.INVISIBLE, Flag.ON_FIRE));
+            metadata.add(armorStandFlags(small ? new ArmorStand.Flag[]{
+                            ArmorStand.Flag.SMALL, ArmorStand.Flag.NO_BASE_PLATE, ArmorStand.Flag.MARKER
+                    } : new ArmorStand.Flag[]{ArmorStand.Flag.MARKER, ArmorStand.Flag.NO_BASE_PLATE}
+            ));
+        } else {
+            metadata.add(entityFlags(Flag.INVISIBLE));
+            metadata.add(armorStandFlags(small
+                    ? new ArmorStand.Flag[]{ArmorStand.Flag.SMALL, ArmorStand.Flag.NO_BASE_PLATE}
+                    : new ArmorStand.Flag[]{ArmorStand.Flag.NO_BASE_PLATE}
+            ));
+        }
         if (rotation != null) metadata.add(headRotation(rotation));
 
         return new WrappedDataWatcher(metadata);
@@ -156,6 +173,24 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param delta delta of rotation
      */
     public void rotate(@NonNull final Vector3F delta) {
+        final Vector3F thisRotation;
+        setRotation((thisRotation = rotation) == null
+                ? new Vector3F(delta.getX(), delta.getY(), delta.getZ())
+                : new Vector3F(
+                        minimizeAngle(thisRotation.getX() + delta.getX()),
+                        minimizeAngle(thisRotation.getY() + delta.getY()),
+                        minimizeAngle(thisRotation.getZ() + delta.getZ())
+                )
+        );
+    }
+
+    /**
+     * Rotates this block by specified delta. This means that its current
+     * roll (<i>x</i>), pitch (<i>y</i>) and yaw (<i>z</i>) will each get incremented by those of delta specified.
+     *
+     * @param delta delta of rotation
+     */
+    public void rotateTo(@NonNull final Vector3F delta) {
         setRotation(rotation == null
                 ? new Vector3F(delta.getX(), delta.getY(), delta.getZ())
                 : new Vector3F(

@@ -133,7 +133,7 @@ public class PacketWrapperPacketAssociations {
     private static class PacketTypeId {
 
         private static final String PACKET_WRAPPER_PACKAGE = SystemPropertyUtil.getSystemProperty(
-                PacketTypeId.class.getCanonicalName().concat("-packet-wrapper-package"),
+                PacketTypeId.class.getCanonicalName() + "-packet-wrapper-package",
                 Function.identity(), "com.comphenix.packetwrapper"
         );
 

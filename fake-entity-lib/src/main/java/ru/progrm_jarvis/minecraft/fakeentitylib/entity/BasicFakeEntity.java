@@ -86,8 +86,6 @@ public interface BasicFakeEntity extends ObservableFakeEntity {
 
     void setMetadata(@Nonnull final WrappedWatchableObject... metadata);
 
-    void addMetadata(List<WrappedWatchableObject> metadata);
-
     void addMetadata(Collection<WrappedWatchableObject> metadata);
 
     void addMetadata(WrappedWatchableObject... metadata);

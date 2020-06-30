@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class PlayerUtil {
 
-    private static final String NAMES_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME
-                = PlayerUtil.class.getCanonicalName().concat(".FIELDS_CACHE_CONCURRENCY_LEVEL");
+    private final String NAMES_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME
+                = PlayerUtil.class.getCanonicalName() + ".FIELDS_CACHE_CONCURRENCY_LEVEL";
 
     @NonNull private final Cache<@NotNull UUID, @Nullable String> NAMES_CACHE = CacheBuilder.newBuilder()
             .softValues()

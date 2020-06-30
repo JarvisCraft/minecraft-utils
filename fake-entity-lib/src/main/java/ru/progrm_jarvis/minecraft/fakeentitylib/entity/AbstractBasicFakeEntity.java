@@ -87,25 +87,21 @@ public abstract class AbstractBasicFakeEntity extends AbstractPlayerContainingFa
     }
 
     @Override
-    public void addMetadata(final List<WrappedWatchableObject> metadata) {
-        if (this.metadata == null) this.metadata = new WrappedDataWatcher(metadata);
-        else for (val metadatum : metadata) this.metadata.setObject(metadatum.getIndex(), metadatum);
-
-        sendMetadata();
-    }
-
-    @Override
     public void addMetadata(final Collection<WrappedWatchableObject> metadata) {
-        if (this.metadata == null) this.metadata = new WrappedDataWatcher(new ArrayList<>(metadata));
-        else for (val metadatum : metadata) this.metadata.setObject(metadatum.getIndex(), metadatum);
+        final WrappedDataWatcher thisMetadata;
+        if ((thisMetadata = this.metadata) == null) this.metadata = new WrappedDataWatcher(Arrays.asList(metadata));
+        else for (val metadatum : metadata) thisMetadata
+                .setObject(metadatum.getWatcherObject(), metadatum.getRawValue());
 
         sendMetadata();
     }
 
     @Override
     public void addMetadata(final WrappedWatchableObject... metadata) {
-        if (this.metadata == null) this.metadata = new WrappedDataWatcher(Arrays.asList(metadata));
-        else for (val metadatum : metadata) this.metadata.setObject(metadatum.getIndex(), metadatum);
+        final WrappedDataWatcher thisMetadata;
+        if ((thisMetadata = this.metadata) == null) this.metadata = new WrappedDataWatcher(Arrays.asList(metadata));
+        else for (val metadatum : metadata) thisMetadata
+                .setObject(metadatum.getWatcherObject(), metadatum.getRawValue());
 
         sendMetadata();
     }
