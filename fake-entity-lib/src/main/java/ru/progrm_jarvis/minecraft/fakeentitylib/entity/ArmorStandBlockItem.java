@@ -173,6 +173,24 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param delta delta of rotation
      */
     public void rotate(@NonNull final Vector3F delta) {
+        final Vector3F thisRotation;
+        setRotation((thisRotation = rotation) == null
+                ? new Vector3F(delta.getX(), delta.getY(), delta.getZ())
+                : new Vector3F(
+                        minimizeAngle(thisRotation.getX() + delta.getX()),
+                        minimizeAngle(thisRotation.getY() + delta.getY()),
+                        minimizeAngle(thisRotation.getZ() + delta.getZ())
+                )
+        );
+    }
+
+    /**
+     * Rotates this block by specified delta. This means that its current
+     * roll (<i>x</i>), pitch (<i>y</i>) and yaw (<i>z</i>) will each get incremented by those of delta specified.
+     *
+     * @param delta delta of rotation
+     */
+    public void rotateTo(@NonNull final Vector3F delta) {
         setRotation(rotation == null
                 ? new Vector3F(delta.getX(), delta.getY(), delta.getZ())
                 : new Vector3F(
