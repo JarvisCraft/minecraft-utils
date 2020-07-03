@@ -5,8 +5,10 @@ import lombok.experimental.FieldDefaults;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.Plugin;
 import ru.progrm_jarvis.minecraft.commons.schedule.task.AbstractSchedulerRunnable;
+import ru.progrm_jarvis.minecraft.commons.util.shutdown.ShutdownHooks;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.ObservableFakeEntity;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.management.AbstractSetBasedEntityManager;
 
@@ -59,7 +61,8 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
 
         this.entitiesSetSupplier = entitiesSetSupplier;
 
-        shutdownHooks.add(() -> {
+        final ShutdownHooks shutdownHooks;
+        (shutdownHooks = this.shutdownHooks).add(() -> {
             lock.lock();
             try {
                 for (val task : tasks) task.cancel();
@@ -75,6 +78,14 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
                 .add(on(PlayerQuitEvent.class)
                         .plugin(plugin)
                         .register(event -> removePlayer(event.getPlayer()))::shutdown);
+
+        shutdownHooks.add(on(PlayerRespawnEvent.class)
+                .plugin(plugin)
+                .register(event -> {
+                    final Player player;
+                    removePlayer(player = event.getPlayer());
+                    addPlayer(player);
+                })::shutdown);
     }
 
     protected void addPlayer(@NonNull final Player player) {
