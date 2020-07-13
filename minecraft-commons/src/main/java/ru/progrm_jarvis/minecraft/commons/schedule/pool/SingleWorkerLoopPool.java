@@ -1,7 +1,7 @@
 package ru.progrm_jarvis.minecraft.commons.schedule.pool;
 
-import io.netty.util.collection.LongObjectHashMap;
-import io.netty.util.collection.LongObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public final class SingleWorkerLoopPool implements LoopPool {
 
     @NonNull Plugin plugin;
     @NonNull BukkitScheduler scheduler;
-    @NonNull LongObjectMap<TaskRunner> syncTasks, asyncTasks;
+    @NonNull Long2ObjectMap<TaskRunner> syncTasks, asyncTasks;
 
     @Override
     public @NotNull ShutdownHook addTask(final @NotNull Runnable task, final long period, final boolean async) {
@@ -46,7 +46,7 @@ public final class SingleWorkerLoopPool implements LoopPool {
     public static LoopPool create(final @NonNull Plugin plugin) {
         return new SingleWorkerLoopPool(
                 plugin, plugin.getServer().getScheduler(),
-                new LongObjectHashMap<>(4), new LongObjectHashMap<>(4)
+                new Long2ObjectOpenHashMap<>(4), new Long2ObjectOpenHashMap<>(4)
         );
     }
 
