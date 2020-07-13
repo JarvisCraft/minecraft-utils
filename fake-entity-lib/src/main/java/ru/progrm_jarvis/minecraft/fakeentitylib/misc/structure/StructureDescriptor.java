@@ -9,8 +9,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.Material;
@@ -31,17 +31,16 @@ import java.util.stream.Collectors;
  */
 @Value
 @Builder
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class StructureDescriptor {
 
-    @Singular private ImmutableList<Element> elements;
+    @Singular ImmutableList<Element> elements;
 
-    @Builder.Default private int frames = 0;
+    @Builder.Default int frames = 0;
 
     /**
      * Keyframes of the structure.
      */
-    private TIntObjectMap<FrameUpdater> keyframes;
+    Int2ObjectMap<FrameUpdater> keyframes;
 
     private static final Gson gson = new Gson();
 
@@ -56,7 +55,7 @@ public class StructureDescriptor {
         val descriptor = builder().elements(elementList); // add elements to descriptor
         val keyframesList = jsonRepresentation.getOrderedKeyframes();
         if (!keyframesList.isEmpty()) {
-            val keyframes = new TIntObjectHashMap<FrameUpdater>();
+            val keyframes = new Int2ObjectOpenHashMap<FrameUpdater>();
 
             for (val keyframe : keyframesList) keyframes
                     .put(keyframe.tick, keyframe.toFrameUpdaterByElementNames(elementNames));
