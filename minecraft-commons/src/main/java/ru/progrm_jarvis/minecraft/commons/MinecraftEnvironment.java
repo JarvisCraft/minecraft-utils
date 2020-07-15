@@ -38,13 +38,12 @@ public enum MinecraftEnvironment {
     @Deprecated
     @Synchronized
     public void setAvailable() {
-        this.available = true;
+        available = true;
     }
 
     @Synchronized
     public boolean isAvailable() {
-        if (available) return true;
-        else return available = classesAvailable() && packagesAvailable();
+        return available || (available = classesAvailable() && packagesAvailable());
     }
 
     private boolean packagesAvailable() {
