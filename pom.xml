@@ -101,9 +101,11 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M3</version>
+                    <version>3.0.0-M5</version>
                     <configuration>
                         <forkCount>0</forkCount>
+                        <reuseForks>true</reuseForks>
+                        <useSystemClassLoader>false</useSystemClassLoader>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -125,10 +127,6 @@
                     <configuration>
                         <artifactSet>
                             <excludes>
-                                <!-- Annotation-related optional dependencies -->
-                                <exlude>org.projectlombok:lombok</exlude>
-                                <exlude>org.jetbrains:annotations</exlude>
-                                <exlude>com.google.code.findbugs:jsr305</exlude>
                                 <!-- Third-party dependencies not required at runtime -->
                                 <exclude>org.openjdk.jmh:*</exclude>
                             </excludes>
@@ -286,18 +284,21 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.18.12</version>
+                <scope>provided</scope>
                 <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
                 <version>19.0.0</version>
+                <scope>provided</scope>
                 <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
                 <version>3.0.2</version>
+                <scope>provided</scope>
                 <optional>true</optional>
             </dependency>
 
