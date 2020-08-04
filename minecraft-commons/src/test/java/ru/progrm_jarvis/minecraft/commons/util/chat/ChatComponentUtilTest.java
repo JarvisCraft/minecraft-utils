@@ -4,14 +4,14 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.google.gson.GsonBuilder;
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import ru.progrm_jarvis.mcunit.annotation.EnabledIfNMS;
+import ru.progrm_jarvis.mcunit.annotation.EnabledIfNms;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ChatComponentUtilTest {
 
     @Test
-    @EnabledIfNMS
+    @EnabledIfNms
     void testWrappedChatComponentGsonSerializer() {
         val gson = new GsonBuilder()
                 .registerTypeAdapter(WrappedChatComponent.class, ChatComponentUtil.wrappedChatComponentGsonSerializer())
