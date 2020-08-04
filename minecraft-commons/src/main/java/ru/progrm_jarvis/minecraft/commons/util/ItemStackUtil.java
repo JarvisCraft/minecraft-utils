@@ -2,7 +2,9 @@ package ru.progrm_jarvis.minecraft.commons.util;
 
 import lombok.experimental.UtilityClass;
 import lombok.var;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,5 +28,29 @@ public class ItemStackUtil {
         for (var i = 0; i < length; i++) copy[i] = items[i].clone();
 
         return copy;
+    }
+
+    /**
+     * Tests if the given item is empty.
+     *
+     * @param item item to check for emptiness
+     * @return {@code true} if and only if the item is {@code null}
+     * or of empty type (i.e. {@link Material#AIR})
+     */
+    @Contract("null -> true")
+    public boolean isEmpty(final @Nullable ItemStack item) {
+        return item == null || item.getType() == Material.AIR;
+    }
+
+    /**
+     * Tests if the given item is not empty.
+     *
+     * @param item item to check for non-emptiness
+     * @return {@code false} if and only if the item is not {@code null}
+     * and not of empty type (i.e. {@link Material#AIR})
+     */
+    @Contract("null -> false")
+    public boolean isNotEmpty(final @Nullable ItemStack item) {
+        return item != null && item.getType() != Material.AIR;
     }
 }
