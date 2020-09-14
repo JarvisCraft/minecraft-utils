@@ -38,7 +38,7 @@ public class NmsUtil {
     static {
         final Class<?> nmsEntityClass;
         try {
-            nmsEntityClass = Class.forName(getNmsPackage().concat(".Entity"));
+            nmsEntityClass = Class.forName(getNmsPackage() + ".Entity");
         } catch (final ClassNotFoundException e) {
             throw new IllegalStateException("Cannot find NMS-entity class", e);
         }

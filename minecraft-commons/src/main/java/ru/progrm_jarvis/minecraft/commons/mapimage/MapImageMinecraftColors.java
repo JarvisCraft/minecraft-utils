@@ -1,8 +1,9 @@
 package ru.progrm_jarvis.minecraft.commons.mapimage;
 
-import gnu.trove.impl.unmodifiable.TUnmodifiableIntByteMap;
-import gnu.trove.map.TIntByteMap;
-import gnu.trove.map.hash.TIntByteHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ByteMap;
+import it.unimi.dsi.fastutil.ints.Int2ByteMaps;
+import it.unimi.dsi.fastutil.ints.Int2ByteOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import ru.progrm_jarvis.minecraft.commons.util.image.ColorUtil;
@@ -16,24 +17,21 @@ import static ru.progrm_jarvis.minecraft.commons.mapimage.MapImageColor.NO_COLOR
 public class MapImageMinecraftColors {
 
     /**
-     * all available colors available in Minecraft associated with their {@link byte}-codes
-     * <p>
-     * {@link <a href="https://minecraft.gamepedia.com/Map_item_format#1.12_Color_Table">
-     * Taken from Minecraft Wiki</a>}
+     * All available colors available in Minecraft associated with their {@link byte}-codes
+     * @see <a href="https://minecraft.gamepedia.com/Map_item_format#1.12_Color_Table"> Taken from Minecraft Wiki</a>
      */
-    public final TIntByteMap MINECRAFT_RGB_COLOR_CODES;
+    public final Int2ByteMap MINECRAFT_RGB_COLOR_CODES;
 
     /**
-     * all available colors available in Minecraft
+     * All available colors available in Minecraft
      * <p>
-     * {@link <a href="https://minecraft.gamepedia.com/Map_item_format#1.12_Color_Table">
-     * Taken from Minecraft Wiki</a>}
+     * @see <a href="https://minecraft.gamepedia.com/Map_item_format#1.12_Color_Table"> Taken from Minecraft Wiki</a>
      */
-    private final int[] MINECRAFT_RGB_COLORS;
+    private final IntSet MINECRAFT_RGB_COLORS;
 
     static {
         //<editor-fold desc="Minecraft colors registration" defaultstate="collapsed">
-        val minecraftColors = new TIntByteHashMap(NO_COLOR_CODE);
+        val minecraftColors = new Int2ByteOpenHashMap(NO_COLOR_CODE);
         minecraftColors.put(ColorUtil.toArgb((byte) 89, (byte) 125, (byte) 39), (byte) 4);
         minecraftColors.put(ColorUtil.toArgb((byte) 109, (byte) 153, (byte) 48), (byte) 5);
         minecraftColors.put(ColorUtil.toArgb((byte) 127, (byte) 178, (byte) 56), (byte) 6);
@@ -239,20 +237,20 @@ public class MapImageMinecraftColors {
         minecraftColors.put(ColorUtil.toArgb((byte) 37, (byte) 22, (byte) 16), (byte) 206);
         minecraftColors.put(ColorUtil.toArgb((byte) 19, (byte) 11, (byte) 8), (byte) 207);
 
-        MINECRAFT_RGB_COLOR_CODES = new TUnmodifiableIntByteMap(minecraftColors);
-        MINECRAFT_RGB_COLORS = MINECRAFT_RGB_COLOR_CODES.keys();
+        MINECRAFT_RGB_COLOR_CODES = Int2ByteMaps.unmodifiable(minecraftColors);
+        MINECRAFT_RGB_COLORS = MINECRAFT_RGB_COLOR_CODES.keySet();
         //</editor-fold>
     }
 
     /**
      * Creates a new primitive map
-     * with keys being an {@link int} representation of an RGB color in Minecraft map
+     * with keys being an {@code int} representation of an RGB color in Minecraft map
      * and value being its code in Minecraft.
      *
      * @return primitive map of available map color codes in minecraft by their RGB colors
      */
-    public TIntByteMap asNewPrimitiveMap() {
-        return new TIntByteHashMap(MINECRAFT_RGB_COLOR_CODES);
+    public Int2ByteMap asNewPrimitiveMap() {
+        return new Int2ByteOpenHashMap(MINECRAFT_RGB_COLOR_CODES);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -262,7 +260,7 @@ public class MapImageMinecraftColors {
     /**
      * Checks whether the specified color can be shown on a map without any distortion.
      *
-     * @param rgb RGB color as {@link int}
+     * @param rgb RGB color as {@code int}
      * @return {@code true} if this color can be shown on an in-game map without distortion anf {@code false} otherwise
      */
     public boolean isMinecraftColor(final int rgb) {
@@ -285,7 +283,7 @@ public class MapImageMinecraftColors {
     /**
      * Gets Minecraft map color code for the specified color.
      *
-     * @param rgb RGB color as {@link int}
+     * @param rgb RGB color as {@code int}
      * @return non-zero value being the found minecraft code for the color or {@code 0} if none was found
      */
     public byte getMinecraftColorCode(final int rgb) {

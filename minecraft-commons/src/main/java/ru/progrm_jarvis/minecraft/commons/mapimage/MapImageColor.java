@@ -2,8 +2,8 @@ package ru.progrm_jarvis.minecraft.commons.mapimage;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import gnu.trove.map.TObjectByteMap;
-import gnu.trove.map.hash.TObjectByteHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ByteMap;
+import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
@@ -45,7 +45,7 @@ public class MapImageColor {
     /**
      * All associations of color's with their available IDs.
      */
-    private static final TObjectByteMap<MapImageColor> COLOR_CODE_CACHE = new TObjectByteHashMap<>();
+    private static final Object2ByteMap<MapImageColor> COLOR_CODE_CACHE = new Object2ByteOpenHashMap<>();
 
     /**
      * 8 bits describing red part of the color
@@ -61,7 +61,7 @@ public class MapImageColor {
     blue;
 
     /**
-     * An {@link int} representation of the color. Also used as the only field for hash-code generation.
+     * An {@code int} representation of the color. Also used as the only field for hash-code generation.
      */
     @EqualsAndHashCode.Include int rgb;
 
@@ -112,9 +112,9 @@ public class MapImageColor {
     }
 
     /**
-     * Gets or creates cached map image color from specified {@link int}-RGB.
+     * Gets or creates cached map image color from specified {@code int}-RGB.
      *
-     * @param rgb RGB encoded as {@link int}
+     * @param rgb RGB encoded as {@code int}
      * @return cached or created and cached map image color
      */
     @SneakyThrows
@@ -143,7 +143,7 @@ public class MapImageColor {
      * @param blue blue color channel
      * @return cached or created and cached map image color
      *
-     * @apiNote alias {@link #of(byte, byte, byte)} using {@link int}s not to perform casts in method call
+     * @apiNote alias {@link #of(byte, byte, byte)} using {@code int}s not to perform casts in method call
      */
     @Nonnull public static MapImageColor of(final int red, final int green, final int blue) {
         return of((byte) red, (byte) green, (byte) blue);
@@ -176,7 +176,7 @@ public class MapImageColor {
      * dissimilarity rate of each available with the one given.
      * This value is cached for further usage.
      *
-     * @param rgb RGB-color {@link int} for which to find the closest available color code
+     * @param rgb RGB-color {@code int} for which to find the closest available color code
      * @return closest available color id
      */
     @SneakyThrows

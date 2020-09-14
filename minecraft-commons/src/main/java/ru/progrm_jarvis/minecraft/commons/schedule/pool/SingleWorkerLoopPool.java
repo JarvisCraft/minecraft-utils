@@ -1,131 +1,107 @@
 package ru.progrm_jarvis.minecraft.commons.schedule.pool;
 
-import lombok.*;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import lombok.val;
 import org.bukkit.plugin.Plugin;
-import ru.progrm_jarvis.minecraft.commons.schedule.misc.KeyedSchedulerGroup;
-import ru.progrm_jarvis.minecraft.commons.schedule.misc.SchedulerGroups;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * A loop pool which creates only one {@link org.bukkit.scheduler.BukkitTask} per sync-mode.
- */
-@ToString
-@EqualsAndHashCode
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
-public class SingleWorkerLoopPool<T extends Runnable, K> implements KeyedLoopPool<T, K> {
+public final class SingleWorkerLoopPool implements LoopPool {
 
-    boolean concurrent;
-
-    @NonNull @Getter Plugin plugin;
-    @NonFinal KeyedSchedulerGroup<CountingTask<T>, K> asyncWorker;
-    @NonFinal KeyedSchedulerGroup<CountingTask<T>, K> syncWorker;
-
-    protected static <T extends Runnable> Collection<T> mapToTasks(final Collection<CountingTask<T>> tasks) {
-        return tasks.stream()
-                .map(task -> task.task)
-                .collect(Collectors.toList());
-    }
+    @NonNull Plugin plugin;
+    @NonNull BukkitScheduler scheduler;
+    @NonNull Long2ObjectMap<TaskRunner> syncTasks, asyncTasks;
 
     @Override
-    public int tasksSize() {
-        return (asyncWorker == null ? 0 : asyncWorker.size()) + (syncWorker == null ? 0 : syncWorker.size());
+    public @NotNull ShutdownHook addTask(final @NotNull Runnable task, final long period, final boolean async) {
+        return (async ? asyncTasks.computeIfAbsent(period, p -> {
+            val runner = new PaperTaskRunner(ConcurrentHashMap.newKeySet());
+            runner.setup(
+                    scheduler.runTaskTimer(plugin, runner, period, period), () -> asyncTasks.remove(period)
+            );
+
+            return runner;
+        }) : syncTasks.computeIfAbsent(period, p -> {
+            val runner = new PaperTaskRunner(ConcurrentHashMap.newKeySet());
+            runner.setup(
+                    scheduler.runTaskTimer(plugin, runner, period, period), () -> syncTasks.remove(period)
+            );
+            return runner;
+        })).addTask(task);
     }
 
-    protected void initAsyncWorker() {
-        if (asyncWorker == null) asyncWorker = concurrent
-                ? SchedulerGroups.concurrentKeyedSchedulerGroup(plugin, true, 1, 1)
-                : SchedulerGroups.keyedSchedulerGroup(plugin, true, 1, 1);
+    public static LoopPool create(final @NonNull Plugin plugin) {
+        return new SingleWorkerLoopPool(
+                plugin, plugin.getServer().getScheduler(),
+                new Long2ObjectOpenHashMap<>(4), new Long2ObjectOpenHashMap<>(4)
+        );
     }
 
-    protected void initSyncWorker() {
-        if (syncWorker == null) syncWorker = concurrent
-                ? SchedulerGroups.concurrentKeyedSchedulerGroup(plugin, false, 1, 1)
-                : SchedulerGroups.keyedSchedulerGroup(plugin, false, 1, 1);
-    }
+    interface TaskRunner extends AutoCloseable {
 
-    @Override
-    public TaskRemover addTask(@NonNull final TaskOptions taskOptions, @NonNull final T task) {
-        if (taskOptions.isAsync()) {
-            initAsyncWorker();
-
-            val countingTask = new CountingTask<>(task, taskOptions.getInterval());
-            asyncWorker.addTask(countingTask);
-
-            return () -> removeTask(countingTask, true);
-        } else {
-            initSyncWorker();
-
-            val countingTask = new CountingTask<>(task, taskOptions.getInterval());
-            syncWorker.addTask(countingTask);
-
-            return () -> removeTask(countingTask, false);
-        }
-    }
-
-    protected void removeTask(@NonNull final CountingTask<T> countingTask, final boolean async) {
-        if (async) if (syncWorker != null) syncWorker.removeTask(countingTask);
-        else if (asyncWorker != null) asyncWorker.removeTask(countingTask);
-    }
-
-    @Override
-    public TaskRemover addTask(@NonNull final TaskOptions taskOptions, final K key, @NonNull final T task) {
-        if (taskOptions.isAsync()) {
-            initAsyncWorker();
-
-            val countingTask = new CountingTask<>(task, taskOptions.getInterval());
-            asyncWorker.addTask(key, countingTask);
-
-            return () -> removeTask(countingTask, true);
-        } else {
-            initSyncWorker();
-
-            val countingTask = new CountingTask<>(task, taskOptions.getInterval());
-            syncWorker.addTask(key, countingTask);
-
-            return () -> removeTask(countingTask, false);
-        }
-    }
-
-    @Override
-    public Collection<T> clearTasks() {
-        val tasks = asyncWorker.clearTasks();
-        attemptCancelAsync();
-
-        tasks.addAll(syncWorker.clearTasks());
-        attemptCancelSync();
-
-        return mapToTasks(tasks);
-    }
-
-    protected void attemptCancelAsync() {
-        if (asyncWorker.isCancelled()) asyncWorker = null;
-    }
-
-    protected void attemptCancelSync() {
-        if (syncWorker.size() == 0) syncWorker = null;
-    }
-
-    @Value
-    @RequiredArgsConstructor
-    @FieldDefaults(level = AccessLevel.PRIVATE)
-    private static class CountingTask<T extends Runnable> implements Runnable {
-
-        final T task;
-        final long interval;
-        @NonFinal long counter;
+        @NotNull ShutdownHook addTask(@NotNull Runnable task);
 
         @Override
-        public void run() {
-            if (++counter == interval) {
-                counter = 0;
+        void close();
+    }
 
-                task.run();
+    interface BukkitTaskRunner extends TaskRunner, Runnable {
+
+        void setup(@NotNull BukkitTask task, @NotNull Runnable disabler);
+    }
+
+    @RequiredArgsConstructor
+    @FieldDefaults(level = AccessLevel.PUBLIC, makeFinal = true)
+    private static class PaperTaskRunner implements BukkitTaskRunner {
+
+        @NotNull Collection<Runnable> tasks;
+        @NonFinal /* because class initialization order */ @Nullable BukkitTask owningTask;
+        @NonFinal /* because class initialization order */ @Nullable Runnable disabler;
+
+        public void run() {
+            for (val task : tasks) task.run();
+        }
+
+        @Override
+        public void setup(@NotNull final BukkitTask task, @NotNull final Runnable disabler) {
+            owningTask = task;
+            this.disabler = disabler;
+        }
+
+        @Override
+        public @NotNull ShutdownHook addTask(@NotNull final Runnable task) {
+            tasks.add(task);
+
+            return () -> removeTask(task);
+        }
+
+        private void removeTask(@NotNull final Runnable task) {
+            tasks.remove(task);
+            if (tasks.isEmpty() && owningTask != null) {
+                assert disabler != null;
+                disabler.run();
+
+                close();
             }
+        }
+
+        @Override
+        public void close() {
+            assert owningTask != null;
+            owningTask.cancel();
         }
     }
 }

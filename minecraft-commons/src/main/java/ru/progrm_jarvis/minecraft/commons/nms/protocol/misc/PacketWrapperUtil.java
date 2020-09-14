@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 public class PacketWrapperUtil {
 
     private final String FIELDS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME
-            = PacketWrapperUtil.class.getCanonicalName().concat(".FIELDS_CACHE_CONCURRENCY_LEVEL"),
+            = PacketWrapperUtil.class.getCanonicalName() + ".FIELDS_CACHE_CONCURRENCY_LEVEL",
             METHODS_CACHE_CONCURRENCY_LEVEL_PROPERTY_NAME
-                    = PacketWrapperUtil.class.getCanonicalName().concat(".METHODS_CACHE_CONCURRENCY_LEVEL");
+                    = PacketWrapperUtil.class.getCanonicalName() + ".METHODS_CACHE_CONCURRENCY_LEVEL";
 
     private final Cache<Class<?>, Map<String, DynamicFieldWrapper<Object, Object>>> FIELDS_CACHE
             = CacheBuilder.newBuilder()

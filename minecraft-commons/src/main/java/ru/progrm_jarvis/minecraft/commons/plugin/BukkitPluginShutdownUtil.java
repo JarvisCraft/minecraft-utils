@@ -72,10 +72,10 @@ public class BukkitPluginShutdownUtil {
         public void onPluginDisable(final PluginDisableEvent event) {
             // check if the plugin disabled is the right one
             if (event.getPlugin() == plugin) {
-                while (!shutdownHooks.isEmpty()) {
-                    val hook = shutdownHooks.get(0);
+                val thisShutdownHooks = shutdownHooks;
+                while (!thisShutdownHooks.isEmpty()) {
+                    val hook = thisShutdownHooks.remove(0);
                     hook.shutdown();
-                    shutdownHooks.remove(hook);
                 }
             }
         }

@@ -5,8 +5,10 @@ import lombok.experimental.FieldDefaults;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.Plugin;
 import ru.progrm_jarvis.minecraft.commons.schedule.task.AbstractSchedulerRunnable;
+import ru.progrm_jarvis.minecraft.commons.util.shutdown.ShutdownHooks;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.ObservableFakeEntity;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.management.AbstractSetBasedEntityManager;
 
@@ -59,7 +61,8 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
 
         this.entitiesSetSupplier = entitiesSetSupplier;
 
-        shutdownHooks.add(() -> {
+        final ShutdownHooks shutdownHooks;
+        (shutdownHooks = this.shutdownHooks).add(() -> {
             lock.lock();
             try {
                 for (val task : tasks) task.cancel();
@@ -75,13 +78,21 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
                 .add(on(PlayerQuitEvent.class)
                         .plugin(plugin)
                         .register(event -> removePlayer(event.getPlayer()))::shutdown);
+
+        shutdownHooks.add(on(PlayerRespawnEvent.class)
+                .plugin(plugin)
+                .register(event -> {
+                    final Player player;
+                    removePlayer(player = event.getPlayer());
+                    addPlayer(player);
+                })::shutdown);
     }
 
-    public void addPlayer(@NonNull final Player player) {
+    protected void addPlayer(@NonNull final Player player) {
         for (val entity : entities) entity.addPlayer(player);
     }
 
-    public void removePlayer(@NonNull final Player player) {
+    protected void removePlayer(@NonNull final Player player) {
         for (val entity : entities) entity.removePlayer(player);
     }
 
@@ -93,7 +104,7 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
                 RedrawEntitiesRunnable minRunnable = null;
                 Integer minEntitiesInRunnable = null;
                 for (val task : tasks) {
-                    val taskEntitiesSize = task.entities.size();
+                    val taskEntitiesSize = task.size();
 
                     // if task has no even reached its entity minimum then use it
                     if (taskEntitiesSize < minEntitiesForNewThread) return task;
@@ -137,7 +148,10 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
             while (iterator.hasNext()) {
                 val task = iterator.next();
                 if (task.removeEntity(entity)) {
-                    if (task.entities.isEmpty()) iterator.remove();
+                    if (task.isEmpty()) {
+                        iterator.remove();
+                        task.cancel();
+                    }
 
                     break;
                 }
@@ -156,6 +170,10 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
 
         public int size() {
             return entities.size();
+        }
+
+        public boolean isEmpty() {
+            return entities.isEmpty();
         }
 
         public void addEntity(final E entity) {

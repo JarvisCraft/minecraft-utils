@@ -58,9 +58,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- JUnit -->
         <version.padla>1.0-SNAPSHOT</version.padla>
-        <version.junit>5.5.2</version.junit>
-        <version.junit.platform>1.6.2</version.junit.platform>
-        <version.mockito>3.3.3</version.mockito>
+        <version.junit>5.7.0</version.junit>
+        <version.junit.platform>1.7.0</version.junit.platform>
+        <version.mockito>3.5.10</version.mockito>
     </properties>
 
     <distributionManagement>
@@ -101,9 +101,11 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M3</version>
+                    <version>3.0.0-M5</version>
                     <configuration>
                         <forkCount>0</forkCount>
+                        <reuseForks>true</reuseForks>
+                        <useSystemClassLoader>false</useSystemClassLoader>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -125,10 +127,6 @@
                     <configuration>
                         <artifactSet>
                             <excludes>
-                                <!-- Annotation-related optional dependencies -->
-                                <exlude>org.projectlombok:lombok</exlude>
-                                <exlude>org.jetbrains:annotations</exlude>
-                                <exlude>com.google.code.findbugs:jsr305</exlude>
                                 <!-- Third-party dependencies not required at runtime -->
                                 <exclude>org.openjdk.jmh:*</exclude>
                             </excludes>
@@ -240,13 +238,13 @@
             <dependency>
                 <groupId>org.spigotmc</groupId>
                 <artifactId>spigot-api</artifactId>
-                <version>1.13.2-R0.1-SNAPSHOT</version>
+                <version>1.16.1-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>net.md-5</groupId>
                 <artifactId>bungeecord-api</artifactId>
-                <version>1.13-SNAPSHOT</version>
+                <version>1.16-R0.3</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -268,12 +266,12 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.7</version>
+                <version>2.8.0</version>
             </dependency>
             <dependency>
-                <groupId>net.sf.trove4j</groupId>
-                <artifactId>trove4j</artifactId>
-                <version>3.0.3</version>
+                <groupId>it.unimi.dsi</groupId>
+                <artifactId>fastutil</artifactId>
+                <version>8.4.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
@@ -286,18 +284,21 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.18.12</version>
+                <scope>provided</scope>
                 <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
-                <version>19.0.0</version>
+                <version>20.1.0</version>
+                <scope>provided</scope>
                 <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
                 <version>3.0.2</version>
+                <scope>provided</scope>
                 <optional>true</optional>
             </dependency>
 
