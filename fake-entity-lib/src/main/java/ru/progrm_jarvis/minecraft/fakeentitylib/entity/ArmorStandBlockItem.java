@@ -13,7 +13,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.progrm_jarvis.javacommons.annotation.ownership.Own;
 import ru.progrm_jarvis.minecraft.commons.nms.NmsUtil;
 import ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand;
 
@@ -87,11 +89,6 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
         equipmentPacket.setItem(this.item = item);
     }
 
-    @Override
-    public void spawn() {
-        super.spawn();
-    }
-
     /**
      * Creates new armor stand block-item by parameters specified.
      *
@@ -159,9 +156,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      *
      * @param rotation new rotation of this block
      */
-    public void setRotation(final @NonNull Vector3F rotation) {
-        if (rotation.equals(this.rotation)) return;
-
+    protected void setRotationNoChecks(final @Own @NotNull Vector3F rotation) {
         addMetadata(headRotation(rotation));
         this.rotation = rotation;
     }
@@ -172,51 +167,29 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      *
      * @param delta delta of rotation
      */
-    public void rotate(final @NonNull Vector3F delta) {
+    public void rotate(final @NonNull @Own Vector3F delta) {
+        final float dx, dy = delta.getY(), dz = delta.getZ();
+        if (((dx = delta.getX()) == 0) && dy == 0 && dz == 0) return; // no-op
+
         final Vector3F thisRotation;
-        setRotation((thisRotation = rotation) == null
-                ? new Vector3F(delta.getX(), delta.getY(), delta.getZ())
-                : new Vector3F(
-                        minimizeAngle(thisRotation.getX() + delta.getX()),
-                        minimizeAngle(thisRotation.getY() + delta.getY()),
-                        minimizeAngle(thisRotation.getZ() + delta.getZ())
-                )
-        );
+        if (((thisRotation = rotation) != null)) {
+            delta.setX(thisRotation.getX() + dx);
+            delta.setY(thisRotation.getY() + dy);
+            delta.setZ(thisRotation.getZ() + dz);
+        }
+        setRotationNoChecks(delta);
     }
 
     /**
-     * Rotates this block by specified delta. This means that its current
-     * roll (<i>x</i>), pitch (<i>y</i>) and yaw (<i>z</i>) will each get incremented by those of delta specified.
+     * Sets this blocks rotation to the one specified.
      *
-     * @param delta delta of rotation
+     * @param newRotation new rotation of this block
      */
-    public void rotateTo(final @NonNull Vector3F delta) {
-        setRotation(rotation == null
-                ? new Vector3F(delta.getX(), delta.getY(), delta.getZ())
-                : new Vector3F(
-                        minimizeAngle(rotation.getX() + delta.getX()),
-                        minimizeAngle(rotation.getY() + delta.getY()),
-                        minimizeAngle(rotation.getZ() + delta.getZ())
-                )
-        );
+    public void setRotation(final @Own @NonNull Vector3F newRotation) {
+        if (!newRotation.equals(rotation)) setRotationNoChecks(newRotation);
     }
 
-    /**
-     * Minimizes the angle so that it fits the interval of <i>[-360; 360]</i> keeping the actual rotation.
-     * This means removing <i>360</i> until the number is less than or equal to <i>360</i>
-     * or adding <i>360</i> until the number is bigger than or equal to <i>-360</i>.
-     *
-     * @param degrees non-minimized angle
-     * @return minimized angle
-     */
-    public static float minimizeAngle(float degrees) {
-        while (degrees >= 360) degrees -= 360;
-        while (degrees <= -360) degrees += 360;
-
-        return degrees;
-    }
-
-    public void setItem(final @NonNull ItemStack item) {
+    public void setItem(final @Own @NonNull ItemStack item) {
         equipmentPacket.setItem(this.item = item);
         for (val entry : players.entrySet()) if (entry.getValue()) equipmentPacket.sendPacket(entry.getKey());
     }
