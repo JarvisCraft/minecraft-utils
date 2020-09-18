@@ -15,13 +15,13 @@ import java.util.function.Function;
 @UtilityClass
 public class PlayerContainers {
 
-    public PlayerContainer wrap(@NonNull final Collection<Player> collectionOfPlayers,
+    public PlayerContainer wrap(final @NonNull Collection<Player> collectionOfPlayers,
                                 final boolean global) {
         return new PlayerContainerCollectionWrapper(collectionOfPlayers, global);
     }
 
-    public <T> PlayerContainer wrap(@NonNull final Map<Player, T> mapOfPlayers,
-                                    @NonNull final Function<Player, T> defaultValueSupplier,
+    public <T> PlayerContainer wrap(final @NonNull Map<Player, T> mapOfPlayers,
+                                    final @NonNull Function<Player, T> defaultValueSupplier,
                                     final boolean global) {
         if (global) {
             val container = new PlayerContainerMapWrapper<>(mapOfPlayers, defaultValueSupplier, true);
@@ -34,7 +34,7 @@ public class PlayerContainers {
     }
 
     // non-global
-    public <T> PlayerContainer wrap(@NonNull final Map<Player, T> mapOfPlayers) {
+    public <T> PlayerContainer wrap(final @NonNull Map<Player, T> mapOfPlayers) {
         return new PlayerContainerMapWrapper<>(mapOfPlayers, player -> {
             throw new UnsupportedOperationException("Players cannot be directly added to this non-global player-map");
         }, false);
@@ -46,7 +46,7 @@ public class PlayerContainers {
         @NonNull Collection<Player> collection;
         boolean global;
 
-        public PlayerContainerCollectionWrapper(@NonNull final Collection<Player> collection, final boolean global) {
+        public PlayerContainerCollectionWrapper(final @NonNull Collection<Player> collection, final boolean global) {
             this.collection = collection;
             this.global = global;
 
@@ -82,8 +82,8 @@ public class PlayerContainers {
         @NonNull Function<Player, T> defaultValueSupplier;
         boolean global;
 
-        public PlayerContainerMapWrapper(@NonNull final Map<Player, T> map,
-                                               @NonNull final Function<Player, T> defaultValueSupplier,
+        public PlayerContainerMapWrapper(final @NonNull Map<Player, T> map,
+                                               final @NonNull Function<Player, T> defaultValueSupplier,
                                                final boolean global) {
             this.map = map;
             playersView = Collections.unmodifiableSet(map.keySet());

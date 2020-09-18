@@ -22,13 +22,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @UtilityClass
 public class SchedulerGroups {
 
-    public <T extends Runnable, K> KeyedSchedulerGroup<T, K> keyedSchedulerGroup(@NonNull final Plugin plugin,
+    public <T extends Runnable, K> KeyedSchedulerGroup<T, K> keyedSchedulerGroup(final @NonNull Plugin plugin,
                                                                                  final boolean async, final long delay,
                                                                                  final long interval) {
         return new MultimapBasedKeyedSchedulerGroup<>(plugin, async, delay, interval, ArrayListMultimap.create());
     }
 
-    public <T extends Runnable, K> KeyedSchedulerGroup<T, K> concurrentKeyedSchedulerGroup(@NonNull final Plugin plugin,
+    public <T extends Runnable, K> KeyedSchedulerGroup<T, K> concurrentKeyedSchedulerGroup(final @NonNull Plugin plugin,
                                                                                            final boolean async,
                                                                                            final long delay,
                                                                                            final long interval) {
@@ -43,14 +43,14 @@ public class SchedulerGroups {
     @FieldDefaults(level = AccessLevel.PROTECTED)
     private static class MultimapBasedKeyedSchedulerGroup<T extends Runnable, K> extends KeyedSchedulerGroup<T, K> {
 
-        @NonNull final Plugin plugin;
+        final @NonNull Plugin plugin;
 
         final BukkitTaskInitializer initializer;
 
         final Multimap<K, T> tasks;
 
-        public MultimapBasedKeyedSchedulerGroup(@NonNull final Plugin plugin, final boolean async, final long delay,
-                                                final long interval, @NonNull final Multimap<K, T> tasks) {
+        public MultimapBasedKeyedSchedulerGroup(final @NonNull Plugin plugin, final boolean async, final long delay,
+                                                final long interval, final @NonNull Multimap<K, T> tasks) {
             this.plugin = plugin;
 
             initializer = BukkitTaskInitializers.createTimerTaskInitializer(plugin, async, delay, interval, this);
@@ -97,19 +97,19 @@ public class SchedulerGroups {
         }
 
         @Override
-        public void addTask(final K key, @NonNull final T task) {
+        public void addTask(final K key, final @NonNull T task) {
             initializer.initialize();
 
             tasks.put(key, task);
         }
 
         @Override
-        public boolean removeTask(@NonNull final T task) {
+        public boolean removeTask(final @NonNull T task) {
             return tasks.values().remove(task);
         }
 
         @Override
-        public int removeTasks(@NonNull final T task) {
+        public int removeTasks(final @NonNull T task) {
             val tasks = this.tasks.values();
             boolean mayContain;
             var removed = 0;
@@ -136,9 +136,9 @@ public class SchedulerGroups {
         Lock readLock = lock.readLock();
         Lock writeLock = lock.writeLock();
 
-        public ConcurrentMultimapBasedKeyedSchedulerGroup(@NonNull final Plugin plugin,
+        public ConcurrentMultimapBasedKeyedSchedulerGroup(final @NonNull Plugin plugin,
                                                           final boolean async, final long delay, final long interval,
-                                                          @NonNull final Multimap<K, T> tasks) {
+                                                          final @NonNull Multimap<K, T> tasks) {
             super(plugin, async, delay, interval, tasks);
         }
 
@@ -183,7 +183,7 @@ public class SchedulerGroups {
         }
 
         @Override
-        public void addTask(final K key, @NonNull final T task) {
+        public void addTask(final K key, final @NonNull T task) {
             writeLock.lock();
             try {
                 super.addTask(key, task);
@@ -193,7 +193,7 @@ public class SchedulerGroups {
         }
 
         @Override
-        public boolean removeTask(@NonNull final T task) {
+        public boolean removeTask(final @NonNull T task) {
             writeLock.lock();
             try {
                 return super.removeTask(task);
@@ -203,7 +203,7 @@ public class SchedulerGroups {
         }
 
         @Override
-        public int removeTasks(@NonNull final T task) {
+        public int removeTasks(final @NonNull T task) {
             writeLock.lock();
             try {
                 return super.removeTasks(task);

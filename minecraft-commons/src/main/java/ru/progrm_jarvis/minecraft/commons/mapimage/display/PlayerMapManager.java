@@ -163,7 +163,7 @@ public class PlayerMapManager {
      * @return map view's ID
      */
     @SneakyThrows
-    public int getMapId(@NonNull final MapView mapView) {
+    public int getMapId(final @NonNull MapView mapView) {
         if (USE_INT_IDS) return (int) MAP_VIEW__GET_ID__METHOD.invokeExact(mapView);
         return (int) (short) MAP_VIEW__GET_ID__METHOD.invokeExact(mapView);
     }
@@ -229,7 +229,7 @@ public class PlayerMapManager {
      * @see #freeMap(Player, MapView) should be called whenever the player stops seeing this map or leaves the server
      */
     @Synchronized
-    public MapView allocateMap(@NonNull final Player player) {
+    public MapView allocateMap(final @NonNull Player player) {
         val mapsOfPlayer = PLAYER_MAPS.get(player);
 
         // if the player has all maps allocated of available than allocate another one (specially for him <3)
@@ -264,7 +264,7 @@ public class PlayerMapManager {
      * @see #allocateMap(Player) only obtained by calling this method should be freed
      */
     @Synchronized
-    public void freeMap(@NonNull final Player player, @NonNull final MapView map) {
+    public void freeMap(final @NonNull Player player, final @NonNull MapView map) {
         PLAYER_MAPS.remove(player, map);
         for (val renderer : map.getRenderers()) map.removeRenderer(renderer);
     }

@@ -13,9 +13,9 @@ import java.util.*;
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public abstract class SnakyBlockChain implements BlocksChain {
 
-    @NonNull final Plugin plugin;
-    @NonNull final @Getter World world;
-    @NonNull final @Getter Block initialBlock;
+    final @NonNull Plugin plugin;
+    @Getter final @NonNull World world;
+    @Getter final @NonNull Block initialBlock;
 
     /**
      * The current layer of blocks to handle
@@ -30,13 +30,13 @@ public abstract class SnakyBlockChain implements BlocksChain {
     /**
      * Blocks that have been handled
      */
-    @NonNull final Set<Block> handledBlocks;
+    final @NonNull Set<Block> handledBlocks;
 
-    protected SnakyBlockChain(@NonNull final Plugin plugin, final @NonNull Block initialBlock,
-                              @NonNull final Queue<Block> blocks, final @NonNull Queue<Block> nextBlocks,
-                              @NonNull final Set<Block> handledBlocks) {
+    protected SnakyBlockChain(final @NonNull Plugin plugin, final @NonNull Block initialBlock,
+                              final @NonNull Queue<Block> blocks, final @NonNull Queue<Block> nextBlocks,
+                              final @NonNull Set<Block> handledBlocks) {
         this.plugin = plugin;
-        this.world = initialBlock.getWorld();
+        world = initialBlock.getWorld();
         this.initialBlock = initialBlock;
         this.blocks = blocks;
         this.nextBlocks = nextBlocks;
@@ -45,13 +45,13 @@ public abstract class SnakyBlockChain implements BlocksChain {
         blocks.add(initialBlock);
     }
 
-    protected SnakyBlockChain(@NonNull final Plugin plugin, @NonNull final Block initialBlock) {
+    protected SnakyBlockChain(final @NonNull Plugin plugin, final @NonNull Block initialBlock) {
         this(plugin, initialBlock, new ArrayDeque<>(), new ArrayDeque<>(), new HashSet<>());
     }
 
-    public static SnakyBlockChain create(@NonNull final Plugin plugin,
-                                         @NonNull final Block initialBlock,
-                                         @NonNull final BlockHandler blockHandler) {
+    public static SnakyBlockChain create(final @NonNull Plugin plugin,
+                                         final @NonNull Block initialBlock,
+                                         final @NonNull BlockHandler blockHandler) {
         return new SnakyBlockChain(plugin, initialBlock) {
             @Override
             protected Collection<Block> handle(final Block block) {

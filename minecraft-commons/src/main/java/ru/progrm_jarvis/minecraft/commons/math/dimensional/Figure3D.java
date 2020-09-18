@@ -175,7 +175,7 @@ public interface Figure3D {
      *
      * @return {@code true} if the point belongs to this figure and {@link false} otherwise
      */
-    default boolean contains(@NonNull final Vector point) {
+    default boolean contains(final @NonNull Vector point) {
         return contains(point.getX(), point.getY(), point.getZ());
     }
 
@@ -186,7 +186,7 @@ public interface Figure3D {
      *
      * @return {@code true} if the point belongs to this figure and {@link false} otherwise
      */
-    default boolean contains(@NonNull final Location point) {
+    default boolean contains(final @NonNull Location point) {
         return contains(point.getX(), point.getY(), point.getZ());
     }
 }

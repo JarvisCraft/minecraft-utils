@@ -94,7 +94,7 @@ public class DefaultMapImage implements MapImage {
      * @param resize whether the image should be resized or cut to fit map image dimensions
      * @return created map image
      */
-    public static DefaultMapImage from(@NonNull final BufferedImage image, final boolean resize,
+    public static DefaultMapImage from(final @NonNull BufferedImage image, final boolean resize,
                                        final byte displayMode) {
         return new DefaultMapImage(MapImages.getMapImagePixels(image, resize), displayMode);
     }
@@ -119,7 +119,7 @@ public class DefaultMapImage implements MapImage {
     }
 
     @Override
-    public void onUpdate(@NonNull final Delta delta) {
+    public void onUpdate(final @NonNull Delta delta) {
         for (val updateSubscriber : updateSubscribers) updateSubscriber.accept(delta);
     }
 

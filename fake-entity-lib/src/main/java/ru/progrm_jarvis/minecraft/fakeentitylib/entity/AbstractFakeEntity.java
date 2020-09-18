@@ -15,7 +15,7 @@ import ru.progrm_jarvis.javacommons.annotation.DontOverrideEqualsAndHashCode;
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public abstract class AbstractFakeEntity implements FakeEntity {
 
-    @NonNull @Getter Location location;
+    @Getter final @NonNull Location location;
     @Getter boolean visible = true; // setter should be created manually to perform visualisation logic
 
     @Override

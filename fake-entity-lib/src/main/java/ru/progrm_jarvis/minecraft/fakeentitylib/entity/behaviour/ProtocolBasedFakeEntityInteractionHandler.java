@@ -16,7 +16,6 @@ import ru.progrm_jarvis.minecraft.commons.util.shutdown.Shutdownable;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.behaviour.FakeEntityInteraction.Hand;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.management.FakeEntityManager;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -28,15 +27,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class ProtocolBasedFakeEntityInteractionHandler<E extends InteractableFakeEntity>
         extends PacketAdapter implements FakeEntityInteractionHandler<E> {
 
-    @NonNull final ProtocolManager protocolManager;
+    final @NonNull ProtocolManager protocolManager;
 
-    @NonNull @ToString.Include Plugin plugin;
+    @ToString.Include @NonNull Plugin plugin;
     @NonNull Set<E> entities;
     @NonNull Set<E> entitiesView;
 
     @Delegate(types = Shutdownable.class) @NonNull ShutdownHooks shutdownHooks;
 
-    public ProtocolBasedFakeEntityInteractionHandler(@Nonnull final Plugin plugin, final boolean concurrent) {
+    public ProtocolBasedFakeEntityInteractionHandler(final @NonNull Plugin plugin, final boolean concurrent) {
         super(
                 checkNotNull(plugin, "plugin should not be null"),
                 PacketType.Play.Client.USE_ENTITY
@@ -102,7 +101,7 @@ public class ProtocolBasedFakeEntityInteractionHandler<E extends InteractableFak
     }
 
     @Override
-    public boolean isManaged(@NonNull final E entity) {
+    public boolean isManaged(final @NonNull E entity) {
         return entities.contains(entity);
     }
 

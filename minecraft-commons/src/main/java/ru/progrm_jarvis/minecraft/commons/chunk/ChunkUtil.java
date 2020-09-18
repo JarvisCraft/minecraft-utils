@@ -135,7 +135,7 @@ public class ChunkUtil {
      * @param chunk chunk treated as {@link long}
      * @return specified chunk of the world
      */
-    public Chunk getChunk(@NonNull final World world, final long chunk) {
+    public Chunk getChunk(final @NonNull World world, final long chunk) {
         return world.getChunkAt(chunkX(chunk), chunkZ(chunk));
     }
 
@@ -243,7 +243,7 @@ public class ChunkUtil {
      *
      * @see #toChunkLocalLocationShort(int, int, int) is called with location's coordinates
      */
-    public short chunkLocalLocation(@NonNull final Location location) {
+    public short chunkLocalLocation(final @NonNull Location location) {
         return chunkLocalLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 

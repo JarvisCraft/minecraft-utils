@@ -46,7 +46,7 @@ public class FluentBukkitEvents {
      * @param <E> type of the event handled
      * @return event listener registration for fluent registration of the event listener(s)
      */
-    public <E extends Event> EventListenerRegistration<E> on(@NonNull final Class<E> eventType) {
+    public <E extends Event> EventListenerRegistration<E> on(final @NonNull Class<E> eventType) {
         return new EventListenerRegistration<>(eventType);
     }
 
@@ -74,7 +74,7 @@ public class FluentBukkitEvents {
          *
          * @param type type of event handled
          */
-        public EventListenerRegistration(@NonNull final Class<E> type) {
+        public EventListenerRegistration(final @NonNull Class<E> type) {
             this.type = type;
         }
 
@@ -99,7 +99,7 @@ public class FluentBukkitEvents {
          * @param listener listener to use for event handling
          * @return unregister to use for event unregistration
          */
-        public Shutdownable register(@NonNull final UncheckedConsumer<E> listener) {
+        public Shutdownable register(final @NonNull UncheckedConsumer<E> listener) {
             val listenersGroup = getListenersGroup();
             listenersGroup.addListener(listener);
 
@@ -131,7 +131,7 @@ public class FluentBukkitEvents {
          *
          * @param listener listener to add to handling dequeue
          */
-        private void addListener(@NonNull final UncheckedConsumer<E> listener) {
+        private void addListener(final @NonNull UncheckedConsumer<E> listener) {
             if (eventListeners.isEmpty()) {
                 PLUGIN_MANAGER
                         .registerEvent(configuration.type, this, configuration.priority, this, configuration.plugin);
@@ -146,7 +146,7 @@ public class FluentBukkitEvents {
          *
          * @param listener listener to remove from handling dequeue
          */
-        private void removeListener(@NonNull final UncheckedConsumer<E> listener) {
+        private void removeListener(final @NonNull UncheckedConsumer<E> listener) {
             eventListeners.remove(listener);
 
             if (eventListeners.isEmpty()) {
@@ -156,7 +156,7 @@ public class FluentBukkitEvents {
         }
 
         @Override
-        public void execute(@NotNull final Listener listener, final Event event) {
+        public void execute(final @NotNull Listener listener, final Event event) {
             if (configuration.type.isAssignableFrom(event.getClass())) {
                 @SuppressWarnings("unchecked") val castEvent = (E) event;
                 for (val eventListener : eventListeners) eventListener.accept(castEvent);
@@ -166,8 +166,8 @@ public class FluentBukkitEvents {
 
     @Value
     private static class ListenerConfiguration<E> {
-        @NonNull final Plugin plugin;
-        @NonNull final Class<E> type;
-        @NonNull final EventPriority priority;
+        final @NonNull Plugin plugin;
+        final @NonNull Class<E> type;
+        final @NonNull EventPriority priority;
     }
 }

@@ -63,7 +63,7 @@ class StructureDescriptorTest {
         assertEquals(1, structureDescriptor.getKeyframes().size());
     }
 
-    private File getFile(@NonNull final String fileName) {
+    private File getFile(final @NonNull String fileName) {
         return new File(getClass().getResource(fileName).getFile());
     }
 }

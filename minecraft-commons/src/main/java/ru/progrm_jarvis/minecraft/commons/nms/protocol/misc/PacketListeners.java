@@ -17,24 +17,24 @@ import java.util.function.Consumer;
 @UtilityClass
 public class PacketListeners {
 
-    public PacketListener callbackPacketListener(@NonNull final Plugin plugin,
-                                                 @NonNull final Consumer<PacketEvent> inboundPacketCallback,
-                                                 @NonNull final Consumer<PacketEvent> outboundPacketCallback,
-                                                 @NonNull final PacketType... packetTypes) {
+    public PacketListener callbackPacketListener(final @NonNull Plugin plugin,
+                                                 final @NonNull Consumer<PacketEvent> inboundPacketCallback,
+                                                 final @NonNull Consumer<PacketEvent> outboundPacketCallback,
+                                                 final @NonNull PacketType... packetTypes) {
         return new CallbackServerPacketListener(plugin, inboundPacketCallback, outboundPacketCallback, packetTypes);
     }
 
-    public PacketListener callbackPacketListener(@NonNull final Plugin plugin,
-                                                 @NonNull final Consumer<PacketEvent> inboundPacketCallback,
-                                                 @NonNull final Consumer<PacketEvent> outboundPacketCallback,
-                                                 @NonNull final Iterable<PacketType> packetTypes) {
+    public PacketListener callbackPacketListener(final @NonNull Plugin plugin,
+                                                 final @NonNull Consumer<PacketEvent> inboundPacketCallback,
+                                                 final @NonNull Consumer<PacketEvent> outboundPacketCallback,
+                                                 final @NonNull Iterable<PacketType> packetTypes) {
         return new CallbackServerPacketListener(plugin, inboundPacketCallback, outboundPacketCallback, packetTypes);
     }
 
-    public PacketListener callbackPacketListener(@NonNull final Plugin plugin,
-                                                 @NonNull final Consumer<PacketEvent> inboundPacketCallback,
-                                                 @NonNull final Consumer<PacketEvent> outboundPacketCallback,
-                                                 @NonNull final PacketCategory... packetCategories) {
+    public PacketListener callbackPacketListener(final @NonNull Plugin plugin,
+                                                 final @NonNull Consumer<PacketEvent> inboundPacketCallback,
+                                                 final @NonNull Consumer<PacketEvent> outboundPacketCallback,
+                                                 final @NonNull PacketCategory... packetCategories) {
         return callbackPacketListener(plugin, inboundPacketCallback, outboundPacketCallback, Arrays
                 .stream(packetCategories)
                 .flatMap(packetCategory -> Arrays.stream(packetCategory.packetTypes))
@@ -42,10 +42,10 @@ public class PacketListeners {
         );
     }
 
-    public PacketListener callbackPacketListener(@NonNull final Plugin plugin,
-                                                 @NonNull final Consumer<PacketEvent> inboundPacketCallback,
-                                                 @NonNull final Consumer<PacketEvent> outboundPacketCallback,
-                                                 @NonNull final Collection<PacketCategory> packetCategories) {
+    public PacketListener callbackPacketListener(final @NonNull Plugin plugin,
+                                                 final @NonNull Consumer<PacketEvent> inboundPacketCallback,
+                                                 final @NonNull Consumer<PacketEvent> outboundPacketCallback,
+                                                 final @NonNull Collection<PacketCategory> packetCategories) {
         return callbackPacketListener(plugin, inboundPacketCallback, outboundPacketCallback, packetCategories
                 .stream()
                 .flatMap(packetCategory -> Arrays.stream(packetCategory.packetTypes))
@@ -70,12 +70,12 @@ public class PacketListeners {
 
         private final PacketType[] packetTypes;
 
-        PacketCategory(@NonNull final Class containingClass) {
+        PacketCategory(final @NonNull Class containingClass) {
             packetTypes = packetTypesFromContainingClass(containingClass);
         }
     }
 
-    private static PacketType[] packetTypesFromContainingClass(@NonNull final Class<?> clazz) {
+    private static PacketType[] packetTypesFromContainingClass(final @NonNull Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredFields())
                 .filter(field -> PacketType.class.isAssignableFrom(field.getType()))
                 .map(field -> {
@@ -93,20 +93,20 @@ public class PacketListeners {
         @NonNull private final Consumer<PacketEvent> inboundPacketCallback;
         @NonNull private final Consumer<PacketEvent> outboundPacketCallback;
 
-        public CallbackServerPacketListener(@NonNull final Plugin plugin,
-                                            @NonNull final Consumer<PacketEvent> inboundPacketCallback,
-                                            @NonNull final Consumer<PacketEvent> outboundPacketCallback,
-                                            @NonNull final PacketType... packetTypes) {
+        public CallbackServerPacketListener(final @NonNull Plugin plugin,
+                                            final @NonNull Consumer<PacketEvent> inboundPacketCallback,
+                                            final @NonNull Consumer<PacketEvent> outboundPacketCallback,
+                                            final @NonNull PacketType... packetTypes) {
             super(plugin, packetTypes);
 
             this.inboundPacketCallback = inboundPacketCallback;
             this.outboundPacketCallback = outboundPacketCallback;
         }
 
-        public CallbackServerPacketListener(@NonNull final Plugin plugin,
-                                            @NonNull final Consumer<PacketEvent> inboundPacketCallback,
-                                            @NonNull final Consumer<PacketEvent> outboundPacketCallback,
-                                            @NonNull final Iterable<PacketType> packetTypes) {
+        public CallbackServerPacketListener(final @NonNull Plugin plugin,
+                                            final @NonNull Consumer<PacketEvent> inboundPacketCallback,
+                                            final @NonNull Consumer<PacketEvent> outboundPacketCallback,
+                                            final @NonNull Iterable<PacketType> packetTypes) {
             super(plugin, packetTypes);
 
             this.inboundPacketCallback = inboundPacketCallback;

@@ -31,7 +31,7 @@ public class ItemBuilder<M extends ItemMeta> implements Cloneable {
         return metadata == null ? Collections.emptyMap() : new HashMap<>(metadata.getEnchants());
     }
 
-    public ItemBuilder<M> addEnchantment(@NonNull final Enchantment enchantment, final int level) {
+    public ItemBuilder<M> addEnchantment(final @NonNull Enchantment enchantment, final int level) {
         initMetadata();
 
         metadata.addEnchant(enchantment, level, true);
@@ -39,7 +39,7 @@ public class ItemBuilder<M extends ItemMeta> implements Cloneable {
         return this;
     }
 
-    public ItemBuilder<M> addEnchantment(@NonNull final Enchant enchant) {
+    public ItemBuilder<M> addEnchantment(final @NonNull Enchant enchant) {
         initMetadata();
 
         metadata.addEnchant(enchant.getEnchantment(), enchant.getLevel(), true);
@@ -47,7 +47,7 @@ public class ItemBuilder<M extends ItemMeta> implements Cloneable {
         return this;
     }
 
-    public ItemBuilder<M> addEnchantments(@NonNull final Enchant... enchants) {
+    public ItemBuilder<M> addEnchantments(final @NonNull Enchant... enchants) {
         initMetadata();
 
         for (val enchant : enchants) metadata.addEnchant(enchant.getEnchantment(), enchant.getLevel(), true);
@@ -55,7 +55,7 @@ public class ItemBuilder<M extends ItemMeta> implements Cloneable {
         return this;
     }
 
-    public ItemBuilder<M> addEnchantments(@NonNull final Iterable<Enchant> enchants) {
+    public ItemBuilder<M> addEnchantments(final @NonNull Iterable<Enchant> enchants) {
         initMetadata();
 
         for (val enchant : enchants) metadata.addEnchant(enchant.getEnchantment(), enchant.getLevel(), true);
@@ -63,7 +63,7 @@ public class ItemBuilder<M extends ItemMeta> implements Cloneable {
         return this;
     }
 
-    public ItemBuilder<M> addEnchantments(@NonNull final Map<Enchantment, Integer> enchantments) {
+    public ItemBuilder<M> addEnchantments(final @NonNull Map<Enchantment, Integer> enchantments) {
         initMetadata();
 
         for (val enchantment : enchantments.entrySet()) metadata.addEnchant(
@@ -73,19 +73,19 @@ public class ItemBuilder<M extends ItemMeta> implements Cloneable {
         return this;
     }
 
-    public ItemBuilder<M> removeEnchantment(@NonNull final Enchantment enchantment) {
+    public ItemBuilder<M> removeEnchantment(final @NonNull Enchantment enchantment) {
         if (metadata != null) metadata.removeEnchant(enchantment);
 
         return this;
     }
 
-    public ItemBuilder<M> removeEnchantments(@NonNull final Enchantment... enchantments) {
+    public ItemBuilder<M> removeEnchantments(final @NonNull Enchantment... enchantments) {
         if (metadata != null) for (val enchantment : enchantments) metadata.removeEnchant(enchantment);
 
         return this;
     }
 
-    public ItemBuilder<M> removeEnchantments(@NonNull final Iterable<Enchantment> enchantments) {
+    public ItemBuilder<M> removeEnchantments(final @NonNull Iterable<Enchantment> enchantments) {
         if (metadata != null) for (val enchantment : enchantments) metadata.removeEnchant(enchantment);
 
         return this;
@@ -101,7 +101,7 @@ public class ItemBuilder<M extends ItemMeta> implements Cloneable {
     }
 
     @SuppressWarnings("unchecked")
-    public ItemBuilder<M> metadata(@NonNull final M metadata) {
+    public ItemBuilder<M> metadata(final @NonNull M metadata) {
         this.metadata = (M) metadata.clone();
 
         return this;
@@ -113,7 +113,7 @@ public class ItemBuilder<M extends ItemMeta> implements Cloneable {
         return metadata.clone();
     }
 
-    public ItemBuilder<M> metadata(@NonNull final Consumer<M> metadataModifier) {
+    public ItemBuilder<M> metadata(final @NonNull Consumer<M> metadataModifier) {
         metadataModifier.accept(metadata);
 
         return this;
@@ -136,7 +136,7 @@ public class ItemBuilder<M extends ItemMeta> implements Cloneable {
         return metadata.isUnbreakable();
     }
 
-    public ItemBuilder<M> displayName(@NonNull final String displayName) {
+    public ItemBuilder<M> displayName(final @NonNull String displayName) {
         initMetadata();
 
         metadata.setDisplayName(displayName);
@@ -150,7 +150,7 @@ public class ItemBuilder<M extends ItemMeta> implements Cloneable {
         return metadata.getDisplayName();
     }
 
-    public ItemBuilder<M> localizedName(@NonNull final String localizedName) {
+    public ItemBuilder<M> localizedName(final @NonNull String localizedName) {
         initMetadata();
 
         metadata.setLocalizedName(localizedName);

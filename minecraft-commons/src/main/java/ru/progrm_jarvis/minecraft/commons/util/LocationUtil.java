@@ -25,7 +25,7 @@ public class LocationUtil {
         );
     }
 
-    public Location nearestLocation(@NonNull final Location location, @NonNull final BlockFace blockFace) {
+    public Location nearestLocation(final @NonNull Location location, final @NonNull BlockFace blockFace) {
         return location.add(blockFace.getModX(), blockFace.getModY(), blockFace.getModZ());
     }
 }

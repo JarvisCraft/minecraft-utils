@@ -8,11 +8,11 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.map.MapPalette;
+import org.jetbrains.annotations.NotNull;
 import ru.progrm_jarvis.minecraft.commons.util.BitwiseUtil;
 import ru.progrm_jarvis.minecraft.commons.util.SystemPropertyUtil;
 import ru.progrm_jarvis.minecraft.commons.util.image.ColorUtil;
 
-import javax.annotation.Nonnull;
 import java.awt.*;
 
 import static java.lang.Math.abs;
@@ -107,7 +107,7 @@ public class MapImageColor {
      * @param color color to convert to map image color object
      * @return map image color equivalent of specified color object
      */
-    @Nonnull public static MapImageColor from(@NonNull final Color color) {
+    public static @NotNull MapImageColor from(final @NonNull Color color) {
         return of(color.getRed(), color.getGreen(), color.getBlue());
     }
 
@@ -118,7 +118,7 @@ public class MapImageColor {
      * @return cached or created and cached map image color
      */
     @SneakyThrows
-    @Nonnull public static MapImageColor of(final int rgb) {
+    public static @NotNull MapImageColor of(final int rgb) {
         return COLOR_CACHE.get(rgb, () -> new MapImageColor(ColorUtil.red(rgb), ColorUtil.green(rgb), ColorUtil.blue(rgb)));
     }
 
@@ -131,7 +131,7 @@ public class MapImageColor {
      * @return cached or created and cached map image color
      */
     @SneakyThrows
-    @Nonnull public static MapImageColor of(final byte red, final byte green, final byte blue) {
+    @NotNull public static MapImageColor of(final byte red, final byte green, final byte blue) {
         return COLOR_CACHE.get(ColorUtil.toArgb(red, green, blue), () -> new MapImageColor(red, green, blue));
     }
 
@@ -145,7 +145,7 @@ public class MapImageColor {
      *
      * @apiNote alias {@link #of(byte, byte, byte)} using {@code int}s not to perform casts in method call
      */
-    @Nonnull public static MapImageColor of(final int red, final int green, final int blue) {
+    public static @NotNull MapImageColor of(final int red, final int green, final int blue) {
         return of((byte) red, (byte) green, (byte) blue);
     }
 
@@ -215,7 +215,7 @@ public class MapImageColor {
         );
     }
 
-    public static int getDistanceSquared(@NonNull final MapImageColor color1, @NonNull final MapImageColor color2) {
+    public static int getDistanceSquared(final @NonNull MapImageColor color1, final @NonNull MapImageColor color2) {
         return getDistanceSquared(color1.red, color1.green, color1.blue, color2.red, color2.green, color2.blue);
     }
 
@@ -238,7 +238,7 @@ public class MapImageColor {
                 red, green, blue);
     }
 
-    public int getDistanceSquared(@NonNull final MapImageColor other) {
+    public int getDistanceSquared(final @NonNull MapImageColor other) {
         return getDistanceSquared(red, green, blue, other.red, other.green, other.blue);
     }
 
@@ -267,7 +267,7 @@ public class MapImageColor {
         );
     }
 
-    public static int getSum(@NonNull final MapImageColor color1, @NonNull final MapImageColor color2) {
+    public static int getSum(final @NonNull MapImageColor color1, final @NonNull MapImageColor color2) {
         return getSum(color1.red, color1.green, color1.blue, color2.red, color2.green, color2.blue);
     }
 
@@ -291,7 +291,7 @@ public class MapImageColor {
         );
     }
 
-    public int getSum(@NonNull final MapImageColor other) {
+    public int getSum(final @NonNull MapImageColor other) {
         return getSum(red, green, blue, other.red, other.green, other.blue);
     }
 
@@ -315,7 +315,7 @@ public class MapImageColor {
                 * (BitwiseUtil.byteToUnsignedInt(blue2) - BitwiseUtil.byteToUnsignedInt(blue1));
     }
 
-    public static int getMultiplicationProduct(@NonNull final MapImageColor color1, @NonNull final MapImageColor color2) {
+    public static int getMultiplicationProduct(final @NonNull MapImageColor color1, final @NonNull MapImageColor color2) {
         return getMultiplicationProduct(color1.red, color1.green, color1.blue, color2.red, color2.green, color2.blue);
     }
 
@@ -339,7 +339,7 @@ public class MapImageColor {
         return getMultiplicationProduct(this.red, this.green, this.blue, red, green, blue);
     }
 
-    public int getMultiplicationProduct(@NonNull final MapImageColor other) {
+    public int getMultiplicationProduct(final @NonNull MapImageColor other) {
         return getMultiplicationProduct(red, green, blue, other.red, other.green, other.blue);
     }
 
@@ -372,7 +372,7 @@ public class MapImageColor {
         return (int) (dRed * dRed + dBlue * dBlue + dGreen * dGreen);
     }
 
-    public static int getNaturalDistanceSquared(@NonNull final MapImageColor color1, @NonNull final MapImageColor color2) {
+    public static int getNaturalDistanceSquared(final @NonNull MapImageColor color1, final @NonNull MapImageColor color2) {
         return getNaturalDistanceSquared(color1.red, color1.green, color1.blue, color2.red, color2.green, color2.blue);
     }
 
@@ -395,7 +395,7 @@ public class MapImageColor {
         return getNaturalDistanceSquared(this.red, this.green, this.blue, red, green, blue);
     }
 
-    public int getNaturalDistanceSquared(@NonNull final MapImageColor other) {
+    public int getNaturalDistanceSquared(final @NonNull MapImageColor other) {
         return getNaturalDistanceSquared(red, green, blue, other.red, other.green, other.blue);
     }
 

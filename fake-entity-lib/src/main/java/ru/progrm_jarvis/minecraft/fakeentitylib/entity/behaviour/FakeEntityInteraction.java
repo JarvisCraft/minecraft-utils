@@ -20,7 +20,7 @@ public interface FakeEntityInteraction {
 
     Hand getHand();
 
-    static FakeEntityInteraction interact(final int entityId, @NonNull final Hand hand) {
+    static FakeEntityInteraction interact(final int entityId, final @NonNull Hand hand) {
         return new InteractInteraction(entityId, hand);
     }
 
@@ -28,12 +28,12 @@ public interface FakeEntityInteraction {
         return new AttackInteraction(entityId);
     }
 
-    static FakeEntityInteraction exactInteract(final int entityId, @NonNull final Hand hand,
+    static FakeEntityInteraction exactInteract(final int entityId, final @NonNull Hand hand,
                                                final int x, final int y, final int z) {
         return new ExactInteractInteraction(entityId, hand, x, y, z);
     }
 
-    static FakeEntityInteraction exactInteract(final int entityId, @NonNull final Hand hand,
+    static FakeEntityInteraction exactInteract(final int entityId, final @NonNull Hand hand,
                                                final Vector vector) {
         // TODO: 20.11.2018 Check if right
         return new ExactInteractInteraction(entityId, hand, vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());

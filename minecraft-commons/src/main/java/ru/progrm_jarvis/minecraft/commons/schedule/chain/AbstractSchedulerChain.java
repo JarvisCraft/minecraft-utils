@@ -10,9 +10,9 @@ public abstract class AbstractSchedulerChain implements SchedulerChain {
 
     @ToString
     @RequiredArgsConstructor
-    protected static abstract class Builder implements SchedulerChain.Builder {
+    protected abstract static class Builder implements SchedulerChain.Builder {
 
-        @NonNull final Queue<ChainedTask> tasks;
+        final @NonNull Queue<ChainedTask> tasks;
 
         @Override
         public SchedulerChain.Builder delay(final long delay) {
@@ -22,28 +22,28 @@ public abstract class AbstractSchedulerChain implements SchedulerChain {
         }
 
         @Override
-        public SchedulerChain.Builder then(@NonNull final Runnable task) {
+        public SchedulerChain.Builder then(final @NonNull Runnable task) {
             tasks.add(new UndelayedTask(task));
 
             return this;
         }
 
         @Override
-        public SchedulerChain.Builder then(@NonNull final Runnable task, final long delay) {
+        public SchedulerChain.Builder then(final @NonNull Runnable task, final long delay) {
             tasks.add(new DelayedTask(task, delay));
 
             return this;
         }
 
         @Override
-        public SchedulerChain.Builder thenRepeat(@NonNull final Runnable task, final long times) {
+        public SchedulerChain.Builder thenRepeat(final @NonNull Runnable task, final long times) {
             tasks.add(new UndelayedRecalledTask(task, times));
 
             return this;
         }
 
         @Override
-        public SchedulerChain.Builder thenRepeat(@NonNull final Runnable task, final long times, final long delay) {
+        public SchedulerChain.Builder thenRepeat(final @NonNull Runnable task, final long times, final long delay) {
             tasks.add(new DelayedRecalledTask(task, delay, times));
 
             return this;

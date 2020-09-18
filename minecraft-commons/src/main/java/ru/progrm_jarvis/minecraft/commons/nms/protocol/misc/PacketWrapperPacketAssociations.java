@@ -58,9 +58,9 @@ public class PacketWrapperPacketAssociations {
     private final Map<PacketType, Function<PacketContainer, AbstractPacket>> PACKET_CREATORS
             = new ConcurrentHashMap<>();
 
-    private Stream<Pair<PacketType, PacketTypeId>> fieldPacketTypes(@NonNull final Class<?> packetType,
-                                                                    @NonNull final String group,
-                                                                    @NonNull final PacketDirection direction) {
+    private Stream<Pair<PacketType, PacketTypeId>> fieldPacketTypes(final @NonNull Class<?> packetType,
+                                                                    final @NonNull String group,
+                                                                    final @NonNull PacketDirection direction) {
         return Arrays.stream(packetType.getDeclaredFields())
                 .filter(field -> PacketType.class.isAssignableFrom(field.getType()))
                 //.filter(field -> field.isAnnotationPresent(Deprecated.class))
@@ -70,7 +70,7 @@ public class PacketWrapperPacketAssociations {
                 ));
     }
 
-    private String upperCaseNameToUpperCamelCase(@NonNull final String name) {
+    private String upperCaseNameToUpperCamelCase(final @NonNull String name) {
         val split = StringUtils.split(name, '_');
 
         val camelCase = new StringBuilder();
@@ -87,7 +87,7 @@ public class PacketWrapperPacketAssociations {
      * @param packet packet to wrap using packet wrapper
      * @return created packet wrapper object for the packet
      */
-    public AbstractPacket createPacketWrapper(@NonNull final PacketContainer packet) {
+    public AbstractPacket createPacketWrapper(final @NonNull PacketContainer packet) {
         return PACKET_CREATORS
                 .computeIfAbsent(packet.getType(),
                         (UncheckedFunction<PacketType, Function<PacketContainer, AbstractPacket>>) packetType -> {
@@ -140,17 +140,17 @@ public class PacketWrapperPacketAssociations {
         /**
          * Group of packets to which the one belongs
          */
-        @NonNull final String group;
+        final @NonNull String group;
 
         /**
          * Direction of the packet
          */
-        @NonNull final PacketDirection direction;
+        final @NonNull PacketDirection direction;
 
         /**
          * Name of the packet in the system
          */
-        @NonNull final String name;
+        final @NonNull String name;
 
         @NonNull private String toPacketWrapperClassName() {
             return PACKET_WRAPPER_PACKAGE + ".Wrapper" + group + direction.name + name;

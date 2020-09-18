@@ -78,7 +78,7 @@ import org.bukkit.util.Vector;
      * @param point2 the second point of the cubic figure
      * @return created cubic figure including the area between the two points
      */
-    public static Figure3D between(@NonNull final Vector point1, @NonNull final Vector point2) {
+    public static Figure3D between(final @NonNull Vector point1, final @NonNull Vector point2) {
         return between(point1.getX(), point1.getY(), point1.getZ(), point2.getX(), point2.getY(), point2.getZ());
     }
 
@@ -89,7 +89,7 @@ import org.bukkit.util.Vector;
      * @param point2 the second point of the cubic figure
      * @return created cubic figure including the area between the two points
      */
-    public static Figure3D between(@NonNull final Location point1, @NonNull final Location point2) {
+    public static Figure3D between(final @NonNull Location point1, final @NonNull Location point2) {
         return between(point1.getX(), point1.getY(), point1.getZ(), point2.getX(), point2.getY(), point2.getZ());
     }
 }

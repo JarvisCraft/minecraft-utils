@@ -23,22 +23,23 @@ public class BukkitSchedulerChain extends AbstractSchedulerChain {
     boolean async;
     @NonNull Iterable<ChainedTask> tasks;
 
-    @NonNull final Object currentTaskMutex;
+    final @NonNull Object currentTaskMutex;
 
-    @SuppressWarnings("NullableProblems") @NonNull @NonFinal volatile Iterator<ChainedTask> iterator;
+    @NonFinal @NonNull volatile Iterator<ChainedTask> iterator;
     @NonFinal volatile BukkitTask currentTask;
 
     public static SchedulerChain.Builder builder(final Plugin plugin, final boolean async) {
         return new Builder(plugin, async, new ArrayDeque<>());
     }
 
-    protected BukkitSchedulerChain(@NonNull final Plugin plugin, final boolean async,
-                                   @NonNull final Iterable<ChainedTask> tasks) {
+    protected BukkitSchedulerChain(final @NonNull Plugin plugin, final boolean async,
+                                   final @NonNull Iterable<ChainedTask> tasks) {
         this.plugin = plugin;
-        this.scheduler = plugin.getServer().getScheduler();
+        scheduler = plugin.getServer().getScheduler();
         this.async = async;
         this.tasks = tasks;
 
+        //noinspection ZeroLengthArrayAllocation: mutex object
         currentTaskMutex = new Object[0];
     }
 
@@ -83,7 +84,7 @@ public class BukkitSchedulerChain extends AbstractSchedulerChain {
         } else reset();
     }
 
-    protected Runnable createNextRunnable(@NonNull final Runnable runnable, final long times) {
+    protected Runnable createNextRunnable(final @NonNull Runnable runnable, final long times) {
         return () -> {
             var mutableTimes = times;
             // call the required tasks needed amount of time
@@ -101,7 +102,7 @@ public class BukkitSchedulerChain extends AbstractSchedulerChain {
         @NonNull Plugin plugin;
         boolean async;
 
-        public Builder(@NonNull final Plugin plugin, final boolean async, @NonNull final Queue<ChainedTask> tasks) {
+        public Builder(final @NonNull Plugin plugin, final boolean async, final @NonNull Queue<ChainedTask> tasks) {
             super(tasks);
             this.plugin = plugin;
             this.async = async;

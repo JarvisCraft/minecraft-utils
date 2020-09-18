@@ -4,9 +4,9 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedConsumer;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -30,11 +30,11 @@ public interface MapImage {
     PIXELS_COUNT = WIDTH * HEIGHT;
 
     /**
-     * {@link #WIDTH} as {@link float} for coefficient calculations.
+     * {@link #WIDTH} as {@code float} for coefficient calculations.
      */
     float WIDTH_F = (float) WIDTH,
     /**
-     * {@link #HEIGHT} as {@link float} for coefficient calculations
+     * {@link #HEIGHT} as {@code float} for coefficient calculations
      */
     HEIGHT_F = (float) HEIGHT;
 
@@ -60,11 +60,11 @@ public interface MapImage {
     int getHeight();
 
     /**
-     * Gets 1-dimensional {@link byte}-array of this image map's pixels.
+     * Gets 1-dimensional {@code byte}-array of this image map's pixels.
      *
      * @return this image's pixel data
      *
-     * @apiNote order as {@link #getWidth()} {@link byte}s (columns)
+     * @apiNote order as {@link #getWidth()} {@code byte}s (columns)
      * coming in a row {@link #getHeight()} times (once for each row)
      */
     /*
@@ -76,7 +76,7 @@ public interface MapImage {
     byte[] getMapData();
 
     /**
-     * Gets 1-dimensional {@link byte}-array of this image map's pixels segment.
+     * Gets 1-dimensional {@code byte}-array of this image map's pixels segment.
      *
      * @param leastX least X-coordinate of image segment
      * @param leastY least Y-coordinate of image segment
@@ -84,20 +84,20 @@ public interface MapImage {
      * @param height of image segment
      * @return this image's pixel data segment
      *
-     * @apiNote order as {@code width} {@link byte}s (columns) coming in a row {@code height} times (once for each row)
+     * @apiNote order as {@code width} {@code byte}s (columns) coming in a row {@code height} times (once for each row)
      */
     byte[] getMapData(final int leastX, final int leastY, final int width, final int height);
 
     /**
-     * Gets 1-dimensional {@link byte}-array of this image map's pixels segment.
+     * Gets 1-dimensional {@code byte}-array of this image map's pixels segment.
      *
      * @param delta delta for whose coordinates to get the image segment
      * @return this image's pixel data segment
      *
-     * @apiNote order as {@link Delta#width()} {@link byte}s (columns)
+     * @apiNote order as {@link Delta#width()} {@code byte}s (columns)
      * coming in a row {@link Delta#height()} times (once for each row)
      */
-    default byte[] getMapData(@Nonnull final Delta delta) {
+    default byte[] getMapData(final @NotNull Delta delta) {
         return getMapData(delta.leastX(), delta.leastY(), delta.width(), delta.height());
     }
 
@@ -121,7 +121,7 @@ public interface MapImage {
      * @param delta delta of the image update
      * @apiNote may not be called whenever there are no changes, but yet should normally handle empty deltas
      */
-    default void onUpdate(@NonNull final Delta delta) {}
+    default void onUpdate(final @NonNull Delta delta) {}
 
     /**
      * Checks whether this map image allows subscriptions on updates.
@@ -484,7 +484,7 @@ public interface MapImage {
          * @param leastY least Y-coordinate of the affected segment
          * @return empty delta if {@code pixels} is empty and non-empty delta otherwise
          */
-        @Nonnull static Delta of(final byte[] pixels, final int width, final int leastX, final int leastY) {
+        static @NotNull Delta of(final byte[] pixels, final int width, final int leastX, final int leastY) {
             val pixelsLength = pixels.length;
             if (pixelsLength == 0) return EMPTY;
             if (pixelsLength == 1) return new SinglePixel(pixels, leastX, leastY);

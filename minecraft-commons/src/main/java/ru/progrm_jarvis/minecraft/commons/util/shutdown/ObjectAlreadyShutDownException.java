@@ -1,8 +1,7 @@
 package ru.progrm_jarvis.minecraft.commons.util.shutdown;
 
 import lombok.NonNull;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * An exception which may be thrown whenever {@link Shutdownable#shutdown()}
@@ -15,7 +14,7 @@ public class ObjectAlreadyShutDownException extends RuntimeException {
      *
      * @param message message describing the reason of the exception
      */
-    public ObjectAlreadyShutDownException(@NonNull final String message) {
+    public ObjectAlreadyShutDownException(final @NonNull String message) {
         super(message);
     }
 
@@ -32,7 +31,7 @@ public class ObjectAlreadyShutDownException extends RuntimeException {
      * @param object object whose {@link Shutdownable#shutdown()} was called multiple times
      * although it was expected to be called only once
      */
-    public ObjectAlreadyShutDownException(@Nullable final Shutdownable object) {
+    public ObjectAlreadyShutDownException(final @Nullable Shutdownable object) {
         this(object == null ? "Object is already shut down" : object + " is already shut down");
     }
 }

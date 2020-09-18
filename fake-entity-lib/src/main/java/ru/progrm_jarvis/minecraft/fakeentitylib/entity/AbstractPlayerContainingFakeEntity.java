@@ -20,8 +20,8 @@ public abstract class AbstractPlayerContainingFakeEntity extends AbstractObserva
     @NonNull Set<Player> playersView;
 
     public AbstractPlayerContainingFakeEntity(final int viewDistance, final boolean global,
-                                              @NonNull final Location location,
-                                              @NonNull final Map<Player, Boolean> players) {
+                                              final @NonNull Location location,
+                                              final @NonNull Map<Player, Boolean> players) {
         super(global, viewDistance, location);
 
         if (!players.isEmpty()) players.clear();
@@ -36,7 +36,7 @@ public abstract class AbstractPlayerContainingFakeEntity extends AbstractObserva
     }
 
     @Override
-    public boolean isRendered(@NonNull final Player player) {
+    public boolean isRendered(final @NonNull Player player) {
         return players.getOrDefault(player, false);
     }
 
@@ -47,18 +47,18 @@ public abstract class AbstractPlayerContainingFakeEntity extends AbstractObserva
 
     @Override
     public void addPlayer(final Player player) {
-        if (!players.containsKey(player)) {
-            if (shouldSee(player)) render(player);
-            else players.put(player, false);
-        }
+        final Map<Player, Boolean> thisPlayers;
+        if (!(thisPlayers = players).containsKey(player)) if (shouldSee(player)) render(player);
+        else thisPlayers.put(player, false);
     }
 
     @Override
     public void removePlayer(final Player player) {
-        val canSee = players.get(player);
-        if (canSee != null) {
+        final Map<Player, Boolean> thisPlayers;
+        final Boolean canSee;
+        if ((canSee = (thisPlayers = players).get(player)) != null) {
             if (canSee) unrender(player);
-            players.remove(player);
+            thisPlayers.remove(player);
         }
     }
 
