@@ -207,7 +207,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     }
 
     public Location getLocation() {
-        return LocationUtil.withOffset(location, xOffset, yOffset, zOffset, yawOffset, pitchOffset);
+        return LocationUtil.withOffset(location, -xOffset, -yOffset, -zOffset, -yawOffset, -pitchOffset);
     }
 
     /**
