@@ -10,6 +10,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
+import ru.progrm_jarvis.minecraft.commons.util.LocationUtil;
 
 import java.util.Map;
 import java.util.Set;
@@ -203,6 +204,10 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
             despawnPacket = thisDespawnPacket = new WrapperPlayServerEntityDestroy();
             thisDespawnPacket.setEntityIds(new int[]{entityId});
         }
+    }
+
+    public Location getLocation() {
+        return LocationUtil.withOffset(location, xOffset, yOffset, zOffset, yawOffset, pitchOffset);
     }
 
     /**
