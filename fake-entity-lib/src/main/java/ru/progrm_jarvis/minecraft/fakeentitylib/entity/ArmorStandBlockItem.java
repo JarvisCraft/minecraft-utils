@@ -80,7 +80,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
                                   final @NotNull Map<@NotNull Player, @NotNull Boolean> playersMap,
                                   final boolean global, final int viewDistance, final boolean visible,
                                   final @NotNull Location location, final @NotNull Vector3F rotation,
-                                  final @NotNull Offset offset,
+                                  final double itemCenterYOffset, final @NotNull Offset offset,
                                   final boolean small, final boolean marker, final @NotNull ItemStack item) {
         super(
                 NmsUtil.nextEntityId(), uuid, EntityType.ARMOR_STAND,
@@ -89,7 +89,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
 
         this.small = small;
         this.marker = marker;
-        itemCenterYOffset = small ? ITEM_CENTER_Y_OFFSET / 2 : ITEM_CENTER_Y_OFFSET;
+        this.itemCenterYOffset = itemCenterYOffset;
 
         this.rotation = rotation;
         this.offset = offset;
@@ -119,14 +119,17 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
                                              final @Own @NonNull Location location,
                                              final @Own @NonNull Vector3F rotation,
                                              final boolean small, final boolean marker, final @NonNull ItemStack item) {
+        final double itemCenterYOffset;
         final Offset offset;
-        (offset = rotationOffsets(rotation, small)).applyTo(location);
+        (offset = rotationOffsets(
+                rotation, itemCenterYOffset = small ? ITEM_CENTER_Y_OFFSET * 0x1p-1 : ITEM_CENTER_Y_OFFSET)
+        ).applyTo(location);
 
         return new ArmorStandBlockItem(
                 uuid, concurrent ? new ConcurrentHashMap<>() : new HashMap<>(),
                 global, viewDistance, visible,
                 location.add(0, -(small ? ARMOR_STAND_HEAD_ROOT_OFFSET / 2 : ARMOR_STAND_HEAD_ROOT_OFFSET), 0),
-                rotation, offset, small, marker, item
+                rotation, itemCenterYOffset, offset, small, marker, item
         );
     }
 
@@ -138,43 +141,21 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
         return location;
     }
 
-    protected static @NotNull Offset rotationOffsets(final Vector3F rotation, final boolean small) {
+    protected static @NotNull Offset rotationOffsets(final Vector3F rotation, double yOffset /* => y */) {
         // apply rotation matrices to align center: https://en.wikipedia.org/wiki/Rotation_matrix
         // let L be initial location and Q be geometrical center
         // the resulting location should be L' = L - Q'
         // where Q' = Mx(xRotation) * My(yRotation) * Mz(zRotation) * Q
         // and Mx, My and Mz are rotation matrices for the axes X, Y and Z respectively
 
-        // TODO optimize the formulas
+        // for non-optimized implementation see commit 58899ac9450afb1e11e4a3b1ab923c139f4c7a29
+
         double angle;
-        double x = 0, y = small ? ITEM_CENTER_Y_OFFSET / 2 : ITEM_CENTER_Y_OFFSET, z = 0;
-
-        //x = x;
-        double cachedCoordinate = y * cos(angle = toRadians(rotation.getX())) - z * sin(angle);
-        z = y * sin(angle) + z * cos(angle);
-        y = cachedCoordinate;
-
-        //y = y;
-        cachedCoordinate = x * cos(angle = toRadians(rotation.getY())) + z * sin(angle);
-        z = -x * sin(angle) + z * cos(angle);
-        x = cachedCoordinate;
-
-        //z = z;
-        cachedCoordinate = x * cos(angle = toRadians(rotation.getZ())) - y * sin(angle);
-        y = x * sin(angle) + y * cos(angle);
-        x = cachedCoordinate;
-
-        /*
-        System.out.printf(
-                "<==========(%+.6g)==========>%n[==========(%+.6g)==========]%n"
-                        + "RotOff(%+.6g:%+.6g:%+.6g) = {%+.6g:%+.6g:%+.6g}%n",
-                (small ? (3.5 / 16) / 2 : (3.5 / 16)),
-                (small ? ITEM_CENTER_Y_OFFSET / 2 : ITEM_CENTER_Y_OFFSET),
-                rotation.getX(), rotation.getY(), rotation.getZ(), -x, -y, -z
-        );
-         */
+        val z = -yOffset * sin(angle = toRadians(rotation.getX()));
         // minuses are used as we need to go to center instead of going from it
-        return SimpleOffset.create(-x, -y, -z);
+        return SimpleOffset.create(
+                (yOffset *= cos(angle)) * sin(angle = toRadians(rotation.getZ())), -yOffset * cos(angle), z
+        );
     }
 
     /**
@@ -224,7 +205,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
         { // overwrite the head's offset
             final Offset oldOffset = offset, newOffset;
             move(
-                    (newOffset = offset = rotationOffsets(rotation, small)).x() - oldOffset.x(),
+                    (newOffset = offset = rotationOffsets(rotation, itemCenterYOffset)).x() - oldOffset.x(),
                     newOffset.y() - oldOffset.y(),
                     newOffset.z() - oldOffset.z()
             );
