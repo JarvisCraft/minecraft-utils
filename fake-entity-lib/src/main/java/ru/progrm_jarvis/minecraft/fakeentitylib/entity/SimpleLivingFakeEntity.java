@@ -10,7 +10,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
-import ru.progrm_jarvis.minecraft.commons.util.LocationUtil;
 
 import java.util.Map;
 import java.util.Set;
@@ -124,40 +123,10 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
      */
     WrapperPlayServerEntityVelocity velocityPacket;
 
-    /**
-     * Difference between the actual entity <i>x</i> and its visible value
-     */
-    final double xOffset,
-    /**
-     * Difference between the actual entity <i>y</i> and its visible value
-     */
-    yOffset,
-    /**
-     * Difference between the actual entity <i>z</i> and its visible value
-     */
-    zOffset;
-
-    /**
-     * Difference between the actual entity <i>yaw</i> and its visible value
-     */
-    final float yawOffset,
-
-    /**
-     * Difference between the actual entity <i>pitch</i> and its visible value
-     */
-    pitchOffset,
-
-    /**
-     * Difference between the actual entity <i>head pitch</i> and its visible value
-     */
-    headPitchOffset;
-
     @Builder
     public SimpleLivingFakeEntity(final int entityId, final @Nullable UUID uuid,
                                   // Start of entities properties, TODO specific class
                                   final @NonNull EntityType type,
-                                  final double xOffset, final double yOffset, final double zOffset,
-                                  final float yawOffset, final float pitchOffset, final float headPitchOffset,
                                   // End of entity's properties
                                   final @NonNull Map<Player, Boolean> players,
                                   final boolean global, final int viewDistance,
@@ -174,13 +143,6 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
         this.players = players;
         this.global = global;
         this.viewDistance = Math.max(-1, viewDistance);
-
-        this.xOffset = xOffset;
-        this.yOffset = yOffset;
-        this.zOffset = zOffset;
-        this.yawOffset = yawOffset;
-        this.pitchOffset = pitchOffset;
-        this.headPitchOffset = headPitchOffset;
 
         this.visible = visible;
 
@@ -204,10 +166,6 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
             despawnPacket = thisDespawnPacket = new WrapperPlayServerEntityDestroy();
             thisDespawnPacket.setEntityIds(new int[]{entityId});
         }
-    }
-
-    public Location getLocation() {
-        return LocationUtil.withOffset(location, -xOffset, -yOffset, -zOffset, -yawOffset, -pitchOffset);
     }
 
     /**
@@ -234,13 +192,13 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
         final WrapperPlayServerSpawnEntityLiving thisSpawnPacket;
         {
             final Location thisLocation;
-            (thisSpawnPacket = spawnPacket).setX((thisLocation = location).getX() + xOffset);
-            thisSpawnPacket.setY(thisLocation.getY() + yOffset);
-            thisSpawnPacket.setZ(thisLocation.getZ() + zOffset);
+            (thisSpawnPacket = spawnPacket).setX((thisLocation = location).getX());
+            thisSpawnPacket.setY(thisLocation.getY());
+            thisSpawnPacket.setZ(thisLocation.getZ());
 
-            thisSpawnPacket.setPitch(thisLocation.getPitch() + pitchOffset);
-            thisSpawnPacket.setYaw(thisLocation.getYaw() + yawOffset);
-            thisSpawnPacket.setHeadPitch(headPitch + headPitchOffset);
+            thisSpawnPacket.setPitch(thisLocation.getPitch());
+            thisSpawnPacket.setYaw(thisLocation.getYaw());
+            thisSpawnPacket.setHeadPitch(headPitch);
         }
 
         {
@@ -385,11 +343,11 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
                 thisTeleportPacket.setEntityID(entityId);
             }
 
-            thisTeleportPacket.setX(x + xOffset);
-            thisTeleportPacket.setY(y + yOffset);
-            thisTeleportPacket.setZ(z + zOffset);
-            thisTeleportPacket.setYaw(yaw + yawOffset);
-            thisTeleportPacket.setPitch(pitch + pitchOffset);
+            thisTeleportPacket.setX(x);
+            thisTeleportPacket.setY(y);
+            thisTeleportPacket.setZ(z);
+            thisTeleportPacket.setYaw(yaw);
+            thisTeleportPacket.setPitch(pitch);
             thisTeleportPacket.setOnGround(isOnGround());
 
             sendVelocity = sendVelocity && hasVelocity();

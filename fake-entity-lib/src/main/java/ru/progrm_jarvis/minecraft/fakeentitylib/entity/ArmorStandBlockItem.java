@@ -5,10 +5,9 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
-import lombok.AccessLevel;
-import lombok.NonNull;
+import lombok.*;
+import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
-import lombok.val;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -25,6 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.lang.Math.*;
 import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand.armorStandFlags;
 import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand.headRotation;
 import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.Entity.*;
@@ -36,11 +36,17 @@ import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
 
-    protected static final double PIXEL_SIZE = 0x1.0p-4,
-            HALF_PIXEL_SIZE = PIXEL_SIZE * 0x1.0p-5,
+    protected static final double PIXEL_SIZE = 0x1p-4,
+            HALF_PIXEL_SIZE = 0x1p-5,
             ARMOR_STAND_BODY_HEIGHT = (16 + 8) * PIXEL_SIZE,
-            ARMOR_STAND_HEAD_OFFSET = ARMOR_STAND_BODY_HEIGHT - HALF_PIXEL_SIZE,
+            ARMOR_STAND_HEAD_ROOT_OFFSET = ARMOR_STAND_BODY_HEIGHT - HALF_PIXEL_SIZE,
             ITEM_CENTER_Y_OFFSET = 3 * PIXEL_SIZE + HALF_PIXEL_SIZE; // offset of the item center from the rotation center
+
+    final boolean small, marker;
+    final double itemCenterYOffset;
+
+    @NotNull Offset offset;
+    //double xOffset, yOffset, zOffset;
 
     /**
      * Rotation of this block
@@ -70,23 +76,29 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param small whether this block-item is small
      * @param item item to be displayed by this block-item
      */
-    public ArmorStandBlockItem(final @Nullable UUID uuid,
-                               final Map<Player, Boolean> playersMap,
-                               final boolean global, final int viewDistance, final boolean visible,
-                               final Location location, final @Nullable Vector3F rotation,
-                               final boolean small, final boolean marker, final @NonNull ItemStack item) {
+    protected ArmorStandBlockItem(final @Nullable UUID uuid,
+                                  final @NotNull Map<@NotNull Player, @NotNull Boolean> playersMap,
+                                  final boolean global, final int viewDistance, final boolean visible,
+                                  final @NotNull Location location, final @NotNull Vector3F rotation,
+                                  final @NotNull Offset offset,
+                                  final boolean small, final boolean marker, final @NotNull ItemStack item) {
         super(
-                NmsUtil.nextEntityId(), uuid,
-                EntityType.ARMOR_STAND, 0, small ? ARMOR_STAND_HEAD_OFFSET / 2 : ARMOR_STAND_HEAD_OFFSET, 0, 0, 0, 0,
+                NmsUtil.nextEntityId(), uuid, EntityType.ARMOR_STAND,
                 playersMap, global, viewDistance, visible, location, 0, null, createMetadata(rotation, small, marker)
         );
 
-        this.rotation = rotation;
+        this.small = small;
+        this.marker = marker;
+        itemCenterYOffset = small ? ITEM_CENTER_Y_OFFSET / 2 : ITEM_CENTER_Y_OFFSET;
 
-        equipmentPacket = new WrapperPlayServerEntityEquipment();
-        equipmentPacket.setEntityID(entityId);
-        equipmentPacket.setSlot(EnumWrappers.ItemSlot.HEAD);
-        equipmentPacket.setItem(this.item = item);
+        this.rotation = rotation;
+        this.offset = offset;
+
+        final WrapperPlayServerEntityEquipment thisEquipmentPacket;
+        equipmentPacket = thisEquipmentPacket = new WrapperPlayServerEntityEquipment();
+        thisEquipmentPacket.setEntityID(entityId);
+        thisEquipmentPacket.setSlot(EnumWrappers.ItemSlot.HEAD);
+        thisEquipmentPacket.setItem(this.item = item);
     }
 
     /**
@@ -104,13 +116,65 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
     public static ArmorStandBlockItem create(final @Nullable UUID uuid,
                                              final boolean concurrent,
                                              final boolean global, final int viewDistance, final boolean visible,
-                                             final Location location,
-                                             final Vector3F rotation, final boolean small, final boolean marker,
-                                             final @NonNull ItemStack item) {
+                                             final @Own @NonNull Location location,
+                                             final @Own @NonNull Vector3F rotation,
+                                             final boolean small, final boolean marker, final @NonNull ItemStack item) {
+        final Offset offset;
+        (offset = rotationOffsets(rotation, small)).applyTo(location);
+
         return new ArmorStandBlockItem(
                 uuid, concurrent ? new ConcurrentHashMap<>() : new HashMap<>(),
-                global, viewDistance, visible, location, rotation, small, marker, item
+                global, viewDistance, visible,
+                location.add(0, -(small ? ARMOR_STAND_HEAD_ROOT_OFFSET / 2 : ARMOR_STAND_HEAD_ROOT_OFFSET), 0),
+                rotation, offset, small, marker, item
         );
+    }
+
+    @Override
+    public @NonNull Location getLocation() {
+        final Location location;
+        offset.applyTo(location = super.getLocation());
+
+        return location;
+    }
+
+    protected static @NotNull Offset rotationOffsets(final Vector3F rotation, final boolean small) {
+        // apply rotation matrices to align center: https://en.wikipedia.org/wiki/Rotation_matrix
+        // let L be initial location and Q be geometrical center
+        // the resulting location should be L' = L - Q'
+        // where Q' = Mx(xRotation) * My(yRotation) * Mz(zRotation) * Q
+        // and Mx, My and Mz are rotation matrices for the axes X, Y and Z respectively
+
+        // TODO optimize the formulas
+        double angle;
+        double x = 0, y = small ? ITEM_CENTER_Y_OFFSET / 2 : ITEM_CENTER_Y_OFFSET, z = 0;
+
+        //x = x;
+        double cachedCoordinate = y * cos(angle = toRadians(rotation.getX())) - z * sin(angle);
+        z = y * sin(angle) + z * cos(angle);
+        y = cachedCoordinate;
+
+        //y = y;
+        cachedCoordinate = x * cos(angle = toRadians(rotation.getY())) + z * sin(angle);
+        z = -x * sin(angle) + z * cos(angle);
+        x = cachedCoordinate;
+
+        //z = z;
+        cachedCoordinate = x * cos(angle = toRadians(rotation.getZ())) - y * sin(angle);
+        y = x * sin(angle) + y * cos(angle);
+        x = cachedCoordinate;
+
+        /*
+        System.out.printf(
+                "<==========(%+.6g)==========>%n[==========(%+.6g)==========]%n"
+                        + "RotOff(%+.6g:%+.6g:%+.6g) = {%+.6g:%+.6g:%+.6g}%n",
+                (small ? (3.5 / 16) / 2 : (3.5 / 16)),
+                (small ? ITEM_CENTER_Y_OFFSET / 2 : ITEM_CENTER_Y_OFFSET),
+                rotation.getX(), rotation.getY(), rotation.getZ(), -x, -y, -z
+        );
+         */
+        // minuses are used as we need to go to center instead of going from it
+        return SimpleOffset.create(-x, -y, -z);
     }
 
     /**
@@ -146,7 +210,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
     }
 
     @Override
-    protected void performSpawnNoChecks(final Player player) {
+    protected void performSpawnNoChecks(final @NotNull Player player) {
         super.performSpawnNoChecks(player);
         equipmentPacket.sendPacket(player);
     }
@@ -157,8 +221,16 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param rotation new rotation of this block
      */
     protected void setRotationNoChecks(final @Own @NotNull Vector3F rotation) {
+        { // overwrite the head's offset
+            final Offset oldOffset = offset, newOffset;
+            move(
+                    (newOffset = offset = rotationOffsets(rotation, small)).x() - oldOffset.x(),
+                    newOffset.y() - oldOffset.y(),
+                    newOffset.z() - oldOffset.z()
+            );
+        }
+        // overwrite the head's rotation
         addMetadata(headRotation(rotation));
-        this.rotation = rotation;
     }
 
     /**
@@ -192,5 +264,29 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
     public void setItem(final @Own @NonNull ItemStack item) {
         equipmentPacket.setItem(this.item = item);
         for (val entry : players.entrySet()) if (entry.getValue()) equipmentPacket.sendPacket(entry.getKey());
+    }
+
+    protected interface Offset {
+        double x();
+        double y();
+        double z();
+
+        void applyTo(@NotNull Location location);
+    }
+
+    @Value
+    @Accessors(fluent = true)
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    protected static class SimpleOffset implements Offset {
+        double x, y, z;
+
+        @Override
+        public void applyTo(final @NotNull Location location) {
+            location.add(x, y, z);
+        }
+
+        public static @NotNull Offset create(final double x, final double y, final double z) {
+            return new SimpleOffset(x, y, z);
+        }
     }
 }
