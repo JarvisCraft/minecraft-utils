@@ -60,7 +60,7 @@
         <version.padla>1.0-SNAPSHOT</version.padla>
         <version.junit>5.7.0</version.junit>
         <version.junit.platform>1.7.0</version.junit.platform>
-        <version.mockito>3.5.11</version.mockito>
+        <version.mockito>3.5.13</version.mockito>
     </properties>
 
     <distributionManagement>
