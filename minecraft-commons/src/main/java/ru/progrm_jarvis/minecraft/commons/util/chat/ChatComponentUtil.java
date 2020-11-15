@@ -49,7 +49,7 @@ public class ChatComponentUtil {
         @Override
         public JsonElement serialize(final WrappedChatComponent src, final Type typeOfSrc,
                                      final JsonSerializationContext context) {
-            return context.serialize(context.serialize(src.getJson(), JsonObject.class));
+            return context.serialize(context.serialize(src.getJson()));
         }
     }
 }
