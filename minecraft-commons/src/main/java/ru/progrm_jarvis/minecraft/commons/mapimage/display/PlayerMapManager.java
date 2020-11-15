@@ -44,18 +44,18 @@ import java.util.stream.Collectors;
 public class PlayerMapManager {
 
     /**
-     * Flag describing whether {@link int} or {@link short} map IDs are used by current server.
+     * Flag describing whether {@code int} or {@code short} map IDs are used by current server.
      */
     private final boolean USE_INT_IDS;
 
     /**
      * Method handle for {@link MapView#getId()} because it returns
-     * {@link short} and {@link int} on different Bukkit API versions.
+     * {@code short} and {@code int} on different Bukkit API versions.
      */
     private final MethodHandle MAP_VIEW__GET_ID__METHOD,
     /**
      * Method handle for {@link Bukkit#getMap(int)} because it consumes
-     * {@link short} and {@link int} on different Bukkit API versions.
+     * {@code short} and {@code int} on different Bukkit API versions.
      */
      BUKKIT__GET_MAP__METHOD;
 
@@ -70,9 +70,8 @@ public class PlayerMapManager {
             val returnType = method.getReturnType();
             if (returnType == int.class) USE_INT_IDS = true;
             else if (returnType == short.class) USE_INT_IDS = false;
-            else throw new IllegalStateException(
-                    "Unknown return type of MapView#getId() method (" + returnType + ")"
-                );
+            else throw new IllegalStateException("Unknown return type of MapView#getId() method (" + returnType + ")");
+
             MAP_VIEW__GET_ID__METHOD = InvokeUtil.toMethodHandle(method);
         }
         try {
@@ -176,11 +175,9 @@ public class PlayerMapManager {
      */
     @SneakyThrows
     public MapView getMap(final int mapId) {
-        return (MapView) (
-                USE_INT_IDS
-                        ? BUKKIT__GET_MAP__METHOD.invokeExact(mapId)
-                        : BUKKIT__GET_MAP__METHOD.invokeExact((short) mapId)
-        );
+        return USE_INT_IDS // note: same casts at both places to be able to use `invokeExact`
+                ? (MapView) BUKKIT__GET_MAP__METHOD.invokeExact(mapId)
+                : (MapView) BUKKIT__GET_MAP__METHOD.invokeExact((short) mapId);
     }
 
     /**
