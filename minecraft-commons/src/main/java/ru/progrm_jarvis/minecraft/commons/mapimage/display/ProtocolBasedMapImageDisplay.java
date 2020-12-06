@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
-import ru.progrm_jarvis.javacommons.map.MapUtil;
+import ru.progrm_jarvis.javacommons.collection.MapUtil;
 import ru.progrm_jarvis.minecraft.commons.mapimage.MapImage;
 import ru.progrm_jarvis.minecraft.commons.player.registry.PlayerRegistries;
 import ru.progrm_jarvis.minecraft.commons.player.registry.PlayerRegistry;

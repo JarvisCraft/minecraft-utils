@@ -11,7 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.material.MaterialData;
-import ru.progrm_jarvis.javacommons.map.MapUtil;
+import ru.progrm_jarvis.javacommons.collection.MapFiller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +29,7 @@ public class LegacySupport {
     private static final boolean LEGACY_MATERIALS = NMS_VERSION_GENERATION < 13;
     private static final boolean LEGACY_BLOCK_FALLING = NMS_VERSION_GENERATION < 13;
 
-    private static final Map<String, LegacyItem> legacyItems = MapUtil.mapFiller(new HashMap<String, LegacyItem>())
+    private static final Map<String, LegacyItem> legacyItems = MapFiller.from(new HashMap<String, LegacyItem>())
             // TODO or find better solution .put("CAVE_AIR", new LegacyItem("CAVE_AIR", "AIR"))
             // .put("VOID_AIR", new LegacyItem("VOID_AIR", "AIR"))
             .map();
