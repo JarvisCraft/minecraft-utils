@@ -108,50 +108,6 @@
                         <useSystemClassLoader>false</useSystemClassLoader>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.2.4</version>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>shade</goal>
-                            </goals>
-                            <configuration>
-                                <shadedArtifactAttached>true</shadedArtifactAttached>
-                                <shadedClassifierName>with-dependencies</shadedClassifierName>
-                            </configuration>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <artifactSet>
-                            <excludes>
-                                <!-- Third-party dependencies not required at runtime -->
-                                <exclude>org.openjdk.jmh:*</exclude>
-                            </excludes>
-                        </artifactSet>
-                        <filters>
-                            <filter>
-                                <artifact>*:*</artifact>
-                                <excludes>
-                                    <exclude>plugin.yml</exclude>
-                                    <exclude>Log4j-*</exclude>
-                                    <exclude>yggdrasil_session_pubkey.der</exclude>
-                                    <!-- Some unknown files present in META-INF :D -->
-                                    <exclude>META-INF/DEPENDENCIES</exclude>
-                                    <exclude>META-INF/LICENSE</exclude>
-                                    <exclude>META-INF/LICENSE.txt</exclude>
-                                    <exclude>META-INF/log4j-provider.properties</exclude>
-                                    <exclude>META-INF/MANIFEST.MF</exclude>
-                                    <exclude>META-INF/NOTICE</exclude>
-                                    <exclude>META-INF/NOTICE.txt</exclude>
-                                    <exclude>META-INF/web-fragment.xml</exclude>
-                                </excludes>
-                            </filter>
-                        </filters>
-                    </configuration>
-                </plugin>
 
                 <!-- Maven Central integration -->
                 <plugin>
@@ -261,7 +217,7 @@
             <dependency>
                 <groupId>com.comphenix.packetwrapper</groupId>
                 <artifactId>PacketWrapper</artifactId>
-                <version>1.13-R0.1-SNAPSHOT</version>
+                <version>1.15.2-R0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>

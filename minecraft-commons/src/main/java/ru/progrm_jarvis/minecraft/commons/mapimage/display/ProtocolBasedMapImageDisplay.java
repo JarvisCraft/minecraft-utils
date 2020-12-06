@@ -6,13 +6,13 @@ import lombok.experimental.FieldDefaults;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Nullable;
+import ru.progrm_jarvis.javacommons.map.MapUtil;
 import ru.progrm_jarvis.minecraft.commons.mapimage.MapImage;
 import ru.progrm_jarvis.minecraft.commons.player.registry.PlayerRegistries;
 import ru.progrm_jarvis.minecraft.commons.player.registry.PlayerRegistry;
 import ru.progrm_jarvis.minecraft.commons.player.registry.PlayerRegistryRegistration;
-import ru.progrm_jarvis.javacommons.map.MapUtil;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 
 @ToString
@@ -26,9 +26,9 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
     @Getter boolean global;
 
     @PlayerRegistryRegistration(PlayerRegistryRegistration.Policy.AUTO)
-    public ProtocolBasedMapImageDisplay(@NonNull final MapImage image, @NonNull final Map<Player, MapView> playerMaps,
-                                        @NonNull final Plugin plugin, final boolean global,
-                                        @NonNull final PlayerRegistry playerRegistry) {
+    public ProtocolBasedMapImageDisplay(final @NonNull MapImage image, final @NonNull Map<Player, MapView> playerMaps,
+                                        final @NonNull Plugin plugin, final boolean global,
+                                        final @NonNull PlayerRegistry playerRegistry) {
         this.image = image;
         this.playerMaps = playerMaps;
         playersView = Collections.unmodifiableSet(playerMaps.keySet());
@@ -39,8 +39,8 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
     }
 
     @PlayerRegistryRegistration(PlayerRegistryRegistration.Policy.AUTO)
-    public ProtocolBasedMapImageDisplay(@NonNull final MapImage image, @NonNull final Map<Player, MapView> playerMaps,
-                                        @NonNull final Plugin plugin, final boolean global) {
+    public ProtocolBasedMapImageDisplay(final @NonNull MapImage image, final @NonNull Map<Player, MapView> playerMaps,
+                                        final @NonNull Plugin plugin, final boolean global) {
         this(image, playerMaps, plugin, global, PlayerRegistries.defaultRegistry(plugin));
     }
 
@@ -52,7 +52,7 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
     /**
      * Sends the whole image to the players.
      */
-    protected void sendFullImage(@NonNull final Player player) {
+    protected void sendFullImage(final @NonNull Player player) {
         new WrapperPlayServerMap() {{
             setItemDamage(PlayerMapManager.getMapId(playerMaps.get(player)));
             setScale(image.getDisplay());
@@ -64,7 +64,7 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
         }}.sendPacket(player);
     }
 
-    protected WrapperPlayServerMap newDeltaPacket(@Nonnull final MapImage.Delta delta) {
+    protected WrapperPlayServerMap newDeltaPacket(final @Nullable MapImage.Delta delta) {
         return new WrapperPlayServerMap() {{
             setScale(image.getDisplay());
             setColumns(delta.width());
@@ -75,7 +75,7 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
         }};
     }
 
-    protected void sendDelta(@NonNull final Player player, @NonNull final MapImage.Delta delta) {
+    protected void sendDelta(final @NonNull Player player, final @NonNull MapImage.Delta delta) {
         if (delta.isEmpty()) return;
 
         val packet = newDeltaPacket(delta);
@@ -84,7 +84,7 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
         packet.sendPacket(player);
     }
 
-    protected void sendDeltaToAllPlayers(@NonNull final MapImage.Delta delta) {
+    protected void sendDeltaToAllPlayers(final @NonNull MapImage.Delta delta) {
         if (delta.isEmpty()) return;
 
         val packet = newDeltaPacket(delta);
@@ -125,7 +125,7 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
     }
 
     @Override
-    @NonNull public Optional<Number> getMapId(@NonNull final Player player) {
+    @NonNull public Optional<Number> getMapId(final @NonNull Player player) {
         return MapUtil.<Player, MapView, Optional<Number>>getOrDefault(
                 playerMaps, player, map -> Optional.of(PlayerMapManager.getMapId(map)), Optional::empty
         );

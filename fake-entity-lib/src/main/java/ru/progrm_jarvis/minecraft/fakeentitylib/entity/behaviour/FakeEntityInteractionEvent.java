@@ -21,7 +21,7 @@ public class FakeEntityInteractionEvent extends PlayerEvent {
         return handlerList;
     }
 
-    public FakeEntityInteractionEvent(@NonNull final Player who, @NonNull final InteractableFakeEntity entity) {
+    public FakeEntityInteractionEvent(final @NonNull Player who, final @NonNull InteractableFakeEntity entity) {
         super(who);
 
         this.entity = entity;

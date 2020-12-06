@@ -87,14 +87,14 @@ public interface Structure {
                 update(element);
             }
 
-            default Updater alsoThen(@NonNull final Updater updater) {
+            default Updater alsoThen(final @NonNull Updater updater) {
                 return element -> {
                     update(element);
                     updater.update(element);
                 };
             }
 
-            default Updater alsoBefore(@NonNull final Updater updater) {
+            default Updater alsoBefore(final @NonNull Updater updater) {
                 return element -> {
                     update(element);
                     updater.update(element);

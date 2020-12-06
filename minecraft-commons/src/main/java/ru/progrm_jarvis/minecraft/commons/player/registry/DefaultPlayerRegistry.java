@@ -28,7 +28,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class DefaultPlayerRegistry implements PlayerRegistry {
 
     @NonNull Plugin plugin;
-    @NonNull @Getter Set<Player> players;
+    @Getter @NonNull Set<Player> players;
     @Getter boolean global;
     @NonNull Set<PlayerContainer> playerContainers = Collections.newSetFromMap(new WeakHashMap<>());
     Lock playerContainersReadLock;
@@ -36,7 +36,7 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
 
     Listener listener;
 
-    public DefaultPlayerRegistry(@NonNull final Plugin plugin, @NonNull final Set<Player> playerSet,
+    public DefaultPlayerRegistry(final @NonNull Plugin plugin, final @NonNull Set<Player> playerSet,
                                  final boolean global) {
         Preconditions.checkArgument(playerSet.isEmpty(), "playerSet should be empty");
 
@@ -69,11 +69,11 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
         }, plugin);
     }
 
-    public DefaultPlayerRegistry(@NonNull final Plugin plugin, final boolean concurrent, final boolean global) {
+    public DefaultPlayerRegistry(final @NonNull Plugin plugin, final boolean concurrent, final boolean global) {
         this(plugin, concurrent ? new HashSet<>() : ConcurrentHashMap.newKeySet(), global);
     }
 
-    public DefaultPlayerRegistry(@NonNull final Plugin plugin) {
+    public DefaultPlayerRegistry(final @NonNull Plugin plugin) {
         this(plugin, true, true);
     }
 

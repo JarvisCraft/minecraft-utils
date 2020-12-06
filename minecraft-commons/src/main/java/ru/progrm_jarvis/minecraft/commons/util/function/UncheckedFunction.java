@@ -34,7 +34,7 @@ public interface UncheckedFunction<T, R> extends Function<T, R> {
     }
 
     @Override
-    default <V> UncheckedFunction<T, V> andThen(@NonNull final Function<? super R, ? extends V> after) {
+    default <V> UncheckedFunction<T, V> andThen(final @NonNull Function<? super R, ? extends V> after) {
         return t -> after.apply(apply(t));
     }
 }

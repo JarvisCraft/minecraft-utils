@@ -35,7 +35,7 @@ public class TitleUtil {
      *
      * @apiNote clearing the title means that the player will be able to see it again if title-time is sent to him
      */
-    public void clearTitle(@NonNull final Player player) {
+    public void clearTitle(final @NonNull Player player) {
         CLEAR_TITLE_PACKET.sendPacket(player);
     }
 
@@ -46,7 +46,7 @@ public class TitleUtil {
      *
      * @apiNote clearing the title means that the player will be able to see it again if title-time is sent to him
      */
-    public void clearTitle(@NonNull final Player... players) {
+    public void clearTitle(final @NonNull Player... players) {
         for (val player : players) CLEAR_TITLE_PACKET.sendPacket(player);
     }
 
@@ -57,7 +57,7 @@ public class TitleUtil {
      *
      * @apiNote clearing the title means that the player will be able to see it again if title-time is sent to him
      */
-    public void clearTitle(@NonNull final Iterable<Player> players) {
+    public void clearTitle(final @NonNull Iterable<Player> players) {
         for (val player : players) CLEAR_TITLE_PACKET.sendPacket(player);
     }
 
@@ -68,7 +68,7 @@ public class TitleUtil {
      *
      * @apiNote resetting the title means that the player won't be able to see it again without resending the text
      */
-    public void resetTitle(@NonNull final Player player) {
+    public void resetTitle(final @NonNull Player player) {
         RESET_TITLE_PACKET.sendPacket(player);
     }
 
@@ -79,7 +79,7 @@ public class TitleUtil {
      *
      * @apiNote resetting the title means that the player won't be able to see it again without resending the text
      */
-    public void resetTitle(@NonNull final Player... players) {
+    public void resetTitle(final @NonNull Player... players) {
         for (val player : players) RESET_TITLE_PACKET.sendPacket(player);
     }
 
@@ -90,7 +90,7 @@ public class TitleUtil {
      *
      * @apiNote resetting the title means that the player won't be able to see it again without resending the text
      */
-    public void resetTitle(@NonNull final Iterable<Player> players) {
+    public void resetTitle(final @NonNull Iterable<Player> players) {
         for (val player : players) RESET_TITLE_PACKET.sendPacket(player);
     }
 
@@ -102,8 +102,8 @@ public class TitleUtil {
      *
      * @apiNote title won't display until title-time is sent
      */
-    public void sendTitle(@NonNull final WrappedChatComponent title,
-                          @NonNull final Player player) {
+    public void sendTitle(final @NonNull WrappedChatComponent title,
+                          final @NonNull Player player) {
         val packet = new WrapperPlayServerTitle();
         packet.setAction(EnumWrappers.TitleAction.TITLE);
         packet.setTitle(title);
@@ -119,8 +119,8 @@ public class TitleUtil {
      *
      * @apiNote title won't display until title-time is sent
      */
-    public void sendTitle(@NonNull final WrappedChatComponent title,
-                          @NonNull final Player... players) {
+    public void sendTitle(final @NonNull WrappedChatComponent title,
+                          final @NonNull Player... players) {
         val packet = new WrapperPlayServerTitle();
         packet.setAction(EnumWrappers.TitleAction.TITLE);
         packet.setTitle(title);
@@ -136,8 +136,8 @@ public class TitleUtil {
      *
      * @apiNote title won't display until title-time is sent
      */
-    public void sendTitle(@NonNull final WrappedChatComponent title,
-                          @NonNull final Iterable<Player> players) {
+    public void sendTitle(final @NonNull WrappedChatComponent title,
+                          final @NonNull Iterable<Player> players) {
         val packet = new WrapperPlayServerTitle();
         packet.setAction(EnumWrappers.TitleAction.TITLE);
         packet.setTitle(title);
@@ -153,8 +153,8 @@ public class TitleUtil {
      *
      * @apiNote subtitle won't display until title-time is sent
      */
-    public void sendSubtitle(@NonNull final WrappedChatComponent title,
-                             @NonNull final Player player) {
+    public void sendSubtitle(final @NonNull WrappedChatComponent title,
+                             final @NonNull Player player) {
         val packet = new WrapperPlayServerTitle();
         packet.setAction(EnumWrappers.TitleAction.SUBTITLE);
         packet.setTitle(title);
@@ -170,8 +170,8 @@ public class TitleUtil {
      *
      * @apiNote subtitle won't display until title-time is sent
      */
-    public void sendSubtitle(@NonNull final WrappedChatComponent subtitle,
-                             @NonNull final Player... players) {
+    public void sendSubtitle(final @NonNull WrappedChatComponent subtitle,
+                             final @NonNull Player... players) {
         val packet = new WrapperPlayServerTitle();
         packet.setAction(EnumWrappers.TitleAction.SUBTITLE);
         packet.setTitle(subtitle);
@@ -187,8 +187,8 @@ public class TitleUtil {
      *
      * @apiNote subtitle won't display until title-time is sent
      */
-    public void sendSubtitle(@NonNull final WrappedChatComponent subtitle,
-                             @NonNull final Iterable<Player> players) {
+    public void sendSubtitle(final @NonNull WrappedChatComponent subtitle,
+                             final @NonNull Iterable<Player> players) {
         val packet = new WrapperPlayServerTitle();
         packet.setAction(EnumWrappers.TitleAction.SUBTITLE);
         packet.setTitle(subtitle);
@@ -208,7 +208,7 @@ public class TitleUtil {
      * @apiNote sending time reverts the effect of clearing the title
      */
     public void sendTitleTime(final int fadeIn, final int stay, final int fadeOut,
-                              @NonNull final Player player) {
+                              final @NonNull Player player) {
         val packet = new WrapperPlayServerTitle();
         packet.setAction(EnumWrappers.TitleAction.TIMES);
         packet.setFadeIn(fadeIn);
@@ -230,7 +230,7 @@ public class TitleUtil {
      * @apiNote sending time reverts the effect of clearing the title
      */
     public void sendTitleTime(final int fadeIn, final int stay, final int fadeOut,
-                              @NonNull final Player... players) {
+                              final @NonNull Player... players) {
         val packet = new WrapperPlayServerTitle();
         packet.setAction(EnumWrappers.TitleAction.TIMES);
         packet.setFadeIn(fadeIn);
@@ -252,7 +252,7 @@ public class TitleUtil {
      * @apiNote sending time reverts the effect of clearing the title
      */
     public void sendTitleTime(final int fadeIn, final int stay, final int fadeOut,
-                              @NonNull final Iterable<Player> players) {
+                              final @NonNull Iterable<Player> players) {
         val packet = new WrapperPlayServerTitle();
         packet.setAction(EnumWrappers.TitleAction.TIMES);
         packet.setFadeIn(fadeIn);

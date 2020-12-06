@@ -54,7 +54,7 @@ class IntWrapperTest {
 
     @ParameterizedTest
     @MethodSource("intWrapperParameters")
-    void testGetValueOfSpecificNumericType(@NonNull final IntWrapper wrapper) {
+    void testGetValueOfSpecificNumericType(final @NonNull IntWrapper wrapper) {
         val value = wrapper.get();
 
         assertEquals((byte) value, wrapper.byteValue());
@@ -67,7 +67,7 @@ class IntWrapperTest {
 
     @ParameterizedTest
     @MethodSource("intWrapperParameters")
-    void testGetSet(@NonNull final IntWrapper wrapper) {
+    void testGetSet(final @NonNull IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val value = RandomUtils.nextInt();
             wrapper.set(value);
@@ -77,7 +77,7 @@ class IntWrapperTest {
 
     @ParameterizedTest
     @MethodSource("intWrapperParameters")
-    void testGetAndIncrement(@NonNull final IntWrapper wrapper) {
+    void testGetAndIncrement(final @NonNull IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val value = wrapper.get();
             assertEquals(value, wrapper.getAndIncrement());
@@ -87,7 +87,7 @@ class IntWrapperTest {
 
     @ParameterizedTest
     @MethodSource("intWrapperParameters")
-    void testIncrementAndGet(@NonNull final IntWrapper wrapper) {
+    void testIncrementAndGet(final @NonNull IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val newValue = wrapper.get() + 1;
             assertEquals(newValue, wrapper.incrementAndGet());
@@ -97,7 +97,7 @@ class IntWrapperTest {
 
     @ParameterizedTest
     @MethodSource("intWrapperParameters")
-    void testGetAndDecrement(@NonNull final IntWrapper wrapper) {
+    void testGetAndDecrement(final @NonNull IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val value = wrapper.get();
             assertEquals(value, wrapper.getAndDecrement());
@@ -107,7 +107,7 @@ class IntWrapperTest {
 
     @ParameterizedTest
     @MethodSource("intWrapperParameters")
-    void testDecrementAndGet(@NonNull final IntWrapper wrapper) {
+    void testDecrementAndGet(final @NonNull IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val newValue = wrapper.get() - 1;
             assertEquals(newValue, wrapper.decrementAndGet());
@@ -117,7 +117,7 @@ class IntWrapperTest {
 
     @ParameterizedTest
     @MethodSource("intWrapperParameters")
-    void testGetAndAdd(@NonNull final IntWrapper wrapper) {
+    void testGetAndAdd(final @NonNull IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val delta = RandomUtils.nextInt() * RandomUtil.randomSign();
 
@@ -129,7 +129,7 @@ class IntWrapperTest {
 
     @ParameterizedTest
     @MethodSource("intWrapperParameters")
-    void testAddAndGet(@NonNull final IntWrapper wrapper) {
+    void testAddAndGet(final @NonNull IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val delta = RandomUtils.nextInt() * RandomUtil.randomSign();
 
@@ -141,7 +141,7 @@ class IntWrapperTest {
 
     @ParameterizedTest
     @MethodSource("intWrapperParameters")
-    void testGetAndUpdate(@NonNull final IntWrapper wrapper) {
+    void testGetAndUpdate(final @NonNull IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val function = randomIntUnaryFunction();
 
@@ -153,7 +153,7 @@ class IntWrapperTest {
 
     @ParameterizedTest
     @MethodSource("intWrapperParameters")
-    void testUpdateAndGet(@NonNull final IntWrapper wrapper) {
+    void testUpdateAndGet(final @NonNull IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val function = randomIntUnaryFunction();
 
@@ -165,7 +165,7 @@ class IntWrapperTest {
 
     @ParameterizedTest
     @MethodSource("intWrapperParameters")
-    void testGetAndAccumulate(@NonNull final IntWrapper wrapper) {
+    void testGetAndAccumulate(final @NonNull IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val function = randomIntBinaryFunction();
             val updateValue = RandomUtils.nextInt();
@@ -178,7 +178,7 @@ class IntWrapperTest {
 
     @ParameterizedTest
     @MethodSource("intWrapperParameters")
-    void testAccumulateAndGet(@NonNull final IntWrapper wrapper) {
+    void testAccumulateAndGet(final @NonNull IntWrapper wrapper) {
         for (var i = 0; i < 128 + RandomUtils.nextInt(129); i++) {
             val function = randomIntBinaryFunction();
             val updateValue = RandomUtils.nextInt();

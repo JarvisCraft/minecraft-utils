@@ -1,9 +1,8 @@
 package ru.progrm_jarvis.minecraft.commons.async;
 
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.Nullable;
 import ru.progrm_jarvis.minecraft.commons.MinecraftEnvironment;
-
-import javax.annotation.Nullable;
 
 /**
  * Utilities for easier use of {@link AsyncRunner}s.
@@ -21,8 +20,8 @@ public class AsyncRunners {
      *
      * @implNote This will give a caller of Bukkit or Bungee depending on availability of their classes
      */
-    public AsyncRunner getMinecraftEnvironmentAware(@Nullable final Object bukkitPlugin,
-                                                    @Nullable final Object bungeePlugin) {
+    public AsyncRunner getMinecraftEnvironmentAware(final @Nullable Object bukkitPlugin,
+                                                    final @Nullable Object bungeePlugin) {
         // try use Bukkit's
         if (MinecraftEnvironment.BUKKIT_API.isAvailable()) attempt: {
             if (bukkitPlugin == null) break attempt;

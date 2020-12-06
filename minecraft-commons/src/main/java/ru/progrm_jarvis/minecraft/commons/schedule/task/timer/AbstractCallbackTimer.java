@@ -47,7 +47,7 @@ public abstract class AbstractCallbackTimer extends AbstractSchedulerRunnable {
 
     protected void onOver() {}
 
-    public static SchedulerRunnable create(@NonNull final LongConsumer task, final long counter) {
+    public static SchedulerRunnable create(final @NonNull LongConsumer task, final long counter) {
         return new SimpleCallbackTimer(task, counter);
     }
 
@@ -56,7 +56,7 @@ public abstract class AbstractCallbackTimer extends AbstractSchedulerRunnable {
 
         @NotNull LongConsumer task;
 
-        public SimpleCallbackTimer(@NotNull final LongConsumer task,
+        public SimpleCallbackTimer(final @NotNull LongConsumer task,
                                    final long counter) {
             super(counter);
             this.task = task;

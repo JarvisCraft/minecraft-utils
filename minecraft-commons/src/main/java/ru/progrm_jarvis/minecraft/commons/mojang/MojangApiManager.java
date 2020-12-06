@@ -14,6 +14,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.progrm_jarvis.javacommons.lazy.Lazy;
 import ru.progrm_jarvis.minecraft.commons.annotation.AsyncExpected;
 import ru.progrm_jarvis.minecraft.commons.async.AsyncRunner;
@@ -21,8 +23,6 @@ import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedConsumer;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedFunction;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedSupplier;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,17 +79,17 @@ public class MojangApiManager implements AutoCloseable {
     ///////////////////////////////////////////////////////////////////////////
 
     @AsyncExpected
-    protected static JsonElement readJson(@NonNull final InputStream inputStream) {
+    protected static JsonElement readJson(final @NonNull InputStream inputStream) {
         return jsonParser.parse(new BufferedReader(new InputStreamReader(inputStream)));
     }
 
     @AsyncExpected
-    protected JsonElement httpGetJson(@NonNull final String uri) throws IOException {
+    protected JsonElement httpGetJson(final @NonNull String uri) throws IOException {
         return readJson(httpClient.get().execute(new HttpGet(uri)).getEntity().getContent());
     }
 
     @AsyncExpected
-    protected JsonElement httpGetJson(@NonNull final String uri, @Nullable final Map<String, String> parameters)
+    protected JsonElement httpGetJson(final @NonNull String uri, final @Nullable Map<String, String> parameters)
             throws IOException {
         if (parameters == null || parameters.isEmpty()) return httpGetJson(uri);
 
@@ -120,25 +120,25 @@ public class MojangApiManager implements AutoCloseable {
     ///////////////////////////////////////////////////////////////////////////
 
     @AsyncExpected
-    @Nonnull public UUID readUuid(@NonNull final String userName) throws IOException {
+    public @NotNull UUID readUuid(final @NonNull String userName) throws IOException {
         return MojangUtil.fromMojangUuid(httpGetJson(USERNAME_TO_UUID_AT_TIME_URI_PREFIX + userName).getAsJsonObject()
                 .get("id").getAsString()
         );
     }
 
-    public void readUuid(@NonNull final String userName,
-                         @NonNull final UncheckedConsumer<UUID> callback) {
+    public void readUuid(final @NonNull String userName,
+                         final @NonNull UncheckedConsumer<UUID> callback) {
         asyncRunner.get().runAsynchronously(() -> readUuid(userName), callback);
     }
 
     @SneakyThrows
     @AsyncExpected
-    @Nonnull public UUID getUuid(@NonNull final String userName) {
+    public @NotNull UUID getUuid(final @NonNull String userName) {
         return uuidsCache.get()
                 .get(userName.toLowerCase(), () -> readUuid(userName));
     }
 
-    public void getUuid(@NonNull final String userName, @NonNull final UncheckedConsumer<UUID> callback) {
+    public void getUuid(final @NonNull String userName, final @NonNull UncheckedConsumer<UUID> callback) {
         asyncRunner.get().runAsynchronously(() -> getUuid(userName), callback);
     }
 
@@ -147,7 +147,7 @@ public class MojangApiManager implements AutoCloseable {
     ///////////////////////////////////////////////////////////////////////////
 
     @AsyncExpected
-    @Nonnull public GameProfile readProfile(@NonNull final UUID uuid, final boolean signed) throws IOException {
+    public @NotNull GameProfile readProfile(final @NonNull UUID uuid, final boolean signed) throws IOException {
         val data = httpGetJson(UUID_TO_PROFILE_URI_PREFIX + MojangUtil.toMojangUuid(uuid) + "?unsigned=" + !signed)
                 .getAsJsonObject();
 
@@ -170,14 +170,14 @@ public class MojangApiManager implements AutoCloseable {
         return profile;
     }
 
-    public void readProfile(@NonNull final UUID uuid, final boolean signed,
-                            @NonNull final UncheckedConsumer<GameProfile> callback) {
+    public void readProfile(final @NonNull UUID uuid, final boolean signed,
+                            final @NonNull UncheckedConsumer<GameProfile> callback) {
         asyncRunner.get().runAsynchronously(() -> readProfile(uuid, signed), callback);
     }
 
     @SneakyThrows
     @AsyncExpected
-    @Nonnull public GameProfile getProfile(@NonNull final UUID uuid, final boolean signed) {
+    public @NotNull GameProfile getProfile(final @NonNull UUID uuid, final boolean signed) {
         val cache = profilesCache.get();
         var cachedProfile = cache.getIfPresent(uuid);
         // get profile using Mojang API if there is no cached one or it is unsigned but has to be
@@ -187,8 +187,8 @@ public class MojangApiManager implements AutoCloseable {
         return cachedProfile;
     }
 
-    public void getProfile(@NonNull final UUID uuid, final boolean signed,
-                        @NonNull final UncheckedConsumer<GameProfile> callback) {
+    public void getProfile(final @NonNull UUID uuid, final boolean signed,
+                        final @NonNull UncheckedConsumer<GameProfile> callback) {
         asyncRunner.get().runAsynchronously(() -> getProfile(uuid, signed), callback);
     }
 

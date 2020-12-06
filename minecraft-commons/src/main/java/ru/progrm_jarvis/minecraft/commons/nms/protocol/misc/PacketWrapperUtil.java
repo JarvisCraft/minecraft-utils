@@ -42,7 +42,7 @@ public class PacketWrapperUtil {
             .build();
 
     @SneakyThrows
-    public String toString(@Nullable final AbstractPacket packet) {
+    public String toString(final @Nullable AbstractPacket packet) {
         if (packet == null) return "null";
 
         final Map<String, DynamicMethodWrapper<Object, Object>> methods;
@@ -87,7 +87,7 @@ public class PacketWrapperUtil {
                 .toString();
     }
 
-    public String getterNameToString(@NonNull final String getterName) {
+    public String getterNameToString(final @NonNull String getterName) {
         if (getterName.startsWith("get")) {
             val name = getterName.substring(3);
             if (name.length() == 0) return "get";

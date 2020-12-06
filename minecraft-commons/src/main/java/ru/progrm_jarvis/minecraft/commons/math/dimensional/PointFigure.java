@@ -60,7 +60,7 @@ import org.bukkit.util.Vector;
      * @param point vector representation to convert
      * @return point figure identical to the specified vector point
      */
-    public static PointFigure from(@NonNull final Vector point) {
+    public static PointFigure from(final @NonNull Vector point) {
         return new PointFigure(point.getX(), point.getY(), point.getZ());
     }
 
@@ -70,7 +70,7 @@ import org.bukkit.util.Vector;
      * @param point location representation to convert
      * @return point figure identical to the specified location point
      */
-    public static PointFigure from(@NonNull final Location point) {
+    public static PointFigure from(final @NonNull Location point) {
         return new PointFigure(point.getX(), point.getY(), point.getZ());
     }
 }

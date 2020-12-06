@@ -44,18 +44,18 @@ import java.util.stream.Collectors;
 public class PlayerMapManager {
 
     /**
-     * Flag describing whether {@link int} or {@link short} map IDs are used by current server.
+     * Flag describing whether {@code int} or {@code short} map IDs are used by current server.
      */
     private final boolean USE_INT_IDS;
 
     /**
      * Method handle for {@link MapView#getId()} because it returns
-     * {@link short} and {@link int} on different Bukkit API versions.
+     * {@code short} and {@code int} on different Bukkit API versions.
      */
     private final MethodHandle MAP_VIEW__GET_ID__METHOD,
     /**
      * Method handle for {@link Bukkit#getMap(int)} because it consumes
-     * {@link short} and {@link int} on different Bukkit API versions.
+     * {@code short} and {@code int} on different Bukkit API versions.
      */
      BUKKIT__GET_MAP__METHOD;
 
@@ -70,9 +70,8 @@ public class PlayerMapManager {
             val returnType = method.getReturnType();
             if (returnType == int.class) USE_INT_IDS = true;
             else if (returnType == short.class) USE_INT_IDS = false;
-            else throw new IllegalStateException(
-                    "Unknown return type of MapView#getId() method (" + returnType + ")"
-                );
+            else throw new IllegalStateException("Unknown return type of MapView#getId() method (" + returnType + ")");
+
             MAP_VIEW__GET_ID__METHOD = InvokeUtil.toMethodHandle(method);
         }
         try {
@@ -163,7 +162,7 @@ public class PlayerMapManager {
      * @return map view's ID
      */
     @SneakyThrows
-    public int getMapId(@NonNull final MapView mapView) {
+    public int getMapId(final @NonNull MapView mapView) {
         if (USE_INT_IDS) return (int) MAP_VIEW__GET_ID__METHOD.invokeExact(mapView);
         return (int) (short) MAP_VIEW__GET_ID__METHOD.invokeExact(mapView);
     }
@@ -176,11 +175,9 @@ public class PlayerMapManager {
      */
     @SneakyThrows
     public MapView getMap(final int mapId) {
-        return (MapView) (
-                USE_INT_IDS
-                        ? BUKKIT__GET_MAP__METHOD.invokeExact(mapId)
-                        : BUKKIT__GET_MAP__METHOD.invokeExact((short) mapId)
-        );
+        return USE_INT_IDS // note: same casts at both places to be able to use `invokeExact`
+                ? (MapView) BUKKIT__GET_MAP__METHOD.invokeExact(mapId)
+                : (MapView) BUKKIT__GET_MAP__METHOD.invokeExact((short) mapId);
     }
 
     /**
@@ -229,7 +226,7 @@ public class PlayerMapManager {
      * @see #freeMap(Player, MapView) should be called whenever the player stops seeing this map or leaves the server
      */
     @Synchronized
-    public MapView allocateMap(@NonNull final Player player) {
+    public MapView allocateMap(final @NonNull Player player) {
         val mapsOfPlayer = PLAYER_MAPS.get(player);
 
         // if the player has all maps allocated of available than allocate another one (specially for him <3)
@@ -264,7 +261,7 @@ public class PlayerMapManager {
      * @see #allocateMap(Player) only obtained by calling this method should be freed
      */
     @Synchronized
-    public void freeMap(@NonNull final Player player, @NonNull final MapView map) {
+    public void freeMap(final @NonNull Player player, final @NonNull MapView map) {
         PLAYER_MAPS.remove(player, map);
         for (val renderer : map.getRenderers()) map.removeRenderer(renderer);
     }

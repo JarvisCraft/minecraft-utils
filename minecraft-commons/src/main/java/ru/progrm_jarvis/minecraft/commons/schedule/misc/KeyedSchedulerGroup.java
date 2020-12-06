@@ -9,7 +9,7 @@ public abstract class KeyedSchedulerGroup<T extends Runnable, K> extends Schedul
     public abstract void addTask(K key, @NonNull T task);
 
     @Override
-    public void addTask(@NonNull final T task) {
+    public void addTask(final @NonNull T task) {
         addTask(null, task);
     }
 

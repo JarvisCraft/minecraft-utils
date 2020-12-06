@@ -9,7 +9,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ReflectionUtil {
 
-    public boolean isClassAvailable(@NonNull final String className) {
+    public boolean isClassAvailable(final @NonNull String className) {
         try {
             Class.forName(className);
 

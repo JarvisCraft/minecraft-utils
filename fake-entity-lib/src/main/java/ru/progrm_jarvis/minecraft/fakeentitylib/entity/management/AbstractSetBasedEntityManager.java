@@ -11,7 +11,6 @@ import ru.progrm_jarvis.minecraft.commons.util.shutdown.ShutdownHooks;
 import ru.progrm_jarvis.minecraft.commons.util.shutdown.Shutdownable;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.FakeEntity;
 
-import javax.annotation.Nonnull;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,12 +27,12 @@ import java.util.Set;
 public abstract class AbstractSetBasedEntityManager<E extends FakeEntity> implements FakeEntityManager<E> {
 
     @NonNull Plugin plugin;
-    @NonNull @ToString.Exclude Set<E> entities;
-    @NonNull @ToString.Exclude Set<E> entitiesView;
+    @ToString.Exclude @NonNull Set<E> entities;
+    @ToString.Exclude @NonNull Set<E> entitiesView;
 
     @Delegate(types = Shutdownable.class) @NonNull ShutdownHooks shutdownHooks;
 
-    public AbstractSetBasedEntityManager(@NonNull final Plugin plugin, @NonNull final Set<E> entities) {
+    public AbstractSetBasedEntityManager(final @NonNull Plugin plugin, final @NonNull Set<E> entities) {
         this.plugin = plugin;
         this.entities = entities;
         this.entitiesView = Collections.unmodifiableSet(entities);
@@ -48,7 +47,7 @@ public abstract class AbstractSetBasedEntityManager<E extends FakeEntity> implem
      * @param plugin parent plugin of this manager
      * @param concurrent whether or not this map should be thread-safe
      */
-    public AbstractSetBasedEntityManager(@Nonnull final Plugin plugin, final boolean concurrent) {
+    public AbstractSetBasedEntityManager(final @NonNull Plugin plugin, final boolean concurrent) {
         this(plugin, concurrent ? FakeEntityManager.concurrentWeakEntitySet() : FakeEntityManager.weakEntitySet());
     }
 
@@ -63,7 +62,7 @@ public abstract class AbstractSetBasedEntityManager<E extends FakeEntity> implem
     }
 
     @Override
-    public boolean isManaged(@NonNull final E entity) {
+    public boolean isManaged(final @NonNull E entity) {
         return entities.contains(entity);
     }
 
@@ -74,13 +73,13 @@ public abstract class AbstractSetBasedEntityManager<E extends FakeEntity> implem
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    public void manageEntity(@NonNull final E entity) {
+    public void manageEntity(final @NonNull E entity) {
         entities.add(entity);
     }
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    public void unmanageEntity(@NonNull final E entity) {
+    public void unmanageEntity(final @NonNull E entity) {
         entities.remove(entity);
     }
 }

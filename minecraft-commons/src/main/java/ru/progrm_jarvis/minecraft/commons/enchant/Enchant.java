@@ -17,7 +17,7 @@ public class Enchant {
     @Nonnegative int level;
 
 
-    public Enchant(@NonNull final Enchantment enchantment, final int level) {
+    public Enchant(final @NonNull Enchantment enchantment, final int level) {
         Preconditions.checkArgument(level >= 0, "Level should be non-negative");
 
         this.enchantment = enchantment;
