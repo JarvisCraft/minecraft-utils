@@ -21,7 +21,7 @@ public enum MinecraftEnvironment {
     @NonFinal boolean available;
     @NonNull String[] checkedClasses, checkedPackages;
 
-    MinecraftEnvironment(@NonNull final String[] checkedClasses, @NonNull final String... checkedPackages) {
+    MinecraftEnvironment(final @NonNull String[] checkedClasses, final @NonNull String... checkedPackages) {
         this.checkedClasses = checkedClasses;
         this.checkedPackages = checkedPackages;
     }

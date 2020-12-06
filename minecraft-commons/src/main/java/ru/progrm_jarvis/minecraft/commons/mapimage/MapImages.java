@@ -5,8 +5,8 @@ import lombok.experimental.UtilityClass;
 import lombok.val;
 import lombok.var;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
@@ -80,7 +80,7 @@ public class MapImages {
      * @apiNote returned object may be ignored as all changes happen to the provided image
      */
     @Contract(pure = true)
-    @Nonnull public BufferedImage fitImage(@NonNull final BufferedImage image, final boolean resize) {
+    public @NotNull BufferedImage fitImage(final @NonNull BufferedImage image, final boolean resize) {
         int width = image.getWidth(), height = image.getHeight();
 
         // if an image is bigger at any bound
@@ -186,7 +186,7 @@ public class MapImages {
      * @param resize whether the image should be resized or cut to fit map image dimensions
      * @return 2-dimensional array of {@link MapImageColor} IDs valid for minecraft.
      */
-    public byte[][] getMapImagePixels2D(@NonNull final BufferedImage image, final boolean resize) {
+    public byte[][] getMapImagePixels2D(final @NonNull BufferedImage image, final boolean resize) {
         return normalizePixels(getNonNormalizedMapImagePixels2D(image, resize));
     }
 
@@ -197,7 +197,7 @@ public class MapImages {
      * @param resize whether the image should be resized or cut to fit map image dimensions
      * @return array of {@link MapImageColor} IDs valid for minecraft.
      */
-    public byte[] getMapImagePixels(@NonNull final BufferedImage image, final boolean resize) {
+    public byte[] getMapImagePixels(final @NonNull BufferedImage image, final boolean resize) {
         return normalizePixels(getNonNormalizedMapImagePixels(image, resize));
     }
 }

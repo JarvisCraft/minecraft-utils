@@ -23,14 +23,14 @@ public abstract class SchedulerGroup<T extends Runnable> extends AbstractSchedul
 
     public abstract Collection<T> clearTasks();
 
-    public T findTask(@NonNull final Predicate<T> predicate) {
+    public T findTask(final @NonNull Predicate<T> predicate) {
 
         for (final T task : tasks()) if (predicate.test(task)) return task;
 
         return null;
     }
 
-    public T removeTask(@NonNull final Predicate<T> predicate) {
+    public T removeTask(final @NonNull Predicate<T> predicate) {
         val tasks = tasks().iterator();
 
         while (tasks.hasNext()) {
@@ -46,7 +46,7 @@ public abstract class SchedulerGroup<T extends Runnable> extends AbstractSchedul
         return null;
     }
 
-    public Collection<T> removeTasks(@NonNull final Predicate<T> predicate) {
+    public Collection<T> removeTasks(final @NonNull Predicate<T> predicate) {
         val tasks = tasks();
         val removedTasks = new ArrayList<T>();
         for (val task : tasks()) if (predicate.test(task)) removedTasks.add(task);

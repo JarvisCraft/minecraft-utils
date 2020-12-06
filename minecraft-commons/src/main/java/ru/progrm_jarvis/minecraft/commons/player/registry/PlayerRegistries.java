@@ -17,30 +17,30 @@ public class PlayerRegistries {
 
     private final Map<Plugin, PlayerRegistry> DEFAULT_REGISTRIES = new ConcurrentHashMap<>();
 
-    public PlayerRegistry defaultRegistry(@NonNull final Plugin plugin) {
+    public PlayerRegistry defaultRegistry(final @NonNull Plugin plugin) {
         return DEFAULT_REGISTRIES.computeIfAbsent(plugin, DefaultPlayerRegistry::new);
     }
 
-    public <C extends PlayerContainer> C registerInDefaultRegistry(@NonNull final Plugin plugin,
-                                                                   @NonNull final C playerContainer) {
+    public <C extends PlayerContainer> C registerInDefaultRegistry(final @NonNull Plugin plugin,
+                                                                   final @NonNull C playerContainer) {
         return defaultRegistry(plugin).register(playerContainer);
     }
 
-    public PlayerContainer registerInDefaultRegistry(@NonNull final Plugin plugin,
-                                                     @NonNull final Collection<Player> collectionOfPlayers,
+    public PlayerContainer registerInDefaultRegistry(final @NonNull Plugin plugin,
+                                                     final @NonNull Collection<Player> collectionOfPlayers,
                                                      final boolean global) {
         return registerInDefaultRegistry(plugin, PlayerContainers.wrap(collectionOfPlayers, global));
     }
 
-    public <T> PlayerContainer registerInDefaultRegistry(@NonNull final Plugin plugin,
-                                                         @NonNull final Map<Player, T> mapOfPlayers,
-                                                         @NonNull final Function<Player, T> defaultValueSupplier,
+    public <T> PlayerContainer registerInDefaultRegistry(final @NonNull Plugin plugin,
+                                                         final @NonNull Map<Player, T> mapOfPlayers,
+                                                         final @NonNull Function<Player, T> defaultValueSupplier,
                                                          final boolean global) {
         return registerInDefaultRegistry(plugin, PlayerContainers.wrap(mapOfPlayers, defaultValueSupplier, global));
     }
 
-    public <T> PlayerContainer registerInDefaultRegistry(@NonNull final Plugin plugin,
-                                                         @NonNull final Map<Player, T> mapOfPlayers) {
+    public <T> PlayerContainer registerInDefaultRegistry(final @NonNull Plugin plugin,
+                                                         final @NonNull Map<Player, T> mapOfPlayers) {
         return registerInDefaultRegistry(plugin, PlayerContainers.wrap(mapOfPlayers));
     }
 }

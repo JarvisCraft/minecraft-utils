@@ -43,7 +43,7 @@ public abstract class AbstractBukkitTimer extends AbstractSchedulerRunnable {
 
     protected void onOver() {}
 
-    public static SchedulerRunnable create(@NonNull final Runnable task, final long counter) {
+    public static SchedulerRunnable create(final @NonNull Runnable task, final long counter) {
         return new SimpleBukkitTimer(task, counter);
     }
 
@@ -52,7 +52,7 @@ public abstract class AbstractBukkitTimer extends AbstractSchedulerRunnable {
 
         @NotNull Runnable task;
 
-        public SimpleBukkitTimer(@NotNull final Runnable task,
+        public SimpleBukkitTimer(final @NotNull Runnable task,
                                  final long counter) {
             super(counter);
             this.task = task;

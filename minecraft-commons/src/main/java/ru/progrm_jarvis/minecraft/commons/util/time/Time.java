@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Time {
 
-    public Time(final long duration, @NonNull final TimeUnit unit) {
+    public Time(final long duration, final @NonNull TimeUnit unit) {
         Preconditions.checkArgument(duration >= 0, "duration should be non-negative");
 
         this.duration = duration;

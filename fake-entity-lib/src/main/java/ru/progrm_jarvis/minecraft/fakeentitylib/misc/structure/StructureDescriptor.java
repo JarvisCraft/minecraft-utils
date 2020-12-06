@@ -44,7 +44,7 @@ public class StructureDescriptor {
 
     private static final Gson gson = new Gson();
 
-    public static StructureDescriptor from(@NonNull final JsonRepresentation jsonRepresentation) {
+    public static StructureDescriptor from(final @NonNull JsonRepresentation jsonRepresentation) {
         val elementNames = new ArrayList<String>();
         val elementList = new ArrayList<Element>();
         jsonRepresentation.getElements().forEach((name, element) -> {
@@ -66,24 +66,24 @@ public class StructureDescriptor {
         return descriptor.build();
     }
 
-    public static StructureDescriptor fromJson(@NonNull final String json) {
+    public static StructureDescriptor fromJson(final @NonNull String json) {
         return from(gson.fromJson(json, JsonRepresentation.class));
     }
 
-    public static StructureDescriptor fromJson(@NonNull final Reader jsonReader) {
+    public static StructureDescriptor fromJson(final @NonNull Reader jsonReader) {
         return from(gson.fromJson(jsonReader, JsonRepresentation.class));
     }
 
-    public static StructureDescriptor fromJson(@NonNull final JsonReader jsonReader) {
+    public static StructureDescriptor fromJson(final @NonNull JsonReader jsonReader) {
         return from(gson.fromJson(jsonReader, JsonRepresentation.class));
     }
 
-    public static StructureDescriptor fromJson(@NonNull final JsonElement jsonElement) {
+    public static StructureDescriptor fromJson(final @NonNull JsonElement jsonElement) {
         return from(gson.fromJson(jsonElement, JsonRepresentation.class));
     }
 
     @SneakyThrows
-    public static StructureDescriptor fromJson(@NonNull final File jsonFile) {
+    public static StructureDescriptor fromJson(final @NonNull File jsonFile) {
         try (val reader = new BufferedReader(new FileReader(jsonFile))) {
             return fromJson(reader);
         }
@@ -105,7 +105,7 @@ public class StructureDescriptor {
         int[] ids;
         Structure.Element.Updater[] updaters;
 
-        public static FrameUpdater from(@NonNull final int[] ids, @NonNull final Structure.Element.Updater[] updaters) {
+        public static FrameUpdater from(final @NonNull int[] ids, final @NonNull Structure.Element.Updater[] updaters) {
             val idsLength = ids.length;
             Preconditions.checkArgument(idsLength == updaters.length, "ids length should be equal to updaters length");
 
@@ -204,7 +204,7 @@ public class StructureDescriptor {
 
                 Translation translation;
 
-                public static Structure.Element.Size sizeFromName(@NonNull final String sizeName) {
+                public static Structure.Element.Size sizeFromName(final @NonNull String sizeName) {
                     switch (sizeName) {
                         case "small": return Structure.Element.Size.SMALL;
                         case "medium": return Structure.Element.Size.MEDIUM;
@@ -240,7 +240,7 @@ public class StructureDescriptor {
             @SerializedName("ontick") int tick;
             Element[] objects;
 
-            public FrameUpdater toFrameUpdaterByElements(@NonNull final List<Element> elements) {
+            public FrameUpdater toFrameUpdaterByElements(final @NonNull List<Element> elements) {
                 final Map<Integer, Element> elementMap = Arrays.stream(objects)
                         .collect(Collectors.toMap(element -> {
                             val index = elements.indexOf(element);
@@ -259,7 +259,7 @@ public class StructureDescriptor {
                         .toArray(Structure.Element.Updater[]::new));
             }
 
-            public FrameUpdater toFrameUpdaterByElementNames(@NonNull final List<String> elementNames) {
+            public FrameUpdater toFrameUpdaterByElementNames(final @NonNull List<String> elementNames) {
                 final Map<Integer, Element> elementMap = Arrays.stream(objects)
                         .collect(Collectors.toMap(element -> {
                             val index = elementNames.indexOf(element.customName);

@@ -23,7 +23,7 @@ public abstract class AbstractConditionalTask extends AbstractSchedulerRunnable 
         if (!tryRun()) cancel();
     }
 
-    public static SchedulerRunnable create(@NonNull final BooleanSupplier conditionalTask) {
+    public static SchedulerRunnable create(final @NonNull BooleanSupplier conditionalTask) {
         return new SimpleConditionalTask(conditionalTask);
     }
 

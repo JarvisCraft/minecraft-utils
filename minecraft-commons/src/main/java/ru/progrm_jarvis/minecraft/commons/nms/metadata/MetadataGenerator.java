@@ -8,10 +8,10 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import ru.progrm_jarvis.minecraft.commons.nms.Conversions;
 import ru.progrm_jarvis.minecraft.commons.nms.NmsUtil;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -156,7 +156,7 @@ public class MetadataGenerator {
             return FACTORY.createWatchable(VERSION >= 9 ? 6 : 16, flagBytes);
         }
 
-        public static WrappedWatchableObject shooter(@Nullable final UUID shooterUuid) {
+        public static WrappedWatchableObject shooter(final @Nullable UUID shooterUuid) {
             if (VERSION >= 9) return FACTORY.createWatchableOptionalUUID(7, Optional.ofNullable(shooterUuid));
             throw new UnsupportedOperationException("Versions prior to 1.9 don't support Arrow metadata");
         }

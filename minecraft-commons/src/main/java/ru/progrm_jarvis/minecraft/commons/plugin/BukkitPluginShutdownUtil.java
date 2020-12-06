@@ -63,7 +63,7 @@ public class BukkitPluginShutdownUtil {
         @NonNull Plugin plugin;
         @NonNull List<Shutdownable> shutdownHooks = ConcurrentCollections.concurrentList(new ArrayList<>());
 
-        private PluginShutdownHandler(@NonNull final Plugin plugin) {
+        private PluginShutdownHandler(final @NonNull Plugin plugin) {
             this.plugin = plugin;
             plugin.getServer().getPluginManager().registerEvents(this, plugin);
         }

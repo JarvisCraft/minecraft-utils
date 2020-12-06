@@ -6,10 +6,9 @@ import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.jetbrains.annotations.Nullable;
 import org.mockito.ArgumentMatcher;
 import org.mockito.ArgumentMatchers;
-
-import javax.annotation.Nullable;
 
 import static org.mockito.ArgumentMatchers.argThat;
 
@@ -29,7 +28,7 @@ public class HttpClientArgumentMatchers {
      *
      * @implNote for {@code null} request {@link ArgumentMatchers#isNull()} is used.
      */
-    @NonNull public ArgumentMatcher<HttpUriRequest> httpUriRequestMatcher(@Nullable final HttpUriRequest request) {
+    @NonNull public ArgumentMatcher<HttpUriRequest> httpUriRequestMatcher(final @Nullable HttpUriRequest request) {
         return new HttpUriRequestMatcher(request);
     }
 
@@ -40,7 +39,7 @@ public class HttpClientArgumentMatchers {
      * @return {@code null}
      */
     // naming and JavaDocs conventions taken from ArgumentMatchers
-    public HttpUriRequest eqHttpUriRequest(@Nullable final HttpUriRequest value) {
+    public HttpUriRequest eqHttpUriRequest(final @Nullable HttpUriRequest value) {
         return argThat(httpUriRequestMatcher(value));
     }
 
@@ -51,7 +50,7 @@ public class HttpClientArgumentMatchers {
         @Nullable HttpUriRequest request;
 
         @Override
-        public boolean matches(@Nullable final HttpUriRequest argument) {
+        public boolean matches(final @Nullable HttpUriRequest argument) {
             if (request == argument) return true; // if one non-null (as both not same) => match
             if (request == null || argument == null) return false;
 

@@ -46,11 +46,11 @@ public abstract class AbstractConcurrentCallbackTimer extends AbstractSchedulerR
 
     protected void onOver() {}
 
-    public static SchedulerRunnable create(@NonNull final LongConsumer task, final long counter) {
+    public static SchedulerRunnable create(final @NonNull LongConsumer task, final long counter) {
         return new SimpleConcurrentCallbackTimer(task, new AtomicLong(counter));
     }
 
-    public static SchedulerRunnable create(@NonNull final LongConsumer task, @NonNull final AtomicLong counter) {
+    public static SchedulerRunnable create(final @NonNull LongConsumer task, final @NonNull AtomicLong counter) {
         return new SimpleConcurrentCallbackTimer(task, counter);
     }
 
@@ -59,8 +59,8 @@ public abstract class AbstractConcurrentCallbackTimer extends AbstractSchedulerR
 
         @NotNull LongConsumer task;
 
-        public SimpleConcurrentCallbackTimer(@NotNull final LongConsumer task,
-                                             @NotNull final AtomicLong counter) {
+        public SimpleConcurrentCallbackTimer(final @NotNull LongConsumer task,
+                                             final @NotNull AtomicLong counter) {
             super(counter);
             this.task = task;
         }

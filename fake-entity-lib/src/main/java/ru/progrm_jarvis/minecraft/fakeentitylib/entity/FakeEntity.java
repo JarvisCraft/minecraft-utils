@@ -24,10 +24,11 @@ public interface FakeEntity extends PlayerContainer {
     World getWorld();
 
     /**
-     * Gets location of this fake entity, the object returned should not be modified without cloning
-     * as it may be an actual fake entity's location object.
+     * Gets location of this fake entity.
      *
      * @return location of this fake entity
+     *
+     * @apiNote changes to the returned location will not affect the fake entity
      */
     Location getLocation();
 

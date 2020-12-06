@@ -22,9 +22,9 @@ public class SystemPropertyUtil {
      * @param <T> type of the resulting property value
      * @return found property transformed to required type or the default value if the property is unset
      */
-    public <T> T getSystemProperty(@NonNull final String propertyName,
-                                   @NonNull final Function<String, T> transformer,
-                                   @NonNull final Supplier<T> defaultValueSupplier) {
+    public <T> T getSystemProperty(final @NonNull String propertyName,
+                                   final @NonNull Function<String, T> transformer,
+                                   final @NonNull Supplier<T> defaultValueSupplier) {
         val property = System.getProperty(propertyName);
 
         return property == null ? defaultValueSupplier.get() : transformer.apply(property);
@@ -40,9 +40,9 @@ public class SystemPropertyUtil {
      * @param <T> type of the resulting property value
      * @return found property transformed to required type or the default value if the property is unset
      */
-    public <T> T getSystemProperty(@NonNull final String propertyName,
-                                   @NonNull final Function<String, T> transformer,
-                                   @NonNull final T defaultValue) {
+    public <T> T getSystemProperty(final @NonNull String propertyName,
+                                   final @NonNull Function<String, T> transformer,
+                                   final @NonNull T defaultValue) {
         return getSystemProperty(propertyName, transformer, (Supplier<T>) () -> defaultValue);
     }
 
@@ -55,8 +55,8 @@ public class SystemPropertyUtil {
      * @return found property transformed to required type
      * or the default value if the property is unset
      */
-    public boolean getSystemPropertyBoolean(@NonNull final String propertyName,
-                                            @NonNull final BooleanSupplier defaultValueSupplier) {
+    public boolean getSystemPropertyBoolean(final @NonNull String propertyName,
+                                            final @NonNull BooleanSupplier defaultValueSupplier) {
         val property = System.getProperty(propertyName);
 
         return property == null ? defaultValueSupplier.getAsBoolean() : Boolean.parseBoolean(property);
@@ -71,7 +71,7 @@ public class SystemPropertyUtil {
      * @return found property transformed to required type
      * or the default value if the property is unset
      */
-    public boolean getSystemPropertyBoolean(@NonNull final String propertyName, final boolean defaultValue) {
+    public boolean getSystemPropertyBoolean(final @NonNull String propertyName, final boolean defaultValue) {
         return getSystemPropertyBoolean(propertyName, () -> defaultValue);
     }
 
@@ -84,8 +84,8 @@ public class SystemPropertyUtil {
      * @return found property transformed to required type
      * or the default value if the property is unset or is not a valid number
      */
-    public int getSystemPropertyInt(@NonNull final String propertyName,
-                                    @NonNull final IntSupplier defaultValueSupplier) {
+    public int getSystemPropertyInt(final @NonNull String propertyName,
+                                    final @NonNull IntSupplier defaultValueSupplier) {
         val property = System.getProperty(propertyName);
 
         if (property == null) return defaultValueSupplier.getAsInt();
@@ -105,7 +105,7 @@ public class SystemPropertyUtil {
      * @return found property transformed to required type
      * or the default value if the property is unset or is not a valid number
      */
-    public int getSystemPropertyInt(@NonNull final String propertyName, final int defaultValue) {
+    public int getSystemPropertyInt(final @NonNull String propertyName, final int defaultValue) {
         return getSystemPropertyInt(propertyName, () -> defaultValue);
     }
 
@@ -118,8 +118,8 @@ public class SystemPropertyUtil {
      * @return found property transformed to required type
      * or the default value if the property is unset or is not a valid number
      */
-    public long getSystemPropertyLong(@NonNull final String propertyName,
-                                      @NonNull final LongSupplier defaultValueSupplier) {
+    public long getSystemPropertyLong(final @NonNull String propertyName,
+                                      final @NonNull LongSupplier defaultValueSupplier) {
         val property = System.getProperty(propertyName);
 
         if (property == null) return defaultValueSupplier.getAsLong();
@@ -139,7 +139,7 @@ public class SystemPropertyUtil {
      * @return found property transformed to required type
      * or the default value if the property is unset or is not a valid number
      */
-    public long getSystemPropertyLong(@NonNull final String propertyName, final long defaultValue) {
+    public long getSystemPropertyLong(final @NonNull String propertyName, final long defaultValue) {
         return getSystemPropertyLong(propertyName, () -> defaultValue);
     }
 
@@ -152,8 +152,8 @@ public class SystemPropertyUtil {
      * @return found property transformed to required type
      * or the default value if the property is unset or is not a valid number
      */
-    public double getSystemPropertyDouble(@NonNull final String propertyName,
-                                          @NonNull final DoubleSupplier defaultValueSupplier) {
+    public double getSystemPropertyDouble(final @NonNull String propertyName,
+                                          final @NonNull DoubleSupplier defaultValueSupplier) {
         val property = System.getProperty(propertyName);
 
         if (property == null) return defaultValueSupplier.getAsDouble();
@@ -173,7 +173,7 @@ public class SystemPropertyUtil {
      * @return found property transformed to required type
      * or the default value if the property is unset or is not a valid number
      */
-    public double getSystemPropertyDouble(@NonNull final String propertyName, final double defaultValue) {
+    public double getSystemPropertyDouble(final @NonNull String propertyName, final double defaultValue) {
         return getSystemPropertyDouble(propertyName, () -> defaultValue);
     }
 }

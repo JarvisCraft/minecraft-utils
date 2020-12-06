@@ -5,25 +5,26 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
-import lombok.AccessLevel;
-import lombok.NonNull;
+import lombok.*;
+import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
-import lombok.val;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import ru.progrm_jarvis.minecraft.commons.math.dimensional.CuboidFigure;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import ru.progrm_jarvis.javacommons.annotation.ownership.Own;
 import ru.progrm_jarvis.minecraft.commons.nms.NmsUtil;
 import ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.lang.Math.*;
 import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand.armorStandFlags;
 import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand.headRotation;
 import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.Entity.*;
@@ -34,6 +35,18 @@ import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.
  */
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
+
+    protected static final double PIXEL_SIZE = 0x1p-4,
+            HALF_PIXEL_SIZE = 0x1p-5,
+            ARMOR_STAND_BODY_HEIGHT = (16 + 8) * PIXEL_SIZE,
+            ARMOR_STAND_HEAD_ROOT_OFFSET = ARMOR_STAND_BODY_HEIGHT - HALF_PIXEL_SIZE,
+            ITEM_CENTER_Y_OFFSET = 3 * PIXEL_SIZE + HALF_PIXEL_SIZE; // offset of the item center from the rotation center
+
+    final boolean small, marker;
+    final double itemCenterYOffset;
+
+    @NotNull Offset offset;
+    //double xOffset, yOffset, zOffset;
 
     /**
      * Rotation of this block
@@ -63,34 +76,29 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param small whether this block-item is small
      * @param item item to be displayed by this block-item
      */
-    public ArmorStandBlockItem(@Nullable final UUID uuid,
-                               final Map<Player, Boolean> playersMap,
-                               final boolean global, final int viewDistance, final boolean visible,
-                               final Location location, @Nullable final Vector3F rotation,
-                               final boolean small, final boolean marker, @NonNull final ItemStack item) {
+    protected ArmorStandBlockItem(final @Nullable UUID uuid,
+                                  final @NotNull Map<@NotNull Player, @NotNull Boolean> playersMap,
+                                  final boolean global, final int viewDistance, final boolean visible,
+                                  final @NotNull Location location, final @NotNull Vector3F rotation,
+                                  final double itemCenterYOffset, final @NotNull Offset offset,
+                                  final boolean small, final boolean marker, final @NotNull ItemStack item) {
         super(
                 NmsUtil.nextEntityId(), uuid, EntityType.ARMOR_STAND,
                 playersMap, global, viewDistance, visible, location, 0, null, createMetadata(rotation, small, marker)
         );
 
+        this.small = small;
+        this.marker = marker;
+        this.itemCenterYOffset = itemCenterYOffset;
+
         this.rotation = rotation;
+        this.offset = offset;
 
-        equipmentPacket = new WrapperPlayServerEntityEquipment();
-        equipmentPacket.setEntityID(entityId);
-        equipmentPacket.setSlot(EnumWrappers.ItemSlot.HEAD);
-        equipmentPacket.setItem(this.item = item);
-
-        // actual block-item position (head of armorstand) is one block higher than its coordinate so normalize it
-        {
-            final double x = location.getX(), y = location.getY(), z = location.getZ();
-            hitbox = new CuboidFigure(0.25, 0.25, 0.25);
-        }
-        yOffset = -1;
-    }
-
-    @Override
-    public void spawn() {
-        super.spawn();
+        final WrapperPlayServerEntityEquipment thisEquipmentPacket;
+        equipmentPacket = thisEquipmentPacket = new WrapperPlayServerEntityEquipment();
+        thisEquipmentPacket.setEntityID(entityId);
+        thisEquipmentPacket.setSlot(EnumWrappers.ItemSlot.HEAD);
+        thisEquipmentPacket.setItem(this.item = item);
     }
 
     /**
@@ -105,15 +113,48 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param item item to be displayed by this block-item
      * @return newly created armor stand block-item
      */
-    public static ArmorStandBlockItem create(@Nullable final UUID uuid,
+    public static ArmorStandBlockItem create(final @Nullable UUID uuid,
                                              final boolean concurrent,
                                              final boolean global, final int viewDistance, final boolean visible,
-                                             final Location location,
-                                             final Vector3F rotation, final boolean small, final boolean marker,
-                                             @NonNull final ItemStack item) {
+                                             final @Own @NonNull Location location,
+                                             final @Own @NonNull Vector3F rotation,
+                                             final boolean small, final boolean marker, final @NonNull ItemStack item) {
+        final double itemCenterYOffset;
+        final Offset offset;
+        (offset = rotationOffsets(
+                rotation, itemCenterYOffset = small ? ITEM_CENTER_Y_OFFSET * 0x1p-1 : ITEM_CENTER_Y_OFFSET)
+        ).applyTo(location);
+
         return new ArmorStandBlockItem(
                 uuid, concurrent ? new ConcurrentHashMap<>() : new HashMap<>(),
-                global, viewDistance, visible, location, rotation, small, marker, item
+                global, viewDistance, visible,
+                location.add(0, -(small ? ARMOR_STAND_HEAD_ROOT_OFFSET / 2 : ARMOR_STAND_HEAD_ROOT_OFFSET), 0),
+                rotation, itemCenterYOffset, offset, small, marker, item
+        );
+    }
+
+    @Override
+    public @NonNull Location getLocation() {
+        final Location location;
+        offset.applyTo(location = super.getLocation());
+
+        return location;
+    }
+
+    protected static @NotNull Offset rotationOffsets(final Vector3F rotation, double yOffset /* => y */) {
+        // apply rotation matrices to align center: https://en.wikipedia.org/wiki/Rotation_matrix
+        // let L be initial location and Q be geometrical center
+        // the resulting location should be L' = L - Q'
+        // where Q' = Mx(xRotation) * My(yRotation) * Mz(zRotation) * Q
+        // and Mx, My and Mz are rotation matrices for the axes X, Y and Z respectively
+
+        // for non-optimized implementation see commit 58899ac9450afb1e11e4a3b1ab923c139f4c7a29
+
+        double angle;
+        val z = -yOffset * sin(angle = toRadians(rotation.getX()));
+        // minuses are used as we need to go to center instead of going from it
+        return SimpleOffset.create(
+                (yOffset *= cos(angle)) * sin(angle = toRadians(rotation.getZ())), -yOffset * cos(angle), z
         );
     }
 
@@ -124,7 +165,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param small whether this block-item is small
      * @return created metadata object
      */
-    protected static WrappedDataWatcher createMetadata(@Nullable final Vector3F rotation,
+    protected static WrappedDataWatcher createMetadata(final @Nullable Vector3F rotation,
                                                        final boolean small, final boolean marker) {
         val metadata = new ArrayList<WrappedWatchableObject>();
 
@@ -133,9 +174,10 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
         if (marker) {
             metadata.add(entityFlags(Flag.INVISIBLE, Flag.ON_FIRE));
             metadata.add(armorStandFlags(small ? new ArmorStand.Flag[]{
-                            ArmorStand.Flag.SMALL, ArmorStand.Flag.NO_BASE_PLATE, ArmorStand.Flag.MARKER
-                    } : new ArmorStand.Flag[]{ArmorStand.Flag.MARKER, ArmorStand.Flag.NO_BASE_PLATE}
-            ));
+                    ArmorStand.Flag.SMALL, ArmorStand.Flag.NO_BASE_PLATE, ArmorStand.Flag.MARKER
+            } : new ArmorStand.Flag[]{
+                    ArmorStand.Flag.MARKER, ArmorStand.Flag.NO_BASE_PLATE
+            }));
         } else {
             metadata.add(entityFlags(Flag.INVISIBLE));
             metadata.add(armorStandFlags(small
@@ -149,7 +191,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
     }
 
     @Override
-    protected void performSpawnNoChecks(final Player player) {
+    protected void performSpawnNoChecks(final @NotNull Player player) {
         super.performSpawnNoChecks(player);
         equipmentPacket.sendPacket(player);
     }
@@ -159,11 +201,17 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      *
      * @param rotation new rotation of this block
      */
-    public void setRotation(@NonNull final Vector3F rotation) {
-        if (rotation.equals(this.rotation)) return;
-
+    protected void setRotationNoChecks(final @Own @NotNull Vector3F rotation) {
+        { // overwrite the head's offset
+            final Offset oldOffset = offset, newOffset;
+            move(
+                    (newOffset = offset = rotationOffsets(rotation, itemCenterYOffset)).x() - oldOffset.x(),
+                    newOffset.y() - oldOffset.y(),
+                    newOffset.z() - oldOffset.z()
+            );
+        }
+        // overwrite the head's rotation
         addMetadata(headRotation(rotation));
-        this.rotation = rotation;
     }
 
     /**
@@ -172,52 +220,54 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      *
      * @param delta delta of rotation
      */
-    public void rotate(@NonNull final Vector3F delta) {
+    public void rotate(final @NonNull @Own Vector3F delta) {
+        final float dx, dy = delta.getY(), dz = delta.getZ();
+        if (((dx = delta.getX()) == 0) && dy == 0 && dz == 0) return; // no-op
+
         final Vector3F thisRotation;
-        setRotation((thisRotation = rotation) == null
-                ? new Vector3F(delta.getX(), delta.getY(), delta.getZ())
-                : new Vector3F(
-                        minimizeAngle(thisRotation.getX() + delta.getX()),
-                        minimizeAngle(thisRotation.getY() + delta.getY()),
-                        minimizeAngle(thisRotation.getZ() + delta.getZ())
-                )
-        );
+        if (((thisRotation = rotation) != null)) {
+            delta.setX(thisRotation.getX() + dx);
+            delta.setY(thisRotation.getY() + dy);
+            delta.setZ(thisRotation.getZ() + dz);
+        }
+        setRotationNoChecks(delta);
     }
 
     /**
-     * Rotates this block by specified delta. This means that its current
-     * roll (<i>x</i>), pitch (<i>y</i>) and yaw (<i>z</i>) will each get incremented by those of delta specified.
+     * Sets this blocks rotation to the one specified.
      *
-     * @param delta delta of rotation
+     * @param newRotation new rotation of this block
      */
-    public void rotateTo(@NonNull final Vector3F delta) {
-        setRotation(rotation == null
-                ? new Vector3F(delta.getX(), delta.getY(), delta.getZ())
-                : new Vector3F(
-                        minimizeAngle(rotation.getX() + delta.getX()),
-                        minimizeAngle(rotation.getY() + delta.getY()),
-                        minimizeAngle(rotation.getZ() + delta.getZ())
-                )
-        );
+    public void setRotation(final @Own @NonNull Vector3F newRotation) {
+        if (!newRotation.equals(rotation)) setRotationNoChecks(newRotation);
     }
 
-    /**
-     * Minimizes the angle so that it fits the interval of <i>[-360; 360]</i> keeping the actual rotation.
-     * This means removing <i>360</i> until the number is less than or equal to <i>360</i>
-     * or adding <i>360</i> until the number is bigger than or equal to <i>-360</i>.
-     *
-     * @param degrees non-minimized angle
-     * @return minimized angle
-     */
-    public static float minimizeAngle(float degrees) {
-        while (degrees >= 360) degrees -= 360;
-        while (degrees <= -360) degrees += 360;
-
-        return degrees;
-    }
-
-    public void setItem(@NonNull final ItemStack item) {
+    public void setItem(final @Own @NonNull ItemStack item) {
         equipmentPacket.setItem(this.item = item);
         for (val entry : players.entrySet()) if (entry.getValue()) equipmentPacket.sendPacket(entry.getKey());
+    }
+
+    protected interface Offset {
+        double x();
+        double y();
+        double z();
+
+        void applyTo(@NotNull Location location);
+    }
+
+    @Value
+    @Accessors(fluent = true)
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    protected static class SimpleOffset implements Offset {
+        double x, y, z;
+
+        @Override
+        public void applyTo(final @NotNull Location location) {
+            location.add(x, y, z);
+        }
+
+        public static @NotNull Offset create(final double x, final double y, final double z) {
+            return new SimpleOffset(x, y, z);
+        }
     }
 }
