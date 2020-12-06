@@ -13,8 +13,8 @@ import ru.progrm_jarvis.minecraft.commons.schedule.task.SchedulerRunnable;
 @UtilityClass
 public class BukkitTaskInitializers {
 
-    public BukkitTaskInitializer createTaskInitializer(@NonNull final Plugin plugin, final boolean async,
-                                                       @NonNull final Runnable runnable) {
+    public BukkitTaskInitializer createTaskInitializer(final @NonNull Plugin plugin, final boolean async,
+                                                       final @NonNull Runnable runnable) {
         return new AbstractBukkitTaskInitializer() {
 
             @Override
@@ -26,8 +26,8 @@ public class BukkitTaskInitializers {
         };
     }
 
-    public BukkitTaskInitializer createTaskInitializer(@NonNull final Plugin plugin, final boolean async,
-                                                       @NonNull final SchedulerRunnable runnable) {
+    public BukkitTaskInitializer createTaskInitializer(final @NonNull Plugin plugin, final boolean async,
+                                                       final @NonNull SchedulerRunnable runnable) {
         return new AbstractBukkitTaskInitializer() {
 
             @Override
@@ -37,9 +37,9 @@ public class BukkitTaskInitializers {
         };
     }
 
-    public BukkitTaskInitializer createTimerTaskInitializer(@NonNull final Plugin plugin, final boolean async,
+    public BukkitTaskInitializer createTimerTaskInitializer(final @NonNull Plugin plugin, final boolean async,
                                                             final long delay, final long period,
-                                                            @NonNull final Runnable runnable) {
+                                                            final @NonNull Runnable runnable) {
         return new AbstractBukkitTaskInitializer() {
 
             @Override
@@ -51,9 +51,9 @@ public class BukkitTaskInitializers {
         };
     }
 
-    public BukkitTaskInitializer createTimerTaskInitializer(@NonNull final Plugin plugin, final boolean async,
+    public BukkitTaskInitializer createTimerTaskInitializer(final @NonNull Plugin plugin, final boolean async,
                                                             final long delay, final long period,
-                                                            @NonNull final SchedulerRunnable runnable) {
+                                                            final @NonNull SchedulerRunnable runnable) {
         return new AbstractBukkitTaskInitializer() {
 
             @Override
@@ -65,9 +65,9 @@ public class BukkitTaskInitializers {
         };
     }
 
-    public BukkitTaskInitializer createDelayedTaskInitializer(@NonNull final Plugin plugin, final boolean async,
+    public BukkitTaskInitializer createDelayedTaskInitializer(final @NonNull Plugin plugin, final boolean async,
                                                               final long delay,
-                                                              @NonNull final Runnable runnable) {
+                                                              final @NonNull Runnable runnable) {
         return new AbstractBukkitTaskInitializer() {
 
             @Override
@@ -79,9 +79,9 @@ public class BukkitTaskInitializers {
         };
     }
 
-    public BukkitTaskInitializer createDelayedTaskInitializer(@NonNull final Plugin plugin, final boolean async,
+    public BukkitTaskInitializer createDelayedTaskInitializer(final @NonNull Plugin plugin, final boolean async,
                                                               final long delay,
-                                                              @NonNull final SchedulerRunnable runnable) {
+                                                              final @NonNull SchedulerRunnable runnable) {
 
         return new AbstractBukkitTaskInitializer() {
 

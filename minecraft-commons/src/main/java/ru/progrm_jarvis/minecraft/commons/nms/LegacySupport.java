@@ -41,7 +41,7 @@ public class LegacySupport {
      * @param block block from which to create the falling one
      * @return spawned falling block
      */
-    public FallingBlock spawnFallingBlock(@NonNull final Location location, @NonNull final Block block) {
+    public FallingBlock spawnFallingBlock(final @NonNull Location location, final @NonNull Block block) {
         if (LEGACY_BLOCK_FALLING) return location.getWorld()
                 .spawnFallingBlock(location, block.getType(), block.getData());
         return location.getWorld().spawnFallingBlock(location, block.getBlockData());
@@ -55,29 +55,29 @@ public class LegacySupport {
      * @param materialData legacy material data
      * @return spawned falling block
      */
-    public FallingBlock spawnFallingBlock(@NonNull final Location location,
-                                          @NonNull final Material material, final byte materialData) {
+    public FallingBlock spawnFallingBlock(final @NonNull Location location,
+                                          final @NonNull Material material, final byte materialData) {
         if (LEGACY_BLOCK_FALLING) return location.getWorld()
                 .spawnFallingBlock(location, material, materialData);
         return location.getWorld().spawnFallingBlock(location, new MaterialData(material, materialData));
     }
 
-    private static LegacyItem legacyItem(@NonNull final Material material, final int legacyData) {
+    private static LegacyItem legacyItem(final @NonNull Material material, final int legacyData) {
         return new LegacyItem(material, (byte) legacyData);
     }
 
-    private static LegacyItem legacyItem(@NonNull final Material material) {
+    private static LegacyItem legacyItem(final @NonNull Material material) {
         return legacyItem(material, 0);
     }
 
-    private static LegacyItem legacyItem(@NonNull final String materialName,
-                                         @NonNull final String legacyMaterialName,
+    private static LegacyItem legacyItem(final @NonNull String materialName,
+                                         final @NonNull String legacyMaterialName,
                                          final int legacyData) {
         return new LegacyItem(Material.valueOf(LEGACY_MATERIALS ? legacyMaterialName : materialName), legacyData);
     }
 
-    private static LegacyItem legacyItem(@NonNull final String materialName,
-                                         @NonNull final String legacyMaterialName) {
+    private static LegacyItem legacyItem(final @NonNull String materialName,
+                                         final @NonNull String legacyMaterialName) {
         return legacyItem(materialName, legacyMaterialName, 0);
     }
 
@@ -88,20 +88,20 @@ public class LegacySupport {
         @NonNull Material material;
         final byte legacyData;
 
-        private LegacyItem(@NonNull final Material material, final int legacyData) {
+        private LegacyItem(final @NonNull Material material, final int legacyData) {
             this(material, (byte) legacyData);
         }
 
-        private LegacyItem(@NonNull final Material material) {
+        private LegacyItem(final @NonNull Material material) {
             this(material, 0);
         }
 
-        private LegacyItem(@NonNull final String materialName, @NonNull final String legacyMaterialName,
+        private LegacyItem(final @NonNull String materialName, final @NonNull String legacyMaterialName,
                            final int legacyData) {
             this(Material.valueOf(LEGACY_MATERIALS ? legacyMaterialName : materialName), (byte) legacyData);
         }
 
-        private LegacyItem(@NonNull final String materialName, @NonNull final String legacyMaterialName) {
+        private LegacyItem(final @NonNull String materialName, final @NonNull String legacyMaterialName) {
             this(materialName, legacyMaterialName, 0);
         }
     }

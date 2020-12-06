@@ -43,7 +43,7 @@ public class LibLoader {
     /**
      * Current class loader used by this lib loader
      */
-    @NonNull @Getter URLClassLoader classLoader;
+    @Getter @NonNull URLClassLoader classLoader;
 
     /**
      * Directory to store library artifacts and hashes in
@@ -53,9 +53,9 @@ public class LibLoader {
     /**
      * Logger for external usage
      */
-    @NonNull @Getter @Setter private Logger log = DEFAULT_LOGGER;
+    @Getter @Setter @NonNull private Logger log = DEFAULT_LOGGER;
 
-    @NonNull final Map<String, File> loadedLibs;
+    final @NonNull Map<String, File> loadedLibs;
 
     // creates a MethodHandle object for URLClassLoader#addUrl(URL) method
     static {
@@ -110,7 +110,7 @@ public class LibLoader {
      *
      * @throws IllegalArgumentException if the {@code classLoader} is not {@link URLClassLoader}
      */
-    public LibLoader(@NonNull final ClassLoader classLoader, @NonNull final File rootDirectory) {
+    public LibLoader(final @NonNull ClassLoader classLoader, final @NonNull File rootDirectory) {
         if (!(classLoader instanceof URLClassLoader)) throw new IllegalArgumentException(
                 classLoader + " is not instance of URLClassLoader"
         );
@@ -125,7 +125,7 @@ public class LibLoader {
      *
      * @param urlClassLoader class loader to use for loading of libraries
      */
-    public LibLoader(@NonNull final URLClassLoader urlClassLoader) {
+    public LibLoader(final @NonNull URLClassLoader urlClassLoader) {
         this(urlClassLoader, new File("libs/artifacts/"));
     }
 
@@ -138,7 +138,7 @@ public class LibLoader {
      *
      * @throws IllegalArgumentException if the {@code classLoader} is not {@link URLClassLoader}
      */
-    public LibLoader(@NonNull final ClassLoader classLoader) {
+    public LibLoader(final @NonNull ClassLoader classLoader) {
         this(classLoader, new File("libs/artifacts/"));
     }
 
@@ -148,7 +148,7 @@ public class LibLoader {
      * should normally be {@link URLClassLoader}
      * @param rootDirectory directory to store library artifacts and hashes in
      */
-    public LibLoader(@NonNull final File rootDirectory) {
+    public LibLoader(final @NonNull File rootDirectory) {
         this(getAvailableUrlClassLoader().orElseThrow(
                 () -> new IllegalStateException("Cannot find any available URLClassLoader in current context")
                 ), rootDirectory
@@ -163,7 +163,7 @@ public class LibLoader {
      *
      * @see #setClassLoader(ClassLoader) variant performing checks of any classloader
      */
-    public LibLoader setClassLoader(@NonNull final URLClassLoader classLoader) {
+    public LibLoader setClassLoader(final @NonNull URLClassLoader classLoader) {
         this.classLoader = classLoader;
 
         return this;
@@ -194,7 +194,7 @@ public class LibLoader {
      * @param name name of the lib
      * @return {@code true} if the lib was loaded by the specified name anf {@code false} otherwise
      */
-    public boolean isLibLoaded(@NonNull final String name) {
+    public boolean isLibLoaded(final @NonNull String name) {
         return loadedLibs.containsKey(name);
     }
 
@@ -205,7 +205,7 @@ public class LibLoader {
      * @return optional containing file og lib's artifact
      * if it was loaded by the specified name or empty optional otherwise
      */
-    public Optional<File> getLoadedLibArtifact(@NonNull final String name) {
+    public Optional<File> getLoadedLibArtifact(final @NonNull String name) {
         return Optional.ofNullable(loadedLibs.get(name));
     }
 
@@ -233,7 +233,7 @@ public class LibLoader {
      * @return file of created artifact
      */
     @SneakyThrows
-    public File loadLib(@NonNull final String name, @NonNull final LibCoords libCoords, final boolean addToClasspath) {
+    public File loadLib(final @NonNull String name, final @NonNull LibCoords libCoords, final boolean addToClasspath) {
         if (isLibLoaded(name)) throw new IllegalStateException("Library " + name + " is a;ready loaded by LibLoader");
         assureRootDirectoryExists();
 
@@ -276,7 +276,7 @@ public class LibLoader {
      * @see #loadLib(String, LibCoords, boolean) called with {@code addToClasspath} set to {@code true}
      */
     @SneakyThrows
-    public File loadLib(@NonNull final String name, @NonNull final LibCoords libCoords) {
+    public File loadLib(final @NonNull String name, final @NonNull LibCoords libCoords) {
         return loadLib(name, libCoords, true);
     }
 
@@ -287,7 +287,7 @@ public class LibLoader {
      * @param url url to add to classpath of class loader
      */
     @SneakyThrows
-    public static void addUrlToClasspath(@NonNull final URLClassLoader classLoader, @NonNull final URL url) {
+    public static void addUrlToClasspath(final @NonNull URLClassLoader classLoader, final @NonNull URL url) {
         URL_CLASS_LOADER__ADD_URL_METHOD.invokeExact(classLoader, url);
     }
 

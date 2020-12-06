@@ -103,7 +103,7 @@ public class HttpClientMocks {
          * @implNote uses {@link IOUtils#toInputStream(CharSequence, Charset)}
          * to convert the {@link String} to {@link InputStream}
          */
-        default MockedHttpClient responding(final HttpUriRequest request, @NonNull final String responseContent,
+        default MockedHttpClient responding(final HttpUriRequest request, final @NonNull String responseContent,
                                             final Charset charset) {
             return responding(request, IOUtils.toInputStream(responseContent, charset));
         }
@@ -124,7 +124,7 @@ public class HttpClientMocks {
          * @implNote uses {@link IOUtils#toInputStream(CharSequence, Charset)}
          * to convert the {@link String} to {@link InputStream}
          */
-        default MockedHttpClient responding(final HttpUriRequest request, @NonNull final String responseContent) {
+        default MockedHttpClient responding(final HttpUriRequest request, final @NonNull String responseContent) {
             return responding(request, responseContent, StandardCharsets.UTF_8);
         }
     }

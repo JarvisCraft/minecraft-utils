@@ -76,19 +76,19 @@ public final class SingleWorkerLoopPool implements LoopPool {
         }
 
         @Override
-        public void setup(@NotNull final BukkitTask task, @NotNull final Runnable disabler) {
+        public void setup(final @NotNull BukkitTask task, final @NotNull Runnable disabler) {
             owningTask = task;
             this.disabler = disabler;
         }
 
         @Override
-        public @NotNull ShutdownHook addTask(@NotNull final Runnable task) {
+        public @NotNull ShutdownHook addTask(final @NotNull Runnable task) {
             tasks.add(task);
 
             return () -> removeTask(task);
         }
 
-        private void removeTask(@NotNull final Runnable task) {
+        private void removeTask(final @NotNull Runnable task) {
             tasks.remove(task);
             if (tasks.isEmpty() && owningTask != null) {
                 assert disabler != null;

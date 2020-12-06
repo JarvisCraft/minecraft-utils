@@ -40,20 +40,20 @@ public class PlayerUtil {
         return (Collection<Player>) Bukkit.getOnlinePlayers();
     }
 
-    public Collection<Player> playersAround(@NonNull final Location location, final double radius) {
+    public Collection<Player> playersAround(final @NonNull Location location, final double radius) {
         return Bukkit.getOnlinePlayers().stream()
                 .filter(player -> player.getLocation().distance(location) <= radius)
                 .collect(Collectors.toList());
     }
 
-    public Collection<Player> playerEyesAround(@NonNull final Location location, final double radius) {
+    public Collection<Player> playerEyesAround(final @NonNull Location location, final double radius) {
         return Bukkit.getOnlinePlayers().stream()
                 .filter(player -> player.getEyeLocation().distance(location) <= radius)
                 .collect(Collectors.toList());
     }
 
     @SneakyThrows
-    public static Optional<String> getPlayerName(@NonNull final UUID uuid) {
+    public static Optional<String> getPlayerName(final @NonNull UUID uuid) {
         return Optional.ofNullable(NAMES_CACHE.get(
                 uuid, () -> ObjectUtil.mapOnlyNonNull(OfflinePlayer::getName, Bukkit.getOfflinePlayer(uuid))
         ));

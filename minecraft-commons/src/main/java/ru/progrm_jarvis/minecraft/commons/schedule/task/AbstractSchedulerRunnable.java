@@ -36,7 +36,7 @@ public abstract class AbstractSchedulerRunnable implements SchedulerRunnable {
 
     @Override
     @Synchronized("taskAccessLock")
-    public BukkitTask runTask(@NotNull final Plugin plugin) {
+    public BukkitTask runTask(final @NotNull Plugin plugin) {
         if (task != null) throw new IllegalStateException("This task has already started");
 
         return task = plugin.getServer().getScheduler().runTask(plugin, this);
@@ -44,7 +44,7 @@ public abstract class AbstractSchedulerRunnable implements SchedulerRunnable {
 
     @Override
     @Synchronized("taskAccessLock")
-    public BukkitTask runTaskAsynchronously(@NotNull final Plugin plugin) {
+    public BukkitTask runTaskAsynchronously(final @NotNull Plugin plugin) {
         if (task != null) throw new IllegalStateException("This task has already started");
 
         return task = plugin.getServer().getScheduler().runTaskAsynchronously(plugin, this);
@@ -52,7 +52,7 @@ public abstract class AbstractSchedulerRunnable implements SchedulerRunnable {
 
     @Override
     @Synchronized("taskAccessLock")
-    public BukkitTask runTaskLater(@NotNull final Plugin plugin, final long delay) {
+    public BukkitTask runTaskLater(final @NotNull Plugin plugin, final long delay) {
         if (task != null) throw new IllegalStateException("This task has already started");
 
         return task = plugin.getServer().getScheduler().runTaskLater(plugin, this, delay);
@@ -60,7 +60,7 @@ public abstract class AbstractSchedulerRunnable implements SchedulerRunnable {
 
     @Override
     @Synchronized("taskAccessLock")
-    public BukkitTask runTaskLaterAsynchronously(@NotNull final Plugin plugin, final long delay) {
+    public BukkitTask runTaskLaterAsynchronously(final @NotNull Plugin plugin, final long delay) {
         if (task != null) throw new IllegalStateException("This task has already started");
 
         return task = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, this, delay);
@@ -68,7 +68,7 @@ public abstract class AbstractSchedulerRunnable implements SchedulerRunnable {
 
     @Override
     @Synchronized("taskAccessLock")
-    public BukkitTask runTaskTimer(@NotNull final Plugin plugin, final long delay, final long period) {
+    public BukkitTask runTaskTimer(final @NotNull Plugin plugin, final long delay, final long period) {
         if (task != null) throw new IllegalStateException("This task has already started");
 
         return task = plugin.getServer().getScheduler().runTaskTimer(plugin, this, delay, period);
@@ -76,7 +76,7 @@ public abstract class AbstractSchedulerRunnable implements SchedulerRunnable {
 
     @Override
     @Synchronized("taskAccessLock")
-    public BukkitTask runTaskTimerAsynchronously(@NotNull final Plugin plugin, final long delay, final long period) {
+    public BukkitTask runTaskTimerAsynchronously(final @NotNull Plugin plugin, final long delay, final long period) {
         if (task != null) throw new IllegalStateException("This task has already started");
 
         return task = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this, delay, period);

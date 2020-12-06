@@ -2,12 +2,12 @@ package ru.progrm_jarvis.minecraft.libloader;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.annotation.Nullable;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
@@ -80,47 +80,47 @@ public interface LibCoords {
      * @param version artifact's version
      * @return URl to the artifacts root ended with '/'
      */
-    static String getMavenArtifactsRootUrl(@NonNull final String repositoryUrl,
-                                           @NonNull final String groupId, @NonNull final String artifactId,
-                                           @NonNull final String version) {
+    static String getMavenArtifactsRootUrl(final @NonNull String repositoryUrl,
+                                           final @NonNull String groupId, final @NonNull String artifactId,
+                                           final @NonNull String version) {
         return (repositoryUrl.lastIndexOf('/') == repositoryUrl.length() - 1 ? repositoryUrl : repositoryUrl + '/')
                 + groupId.replace('.', '/') + '/' + artifactId + '/' + version + '/';
     }
 
     @SneakyThrows(MalformedURLException.class)
-    static LibCoords fromMavenRepo(@NonNull final String repositoryUrl,
-                                   @NonNull final String groupId, @NonNull final String artifactId,
-                                   @NonNull final String version) {
+    static LibCoords fromMavenRepo(final @NonNull String repositoryUrl,
+                                   final @NonNull String groupId, final @NonNull String artifactId,
+                                   final @NonNull String version) {
         val jarUrl = getMavenArtifactsRootUrl(repositoryUrl, groupId, artifactId, version)
                 + artifactId + '-' + version + ".jar";
 
         return new MavenRepoLibCoords(new URL(jarUrl), new URL(jarUrl + ".sha1"), new URL(jarUrl + ".md5"));
     }
 
-    static LibCoords fromMavenCentralRepo(@NonNull final String groupId, @NonNull final String artifactId,
-                                          @NonNull final String version) {
+    static LibCoords fromMavenCentralRepo(final @NonNull String groupId, final @NonNull String artifactId,
+                                          final @NonNull String version) {
         return fromMavenRepo(MAVEN_CENTRAL_REPO_URL, groupId, artifactId, version);
     }
 
     @SneakyThrows(MalformedURLException.class)
-    static LibCoords fromSonatypeNexusRepo(@NonNull final String repositoryUrl,
-                                           @NonNull final String groupId, @NonNull final String artifactId,
-                                           @NonNull final String version, @NonNull final String metadataFileName) {
+    static LibCoords fromSonatypeNexusRepo(final @NonNull String repositoryUrl,
+                                           final @NonNull String groupId, final @NonNull String artifactId,
+                                           final @NonNull String version, final @NonNull String metadataFileName) {
         val rootUrl = getMavenArtifactsRootUrl(repositoryUrl, groupId, artifactId, version);
 
         return new SonatypeNexusRepoLibCoords(new URL(rootUrl + metadataFileName), rootUrl);
     }
 
-    static LibCoords fromSonatypeNexusRepo(@NonNull final String repositoryUrl,
-                                           @NonNull final String groupId, @NonNull final String artifactId,
-                                           @NonNull final String version) {
+    static LibCoords fromSonatypeNexusRepo(final @NonNull String repositoryUrl,
+                                           final @NonNull String groupId, final @NonNull String artifactId,
+                                           final @NonNull String version) {
         return fromSonatypeNexusRepo(
                 repositoryUrl, groupId, artifactId, version, SonatypeNexusRepoLibCoords.METADATA_FILE_NAME
         );
     }
 
-    static LibCoords fromSonatypeOssSnapshotsRepo(@NonNull final String groupId, @NonNull final String artifactId,
-                                                  @NonNull final String version) {
+    static LibCoords fromSonatypeOssSnapshotsRepo(final @NonNull String groupId, final @NonNull String artifactId,
+                                                  final @NonNull String version) {
         return fromSonatypeNexusRepo(
                 SONATYPE_OSS_SNAPSHOTS_REPO_URL, groupId, artifactId,
                 version, SonatypeNexusRepoLibCoords.METADATA_FILE_NAME
@@ -135,7 +135,7 @@ public interface LibCoords {
      *
      * @see Document#getDocumentElement() to create {@link Element} from {@link Document}
      */
-    static String getLatestNexusArtifactName(@NonNull final Element documentElement) {
+    static String getLatestNexusArtifactName(final @NonNull Element documentElement) {
         val version = documentElement.getElementsByTagName("version").item(0).getFirstChild().getTextContent();
         val snapshot = (Element) ((Element) documentElement.getElementsByTagName("versioning").item(0))
                 .getElementsByTagName("snapshot").item(0);
@@ -168,18 +168,18 @@ public interface LibCoords {
          */
         hash2Url;
 
-        public MavenRepoLibCoords(@NonNull final URL artifactUrl,
-                                  @Nullable final URL hash1Url, @Nullable final URL hash2Url) {
+        public MavenRepoLibCoords(final @NonNull URL artifactUrl,
+                                  final @Nullable URL hash1Url, final @Nullable URL hash2Url) {
             this.artifactUrl = artifactUrl;
             this.hash1Url = hash1Url;
             this.hash2Url = hash2Url;
         }
 
-        public MavenRepoLibCoords(@NonNull final URL jarUrl, final URL hash1Url) {
+        public MavenRepoLibCoords(final @NonNull URL jarUrl, final URL hash1Url) {
             this(jarUrl, hash1Url, null);
         }
 
-        public MavenRepoLibCoords(@NonNull final URL jarUrl) {
+        public MavenRepoLibCoords(final @NonNull URL jarUrl) {
             this(jarUrl, null, null);
         }
 
@@ -228,8 +228,8 @@ public interface LibCoords {
         /**
          * URL of a metadata file to get the latest version of artifact.
          */
-        @NonNull final URL mavenMetadataUrl;
-        @NonNull final String artifactsRootUrl;
+        final @NonNull URL mavenMetadataUrl;
+        final @NonNull String artifactsRootUrl;
 
         /**
          * Whether or not this lib coords were refreshed.

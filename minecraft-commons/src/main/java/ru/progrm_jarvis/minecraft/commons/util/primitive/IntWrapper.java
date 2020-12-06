@@ -198,7 +198,7 @@ public abstract class IntWrapper extends Number {
         }
 
         @Override
-        int getAndUpdate(@NonNull final IntUnaryOperator updateFunction) {
+        int getAndUpdate(final @NonNull IntUnaryOperator updateFunction) {
             val oldValue = value;
             value = updateFunction.applyAsInt(oldValue);
 
@@ -206,12 +206,12 @@ public abstract class IntWrapper extends Number {
         }
 
         @Override
-        int updateAndGet(@NonNull final IntUnaryOperator updateFunction) {
+        int updateAndGet(final @NonNull IntUnaryOperator updateFunction) {
             return value = updateFunction.applyAsInt(value);
         }
 
         @Override
-        int getAndAccumulate(final int updateValue, @NonNull final IntBinaryOperator accumulatorFunction) {
+        int getAndAccumulate(final int updateValue, final @NonNull IntBinaryOperator accumulatorFunction) {
             val oldValue = value;
             value = accumulatorFunction.applyAsInt(value, updateValue);
 
@@ -219,7 +219,7 @@ public abstract class IntWrapper extends Number {
         }
 
         @Override
-        int accumulateAndGet(final int updateValue, @NonNull final IntBinaryOperator accumulatorFunction) {
+        int accumulateAndGet(final int updateValue, final @NonNull IntBinaryOperator accumulatorFunction) {
             return value = accumulatorFunction.applyAsInt(value, updateValue);
         }
 
@@ -311,22 +311,22 @@ public abstract class IntWrapper extends Number {
         }
 
         @Override
-        int getAndUpdate(@NonNull final IntUnaryOperator updateFunction) {
+        int getAndUpdate(final @NonNull IntUnaryOperator updateFunction) {
             return value.getAndUpdate(updateFunction);
         }
 
         @Override
-        int updateAndGet(@NonNull final IntUnaryOperator updateFunction) {
+        int updateAndGet(final @NonNull IntUnaryOperator updateFunction) {
             return value.updateAndGet(updateFunction);
         }
 
         @Override
-        int getAndAccumulate(final int updateValue, @NonNull final IntBinaryOperator accumulatorFunction) {
+        int getAndAccumulate(final int updateValue, final @NonNull IntBinaryOperator accumulatorFunction) {
             return value.getAndAccumulate(updateValue, accumulatorFunction);
         }
 
         @Override
-        int accumulateAndGet(final int updateValue, @NonNull final IntBinaryOperator accumulatorFunction) {
+        int accumulateAndGet(final int updateValue, final @NonNull IntBinaryOperator accumulatorFunction) {
             return value.accumulateAndGet(updateValue, accumulatorFunction);
         }
 

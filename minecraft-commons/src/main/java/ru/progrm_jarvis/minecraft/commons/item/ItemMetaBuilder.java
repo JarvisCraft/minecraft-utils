@@ -7,9 +7,9 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 import ru.progrm_jarvis.minecraft.commons.enchant.Enchant;
 
-import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,7 +69,7 @@ public class ItemMetaBuilder<M extends ItemMeta, B extends ItemMetaBuilder<M, B>
         if (enchantments == null) enchantments = new HashMap<>();
     }
 
-    public B addEnchantment(@NonNull final Enchantment enchantment, final int level) {
+    public B addEnchantment(final @NonNull Enchantment enchantment, final int level) {
         initEnchantments();
 
         enchantments.put(enchantment, level);
@@ -77,7 +77,7 @@ public class ItemMetaBuilder<M extends ItemMeta, B extends ItemMetaBuilder<M, B>
         return self;
     }
 
-    public B addEnchantment(@NonNull final Enchant enchant) {
+    public B addEnchantment(final @NonNull Enchant enchant) {
         initEnchantments();
 
         enchantments.put(enchant.getEnchantment(), enchant.getLevel());
@@ -85,7 +85,7 @@ public class ItemMetaBuilder<M extends ItemMeta, B extends ItemMetaBuilder<M, B>
         return self;
     }
 
-    public B addEnchantments(@NonNull final Enchant... enchants) {
+    public B addEnchantments(final @NonNull Enchant... enchants) {
         initEnchantments();
 
         for (val enchant : enchants) enchantments.put(enchant.getEnchantment(), enchant.getLevel());
@@ -93,7 +93,7 @@ public class ItemMetaBuilder<M extends ItemMeta, B extends ItemMetaBuilder<M, B>
         return self;
     }
 
-    public B addEnchantments(@NonNull final Iterable<Enchant> enchants) {
+    public B addEnchantments(final @NonNull Iterable<Enchant> enchants) {
         initEnchantments();
 
         for (val enchant : enchants) enchantments.put(enchant.getEnchantment(), enchant.getLevel());
@@ -101,7 +101,7 @@ public class ItemMetaBuilder<M extends ItemMeta, B extends ItemMetaBuilder<M, B>
         return self;
     }
 
-    public B addEnchantments(@NonNull final Map<Enchantment, Integer> enchantments) {
+    public B addEnchantments(final @NonNull Map<Enchantment, Integer> enchantments) {
         initEnchantments();
 
         for (val enchantment : enchantments.entrySet()) this.enchantments.put(enchantment.getKey(), enchantment.getValue());
@@ -109,19 +109,19 @@ public class ItemMetaBuilder<M extends ItemMeta, B extends ItemMetaBuilder<M, B>
         return self;
     }
 
-    public B removeEnchantment(@NonNull final Enchantment enchantment) {
+    public B removeEnchantment(final @NonNull Enchantment enchantment) {
         if (this.enchantments != null) enchantments.remove(enchantment);
 
         return self;
     }
 
-    public B removeEnchantments(@NonNull final Enchantment... enchantments) {
+    public B removeEnchantments(final @NonNull Enchantment... enchantments) {
         if (this.enchantments != null) for (val enchantment : enchantments) this.enchantments.remove(enchantment);
 
         return self;
     }
 
-    public B removeEnchantments(@NonNull final Iterable<Enchantment> enchantments) {
+    public B removeEnchantments(final @NonNull Iterable<Enchantment> enchantments) {
         if (this.enchantments != null) for (val enchantment : enchantments) this.enchantments.remove(enchantment);
 
         return self;
@@ -143,7 +143,7 @@ public class ItemMetaBuilder<M extends ItemMeta, B extends ItemMetaBuilder<M, B>
     }
 
     @OverridingMethodsMustInvokeSuper
-    protected void fillMeta(@NonNull final M meta) {
+    protected void fillMeta(final @NonNull M meta) {
         if (unbreakable != null) meta.setUnbreakable(unbreakable);
         if (displayName != null) meta.setDisplayName(displayName);
         if (localizedName != null) meta.setLocalizedName(localizedName);

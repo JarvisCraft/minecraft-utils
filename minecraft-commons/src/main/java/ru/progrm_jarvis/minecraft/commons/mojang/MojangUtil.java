@@ -19,7 +19,7 @@ public class MojangUtil {
      * @param mojangUuid UUID in a non-standard form returned by Mojang API call (no dashes) to convert
      * @return standard UUID object, result of conversion
      */
-    public UUID fromMojangUuid(@NonNull final String mojangUuid) {
+    public UUID fromMojangUuid(final @NonNull String mojangUuid) {
         return UUID.fromString(
                 mojangUuid.substring(0, 8)
                         + '-' + mojangUuid.substring(8, 12)
@@ -35,7 +35,7 @@ public class MojangUtil {
      * @param uuid standard UUID object to convert
      * @return UUID in a non-standard form used by Mojang API (no dashes), result of conversion
      */
-    public String toMojangUuid(@NonNull final UUID uuid) {
+    public String toMojangUuid(final @NonNull UUID uuid) {
         val stringUuid = uuid.toString();
         return stringUuid.substring(0, 8)
                 + stringUuid.substring(9, 13)
@@ -51,7 +51,7 @@ public class MojangUtil {
      * @return {@code true} if the specified profile has all its properties signed
      * or {@code false} if any of those is unsigned
      */
-    public boolean isSigned(@NonNull final GameProfile profile) {
+    public boolean isSigned(final @NonNull GameProfile profile) {
         for (val entry : profile.getProperties().entries()) if (!entry.getValue().hasSignature()) return false;
         return true;
     }

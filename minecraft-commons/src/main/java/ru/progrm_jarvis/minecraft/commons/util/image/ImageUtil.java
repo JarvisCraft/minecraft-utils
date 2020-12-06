@@ -22,7 +22,7 @@ public class ImageUtil {
      * @param image image to clone
      * @return cloned image
      */
-    public BufferedImage clone(@NonNull final BufferedImage image) {
+    public BufferedImage clone(final @NonNull BufferedImage image) {
         val clonedImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
         val graphics = clonedImage.getGraphics();
         graphics.drawImage(image, 0, 0, null);
@@ -40,7 +40,7 @@ public class ImageUtil {
      * @see #clone(BufferedImage) should be used to keep your source image unmodified
      */
     @Contract("null, _ -> fail; _, null -> fail; !null, _ -> param1")
-    public BufferedImage merge(@NonNull final BufferedImage background, @NonNull final BufferedImage... foregrounds) {
+    public BufferedImage merge(final @NonNull BufferedImage background, final @NonNull BufferedImage... foregrounds) {
         final int width = background.getWidth(), height = background.getHeight();
         val graphics = background.getGraphics();
 
@@ -65,8 +65,8 @@ public class ImageUtil {
      * @see ColorUtil#blendColors(int, int) used color blending algorithm
      */
     @Contract("null, _ -> fail; _, null -> fail; !null, _ -> param1")
-    public BufferedImage mergeSharp(@NonNull final BufferedImage background,
-                                    @NonNull final BufferedImage... foregrounds) {
+    public BufferedImage mergeSharp(final @NonNull BufferedImage background,
+                                    final @NonNull BufferedImage... foregrounds) {
         final int width = background.getWidth(), height = background.getHeight();
 
         for (val foreground : foregrounds) {

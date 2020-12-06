@@ -106,7 +106,7 @@ public interface FakeEntityManager<E extends FakeEntity> extends BukkitPluginCon
      * @param entity entity to check
      * @return {@code true} if this entity manager manages the specified entity and {@code false} otherwise
      */
-    boolean isManaged(@NonNull final E entity);
+    boolean isManaged(final @NonNull E entity);
 
     /**
      * Removes the entity managed by this manager.

@@ -45,11 +45,11 @@ public abstract class AbstractConcurrentBukkitTimer extends AbstractSchedulerRun
 
     protected void onOver() {}
 
-    public static SchedulerRunnable create(@NonNull final Runnable task, final long counter) {
+    public static SchedulerRunnable create(final @NonNull Runnable task, final long counter) {
         return new SimpleConcurrentBukkitTimer(task, new AtomicLong(counter));
     }
 
-    public static SchedulerRunnable create(@NonNull final Runnable task, @NonNull final AtomicLong counter) {
+    public static SchedulerRunnable create(final @NonNull Runnable task, final @NonNull AtomicLong counter) {
         return new SimpleConcurrentBukkitTimer(task, counter);
     }
 
@@ -58,8 +58,8 @@ public abstract class AbstractConcurrentBukkitTimer extends AbstractSchedulerRun
 
         @NotNull Runnable task;
 
-        public SimpleConcurrentBukkitTimer(@NotNull final Runnable task,
-                                           @NotNull final AtomicLong counter) {
+        public SimpleConcurrentBukkitTimer(final @NotNull Runnable task,
+                                           final @NotNull AtomicLong counter) {
             super(counter);
             this.task = task;
         }

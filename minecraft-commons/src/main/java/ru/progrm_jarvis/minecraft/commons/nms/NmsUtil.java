@@ -26,7 +26,7 @@ public class NmsUtil {
     /**
      * Base package of CraftBukkit (<i>org.bukkit.craftbukkit.{version}</i>)
      */
-            CRAFT_BUKKIT_PACKAGE = "org.bukkit.craftbukkit." + NMS_VERSION.name;
+    CRAFT_BUKKIT_PACKAGE = "org.bukkit.craftbukkit." + NMS_VERSION.name;
 
     /**
      * Field access method-handle of <i>{nms}.Entity</i> class field responsible for entity <i>int-UID</i> generation.
@@ -117,7 +117,7 @@ public class NmsUtil {
      * @param dataWatcher DataWatcher from which to create DataWatcher modifier
      * @return DataWatcher modifier valid for current server version
      */
-    public DataWatcherFactory.DataWatcherModifier dataWatcherModifier(@NonNull final WrappedDataWatcher dataWatcher) {
+    public DataWatcherFactory.DataWatcherModifier dataWatcherModifier(final @NonNull WrappedDataWatcher dataWatcher) {
         return DATA_WATCHER_FACTORY.modifier(dataWatcher);
     }
 
@@ -157,7 +157,7 @@ public class NmsUtil {
          *
          * @param name name of a version
          */
-        private NmsVersion(@NonNull final String name) {
+        private NmsVersion(final @NonNull String name) {
             this(name, Short.parseShort(name.substring(3, name.indexOf('_', 4))));
         }
 

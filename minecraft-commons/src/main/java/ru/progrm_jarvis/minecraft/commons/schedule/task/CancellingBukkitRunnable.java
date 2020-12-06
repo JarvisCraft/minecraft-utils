@@ -21,7 +21,7 @@ public abstract class CancellingBukkitRunnable extends AbstractSchedulerRunnable
 
     protected abstract boolean tick();
 
-    public static SchedulerRunnable create(@NonNull final BooleanSupplier task) {
+    public static SchedulerRunnable create(final @NonNull BooleanSupplier task) {
         return new FunctionalCancellingBukkitRunnable(task);
     }
 

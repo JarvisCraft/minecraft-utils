@@ -23,27 +23,27 @@ public class Conversions {
     EquivalentConverter<Direction> DIRECTION_EQUIVALENT_CONVERTER = EnumWrappers.getDirectionConverter();
     EquivalentConverter<Particle> PARTICLE_EQUIVALENT_CONVERTER = EnumWrappers.getParticleConverter();
 
-    public Object toNms(@NonNull final Vector3F vector3F) {
+    public Object toNms(final @NonNull Vector3F vector3F) {
         return VECTOR_3_F_EQUIVALENT_CONVERTER.getGeneric(vector3F);
     }
 
-    public Vector3F toVector3F(@NonNull final Object nms) {
+    public Vector3F toVector3F(final @NonNull Object nms) {
         return VECTOR_3_F_EQUIVALENT_CONVERTER.getSpecific(nms);
     }
 
-    public Object toNms(@NonNull final Direction direction) {
+    public Object toNms(final @NonNull Direction direction) {
         return DIRECTION_EQUIVALENT_CONVERTER.getGeneric(direction);
     }
 
-    public Direction toDirection(@NonNull final Object nms) {
+    public Direction toDirection(final @NonNull Object nms) {
         return DIRECTION_EQUIVALENT_CONVERTER.getSpecific(nms);
     }
 
-    public Object toNms(@NonNull final Particle particle) {
+    public Object toNms(final @NonNull Particle particle) {
         return PARTICLE_EQUIVALENT_CONVERTER.getGeneric(particle);
     }
 
-    public Particle toParticle(@NonNull final Object nms) {
+    public Particle toParticle(final @NonNull Object nms) {
         return PARTICLE_EQUIVALENT_CONVERTER.getSpecific(nms);
     }
 }

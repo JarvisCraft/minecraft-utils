@@ -23,7 +23,7 @@ public class FileUtil {
      * @apiNote this attempts to create a file and its parent directory only when needed
      */
     @SneakyThrows
-    public File makeSureExists(@NonNull final File file) {
+    public File makeSureExists(final @NonNull File file) {
         if (!file.isFile()) {
             val parent = file.getParentFile();
             if (parent != null && !parent.isDirectory()) Files.createDirectories(parent.toPath());

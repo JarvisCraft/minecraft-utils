@@ -12,7 +12,6 @@ import ru.progrm_jarvis.minecraft.commons.util.shutdown.ShutdownHooks;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.ObservableFakeEntity;
 import ru.progrm_jarvis.minecraft.fakeentitylib.entity.management.AbstractSetBasedEntityManager;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,10 +42,10 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
     Supplier<Set<E>> entitiesSetSupplier;
 
     @Builder
-    public PeriodicFakeEntityObserver(@Nonnull final Plugin plugin, final boolean concurrent,
+    public PeriodicFakeEntityObserver(final @NonNull Plugin plugin, final boolean concurrent,
                                       boolean global, final long interval, final boolean async,
                                       final int minEntitiesForNewThread, final int maxThreads,
-                                      @NonNull final Supplier<Set<E>> entitiesSetSupplier) {
+                                      final @NonNull Supplier<Set<E>> entitiesSetSupplier) {
         super(plugin, beforeSuper(concurrent,
                 () -> checkArgument(interval > 0, "interval should be positive"),
                 () -> checkArgument(minEntitiesForNewThread > 0, "minEntitiesForNewThread should be positive"),
@@ -88,11 +87,11 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
                 })::shutdown);
     }
 
-    protected void addPlayer(@NonNull final Player player) {
+    protected void addPlayer(final @NonNull Player player) {
         for (val entity : entities) entity.addPlayer(player);
     }
 
-    protected void removePlayer(@NonNull final Player player) {
+    protected void removePlayer(final @NonNull Player player) {
         for (val entity : entities) entity.removePlayer(player);
     }
 
@@ -134,13 +133,13 @@ public class PeriodicFakeEntityObserver<E extends ObservableFakeEntity>
     }
 
     @Override
-    public void manageEntity(@NonNull final E entity) {
+    public void manageEntity(final @NonNull E entity) {
         super.manageEntity(entity);
         getRedrawEntitiesRunnable().addEntity(entity);
     }
 
     @Override
-    public void unmanageEntity(@NonNull final E entity) {
+    public void unmanageEntity(final @NonNull E entity) {
         super.unmanageEntity(entity);
         lock.lock();
         try {

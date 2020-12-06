@@ -27,9 +27,9 @@ public class FakeEntityManagerGroup<E extends FakeEntity> extends AbstractSetBas
 
     @NonNull Collection<FakeEntityManager<E>> managers;
 
-    public FakeEntityManagerGroup(@NonNull final Plugin plugin,
-                                  @NonNull final Set<E> entities,
-                                  @NonNull final Collection<BiFunction<Plugin, Set<E>,
+    public FakeEntityManagerGroup(final @NonNull Plugin plugin,
+                                  final @NonNull Set<E> entities,
+                                  final @NonNull Collection<BiFunction<Plugin, Set<E>,
                                           ? extends FakeEntityManager<E>>> managerCreators) {
         super(plugin, entities);
 
@@ -41,29 +41,29 @@ public class FakeEntityManagerGroup<E extends FakeEntity> extends AbstractSetBas
     }
 
     @SafeVarargs
-    public FakeEntityManagerGroup(@NonNull final Plugin plugin,
-                                  @NonNull final Set<E> entities,
-                                  @NonNull final BiFunction<Plugin, Set<E>,
+    public FakeEntityManagerGroup(final @NonNull Plugin plugin,
+                                  final @NonNull Set<E> entities,
+                                  final @NonNull BiFunction<Plugin, Set<E>,
                                           ? extends FakeEntityManager<E>>... managerCreators) {
         this(plugin, entities, Arrays.asList(managerCreators));
     }
 
     @Override
-    public void manageEntity(@NonNull final E entity) {
+    public void manageEntity(final @NonNull E entity) {
         super.manageEntity(entity);
 
         for (val manager : managers) manager.manageEntity(entity);
     }
 
     @Override
-    public void unmanageEntity(@NonNull final E entity) {
+    public void unmanageEntity(final @NonNull E entity) {
         super.unmanageEntity(entity);
 
         for (val manager : managers) manager.unmanageEntity(entity);
     }
 
     @Override
-    public void remove(@NonNull final E entity) {
+    public void remove(final @NonNull E entity) {
         for (val manager : managers) manager.remove(entity);
 
         entity.remove();
