@@ -9,9 +9,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
-import ru.progrm_jarvis.javacommons.map.MapUtil;
-import ru.progrm_jarvis.javacommons.pair.Pair;
-import ru.progrm_jarvis.javacommons.pair.SimplePair;
+import ru.progrm_jarvis.javacommons.collection.MapFiller;
+import ru.progrm_jarvis.javacommons.object.Pair;
 import ru.progrm_jarvis.minecraft.commons.util.SystemPropertyUtil;
 import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedFunction;
 
@@ -43,7 +42,7 @@ public class PacketWrapperPacketAssociations {
      * Immutable bi-directional map of packet types and their IDs
      */
     @NonNull public final BiMap<PacketType, PacketTypeId> PACKET_TYPES = ImmutableBiMap.copyOf(
-            MapUtil.mapFiller(new HashMap<PacketType, PacketTypeId>())
+            MapFiller.from(new HashMap<PacketType, PacketTypeId>())
                     .fill(fieldPacketTypes(PacketType.Handshake.Client.class, "Handshake", PacketDirection.CLIENT))
                     .fill(fieldPacketTypes(PacketType.Handshake.Server.class, "Handshake", PacketDirection.SERVER))
                     .fill(fieldPacketTypes(PacketType.Login.Client.class, "Login", PacketDirection.CLIENT))
@@ -64,7 +63,7 @@ public class PacketWrapperPacketAssociations {
         return Arrays.stream(packetType.getDeclaredFields())
                 .filter(field -> PacketType.class.isAssignableFrom(field.getType()))
                 //.filter(field -> field.isAnnotationPresent(Deprecated.class))
-                .map((UncheckedFunction<Field, Pair<PacketType, PacketTypeId>>) field -> SimplePair.of(
+                .map((UncheckedFunction<Field, Pair<PacketType, PacketTypeId>>) field -> Pair.of(
                         (PacketType) field.get(null),
                         PacketTypeId.of(group, direction, upperCaseNameToUpperCamelCase(field.getName()))
                 ));

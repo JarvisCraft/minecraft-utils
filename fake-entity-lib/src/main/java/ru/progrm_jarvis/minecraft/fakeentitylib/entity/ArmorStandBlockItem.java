@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.progrm_jarvis.javacommons.annotation.ownership.Own;
+import ru.progrm_jarvis.javacommons.ownership.annotation.Own;
 import ru.progrm_jarvis.minecraft.commons.nms.NmsUtil;
 import ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand;
 
@@ -40,7 +40,8 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
             HALF_PIXEL_SIZE = 0x1p-5,
             ARMOR_STAND_BODY_HEIGHT = (16 + 8) * PIXEL_SIZE,
             ARMOR_STAND_HEAD_ROOT_OFFSET = ARMOR_STAND_BODY_HEIGHT - HALF_PIXEL_SIZE,
-            ITEM_CENTER_Y_OFFSET = 3 * PIXEL_SIZE + HALF_PIXEL_SIZE; // offset of the item center from the rotation center
+            ITEM_CENTER_Y_OFFSET = 3 * PIXEL_SIZE + HALF_PIXEL_SIZE;
+                    // offset of the item center from the rotation center
 
     final boolean small, marker;
     final double itemCenterYOffset;
@@ -141,7 +142,8 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
         return location;
     }
 
-    protected static @NotNull Offset rotationOffsets(final Vector3F rotation, double yOffset /* => y */) {
+    protected static @NotNull
+    Offset rotationOffsets(final Vector3F rotation, double yOffset /* => y */) {
         // apply rotation matrices to align center: https://en.wikipedia.org/wiki/Rotation_matrix
         // let L be initial location and Q be geometrical center
         // the resulting location should be L' = L - Q'
@@ -249,7 +251,9 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
 
     protected interface Offset {
         double x();
+
         double y();
+
         double z();
 
         void applyTo(@NotNull Location location);
@@ -266,7 +270,8 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
             location.add(x, y, z);
         }
 
-        public static @NotNull Offset create(final double x, final double y, final double z) {
+        public static @NotNull
+        Offset create(final double x, final double y, final double z) {
             return new SimpleOffset(x, y, z);
         }
     }
