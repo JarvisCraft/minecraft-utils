@@ -1,0 +1,4 @@
+[submodule "PacketWrapper"]
+	path = dependencies/PacketWrapper
+	url = git://github.com/JarvisCraft/PacketWrapper
+	branch = legacy-support
