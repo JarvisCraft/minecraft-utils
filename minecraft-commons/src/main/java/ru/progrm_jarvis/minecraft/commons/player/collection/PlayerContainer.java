@@ -77,9 +77,10 @@ public interface PlayerContainer {
     }
 
     /**
-     * Returns {@code true} if this container contains the specified player and {@code false} otherwise.
+     * Checks if this container contains the specified player.
      *
      * @param player player to check for containment
+     * @return {@code true} if this container contains the specified player and {@code false} otherwise.
      */
     boolean containsPlayer(Player player);
 

@@ -256,6 +256,7 @@ public class PlayerMapManager {
      * This should be called whenever the player stops seeing this map or leaves the server.
      *
      * @param player player for whom to free the map
+     * @param map map which should be freed
      * @apiNote this <b>must</b> be called for any map allocation once it can be free
      *
      * @see #allocateMap(Player) only obtained by calling this method should be freed

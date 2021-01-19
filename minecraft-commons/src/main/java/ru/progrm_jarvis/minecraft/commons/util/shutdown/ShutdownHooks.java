@@ -24,7 +24,7 @@ public interface ShutdownHooks extends Shutdownable {
      * Adds a shutdown hook.
      *
      * @param hook shutdown hook to add
-     * @return this {@link ShutdownHooks} for chaining
+     * @return this shutdown hooks for chaining
      */
     @NonNull ShutdownHooks add(@NonNull Runnable hook);
 
@@ -32,7 +32,7 @@ public interface ShutdownHooks extends Shutdownable {
      * Adds a shutdown hook.
      *
      * @param hookSupplier supplier to be used instantly to create a hook
-     * @return this {@link ShutdownHooks} for chaining
+     * @return this shutdown hooks for chaining
      *
      * @apiNote supplier is called instantly, not lazily
      */
@@ -43,7 +43,8 @@ public interface ShutdownHooks extends Shutdownable {
      *
      * @param objectSupplier supplier to create an object which wil be shut down
      * @param hookCreator function to create a hook
-     * @return this {@link ShutdownHooks} for chaining
+     * @param <T> type of the supplied object
+     * @return this shutdown hooks for chaining
      *
      * @apiNote supplier and function are called instantly, not lazily
      */
@@ -53,22 +54,22 @@ public interface ShutdownHooks extends Shutdownable {
      * Removes a shutdown hook.
      *
      * @param hook shutdown hook to remove
-     * @return this {@link ShutdownHooks} for chaining
+     * @return this shutdown hooks for chaining
      */
     @NonNull ShutdownHooks remove(@NonNull Runnable hook);
 
     /**
-     * Registers these {@link ShutdownHooks} as a Bukkit plugin shutdown hook.
+     * Registers these shutdown hooks as a Bukkit plugin shutdown hook.
      *
      * @param plugin plugin whose shutdown hook this is
-     * @return this {@link ShutdownHooks} for chaining
+     * @return this shutdown hooks for chaining
      */
     @NonNull ShutdownHooks registerBukkitShutdownHook(@NonNull Plugin plugin);
 
     /**
-     * Unregisters these {@link ShutdownHooks} as a Bukkit plugin shutdown hook.
+     * Unregisters these shutdown hooks as a Bukkit plugin shutdown hook.
      *
-     * @return this {@link ShutdownHooks} for chaining
+     * @return this shutdown hooks for chaining
      */
     @NonNull ShutdownHooks unregisterBukkitShutdownHook();
 
@@ -81,43 +82,43 @@ public interface ShutdownHooks extends Shutdownable {
     /**
      * Retrieves whether or not {@link #shutdown()} was called.
      *
-     * @return {@cpde true} if this was shut down and {@code false} otherwise
+     * @return {@code true} if this was shut down and {@code false} otherwise
      */
     boolean isShutDown();
 
     /**
-     * Creates new {@link ShutdownHooks} instance.
+     * Creates a new shutdown hook instance.
      *
-     * @return created {@link ShutdownHooks} instance
+     * @return created shutdown hook instance
      */
     static ShutdownHooks create() {
         return new Simple();
     }
 
     /**
-     * Creates new {@link ShutdownHooks} instance.
+     * Creates new shutdown hook instance.
      *
      * @param parent object whose shutdown hooks those are
-     * @return created {@link ShutdownHooks} instance
+     * @return created shutdown hook instance
      */
     static ShutdownHooks create(final @NonNull Shutdownable parent) {
         return new Simple(parent);
     }
 
     /**
-     * Creates new concurrent {@link ShutdownHooks} instance.
+     * Creates new concurrent shutdown hook instance.
      *
-     * @return created concurrent {@link ShutdownHooks} instance
+     * @return created concurrent shutdown hook instance
      */
     static ShutdownHooks createConcurrent() {
         return new Concurrent();
     }
 
     /**
-     * Creates new concurrent {@link ShutdownHooks} instance.
+     * Creates new concurrent shutdown hook instance.
      *
      * @param parent object whose shutdown hooks those are
-     * @return created concurrent {@link ShutdownHooks} instance
+     * @return created concurrent shutdown hook instance
      */
     static ShutdownHooks createConcurrent(final @NonNull Shutdownable parent) {
         return new Concurrent(parent);
