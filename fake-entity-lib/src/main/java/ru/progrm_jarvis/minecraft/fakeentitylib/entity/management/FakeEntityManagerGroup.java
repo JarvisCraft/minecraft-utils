@@ -17,7 +17,6 @@ import java.util.function.BiFunction;
  * Facade grouping multiple {@link FakeEntityManager}s into a single one.
  * Its general methods delegate the calls to each of the managers.
  *
- * @param <P> type of parent plugin
  * @param <E> type of managed entity
  */
 @ToString
