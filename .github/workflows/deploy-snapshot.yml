@@ -33,8 +33,8 @@ jobs:
           echo -e "${{ secrets.CODE_SIGNING_GPG_PRIVATE_KEY }}" | gpg --batch --import
           gpg --list-secret-keys --keyid-format LONG
 
-      # TODO check version
       - name: Deploy snapshot
+        if: '"$(./.github-actions/scripts/get_version.sh)" == *-SNAPSHOT'
         env:
           CODE_SIGNING_GPG_KEY_ID: ${{ secrets.CODE_SIGNING_GPG_KEY_ID }}
           CODE_SIGNING_GPG_KEY_PASSPHRASE: ${{ secrets.CODE_SIGNING_GPG_KEY_PASSPHRASE }}
