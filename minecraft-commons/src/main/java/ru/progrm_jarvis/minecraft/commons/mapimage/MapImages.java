@@ -64,13 +64,15 @@ public class MapImages {
      * <p>
      * The logic is the following:
      *
-     * <dt>The image is {@link MapImage#WIDTH}×{@link MapImage#HEIGHT} or is smaller</dt>
-     * <dd>Do nothing and return this image</dd>
+     * <dl>
+     *     <dt>The image is {@link MapImage#WIDTH}×{@link MapImage#HEIGHT} or is smaller</dt>
+     *     <dd>Do nothing and return this image</dd>
      *
-     * <dt>The image's width is bigger than {@link MapImage#WIDTH}
-     * or its height is bigger than{@link MapImage#HEIGHT}</dt>
-     * <dd>The image is resized proportionally to be of maximal possible size
-     * yet fitting the bounds of {@link MapImage#WIDTH}×{@link MapImage#HEIGHT}</dd>
+     *     <dt>The image's width is bigger than {@link MapImage#WIDTH}
+     *     or its height is bigger than{@link MapImage#HEIGHT}</dt>
+     *     <dd>The image is resized proportionally to be of maximal possible size
+     *     yet fitting the bounds of {@link MapImage#WIDTH}×{@link MapImage#HEIGHT}</dd>
+     * </dl>
      *
      * @param image image to fit (will be redrawn)
      * @param resize whether the image should be resized ({@code true}) or cut ({@code false})

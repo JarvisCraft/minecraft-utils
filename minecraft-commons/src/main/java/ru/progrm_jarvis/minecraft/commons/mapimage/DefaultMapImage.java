@@ -94,8 +94,8 @@ public class DefaultMapImage implements MapImage {
      * @param resize whether the image should be resized or cut to fit map image dimensions
      * @return created map image
      */
-    public static DefaultMapImage from(final @NonNull BufferedImage image, final boolean resize,
-                                       final byte displayMode) {
+    public static MapImage from(final @NonNull BufferedImage image, final boolean resize,
+                                final byte displayMode) {
         return new DefaultMapImage(MapImages.getMapImagePixels(image, resize), displayMode);
     }
 
@@ -193,7 +193,7 @@ public class DefaultMapImage implements MapImage {
         /**
          * Resets this buffered drawer setting {@link #unchanged} to {@code true} and resetting its buffer.
          */
-        protected void reset() {
+        private void reset() {
             unchanged = true;
             leastChangedX = leastChangedY = mostChangedX = mostChangedY = Delta.NONE;
 
@@ -214,8 +214,9 @@ public class DefaultMapImage implements MapImage {
                 var i = -1;
                 for (var y = leastY; y < height; y++) {
                     val offset = y * width;
-                    for (var x = leastX; x < width; x++) if (pixels[++i] != NO_COLOR_CODE) DefaultMapImage.this
-                            .pixels[x + offset] = pixels[i];
+                    for (var x = leastX; x < width; x++)
+                        if (pixels[++i] != NO_COLOR_CODE) DefaultMapImage.this
+                                .pixels[x + offset] = pixels[i];
                 }
 
                 reset();
