@@ -164,7 +164,7 @@ public interface Figure3D {
      * @param y Y coordinate of a point to check
      * @param z Z coordinate of a point to check
      *
-     * @return {@code true} if the point belongs to this figure and {@link false} otherwise
+     * @return {@code true} if the point belongs to this figure and {@code false} otherwise
      */
     boolean contains(double x, double y, double z);
 
@@ -173,7 +173,7 @@ public interface Figure3D {
      *
      * @param point point to check
      *
-     * @return {@code true} if the point belongs to this figure and {@link false} otherwise
+     * @return {@code true} if the point belongs to this figure and {@code false} otherwise
      */
     default boolean contains(final @NonNull Vector point) {
         return contains(point.getX(), point.getY(), point.getZ());
@@ -184,7 +184,7 @@ public interface Figure3D {
      *
      * @param point point to check
      *
-     * @return {@code true} if the point belongs to this figure and {@link false} otherwise
+     * @return {@code true} if the point belongs to this figure and {@code false} otherwise
      */
     default boolean contains(final @NonNull Location point) {
         return contains(point.getX(), point.getY(), point.getZ());

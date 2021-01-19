@@ -18,7 +18,7 @@ public final class ChunkLocalLocation {
     Chunk chunk;
 
     /**
-     * Chunk-local location in a {@link short} representation
+     * Chunk-local location in a {@code short} representation
      */
     short location;
 }

@@ -1,8 +1,8 @@
-name: Deploy snapshot
+name: Deploy release
 
 on:
   push:
-    branches: [ development ]
+    tags: [ v* ]
 
 jobs:
   build:
@@ -40,4 +40,4 @@ jobs:
           GITHUB_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONATYPE_OSSRH_DEPLOYER: ${{ secrets.SONATYPE_OSSRH_DEPLOYER }}
           SONATYPE_OSSRH_TOKEN: ${{ secrets.SONATYPE_OSSRH_TOKEN }}
-        run: ./.github-actions/scripts/maven_deploy.sh
+        run: ./.github-actions/scripts/maven_deploy.sh release

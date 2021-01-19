@@ -17,7 +17,7 @@ import static ru.progrm_jarvis.minecraft.commons.mapimage.MapImageColor.NO_COLOR
 public class MapImageMinecraftColors {
 
     /**
-     * All available colors available in Minecraft associated with their {@link byte}-codes
+     * All available colors available in Minecraft associated with their {@code byte}-codes
      * @see <a href="https://minecraft.gamepedia.com/Map_item_format#1.12_Color_Table"> Taken from Minecraft Wiki</a>
      */
     public final Int2ByteMap MINECRAFT_RGB_COLOR_CODES;
