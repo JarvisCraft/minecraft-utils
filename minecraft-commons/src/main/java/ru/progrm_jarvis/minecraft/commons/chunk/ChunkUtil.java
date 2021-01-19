@@ -15,14 +15,14 @@ import static com.google.common.base.Preconditions.checkArgument;
  * There are general conventions for type=methods:
  *
  * <dl>
- * <dt>{@code Foo [bar]foo(Bar...)}</dt>
- * <dd>return the specified <i>bar</i> value's <i>foo</i>component (other data is lost)</dd>
+ *     <dt>{@code Foo [bar]foo(Bar...)}</dt>
+ *     <dd>return the specified <i>bar</i> value's <i>foo</i>component (other data is lost)</dd>
  *
- * <dt>{@code Foo [bar]toFoo(Bar...)}</dt>
- * <dd>convert the specified <i>bar</i> value to its <i>foo</i> representation (no data is lost)</dd>
+ *     <dt>{@code Foo [bar]toFoo(Bar...)}</dt>
+ *     <dd>convert the specified <i>bar</i> value to its <i>foo</i> representation (no data is lost)</dd>
  *
- * <dt>{@code Foo <action>[Bar]Foo(Bar...)}</dt>
- * <dd>performs the action specified on <i>bar</i> using <i>foo</i></dd>
+ *     <dt>{@code Foo <action>[Bar]Foo(Bar...)}</dt>
+ *     <dd>performs the action specified on <i>bar</i> using <i>foo</i></dd>
  * </dl>
  *
  * @apiNote chunks are (by default) returned as a single {@code long} as the limit of chunk at non-Y-axis is 3750000
