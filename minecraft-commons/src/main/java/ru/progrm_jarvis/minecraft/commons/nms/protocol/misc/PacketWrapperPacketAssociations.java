@@ -12,11 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import ru.progrm_jarvis.javacommons.collection.MapFiller;
 import ru.progrm_jarvis.javacommons.object.Pair;
 import ru.progrm_jarvis.minecraft.commons.util.SystemPropertyUtil;
-import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedFunction;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.lang.reflect.Field;
+import java.lang.invoke.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +22,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.lang.invoke.LambdaMetafactory.metafactory;
+import static java.lang.invoke.MethodType.methodType;
 
 /**
  * Utility for linking ProtocolLib's packer-related objects.
@@ -34,7 +32,8 @@ public class PacketWrapperPacketAssociations {
 
     private final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
-    private final MethodType FUNCTION__METHOD_TYPE = MethodType.methodType(Function.class);
+    private final MethodType FUNCTION__METHOD_TYPE = methodType(Function.class);
+    private final MethodType VOID_PACKET_CONTAINER__METHOD_TYPE = methodType(void.class, PacketContainer.class);
 
     private final String FUNCTION__APPLY__METHOD_NAME = "apply";
 
@@ -62,20 +61,29 @@ public class PacketWrapperPacketAssociations {
                                                                     final @NonNull PacketDirection direction) {
         return Arrays.stream(packetType.getDeclaredFields())
                 .filter(field -> PacketType.class.isAssignableFrom(field.getType()))
-                //.filter(field -> field.isAnnotationPresent(Deprecated.class))
-                .map((UncheckedFunction<Field, Pair<PacketType, PacketTypeId>>) field -> Pair.of(
-                        (PacketType) field.get(null),
-                        PacketTypeId.of(group, direction, upperCaseNameToUpperCamelCase(field.getName()))
-                ));
+                //.filter(field -> !field.isAnnotationPresent(Deprecated.class))
+                .map(field -> {
+                    final PacketType fieldValue;
+                    try {
+                        fieldValue = (PacketType) field.get(null);
+                    } catch (final IllegalAccessException e) {
+                        throw new IllegalStateException("Could not read value of field " + field);
+                    }
+                    return Pair.of(
+                            fieldValue,
+                            PacketTypeId.of(group, direction, upperCaseNameToUpperCamelCase(field.getName()))
+                    );
+                });
     }
 
     private String upperCaseNameToUpperCamelCase(final @NonNull String name) {
         val split = StringUtils.split(name, '_');
 
         val camelCase = new StringBuilder();
-        for (val word : split) if (word.length() != 0) camelCase
-                .append(StringUtils.capitalize(StringUtils.lowerCase(word)));
-        else camelCase.append("_");
+        for (val word : split)
+            if (word.length() != 0) camelCase
+                    .append(StringUtils.capitalize(StringUtils.lowerCase(word)));
+            else camelCase.append("_");
 
         return camelCase.toString();
     }
@@ -88,23 +96,55 @@ public class PacketWrapperPacketAssociations {
      */
     public AbstractPacket createPacketWrapper(final @NonNull PacketContainer packet) {
         return PACKET_CREATORS
-                .computeIfAbsent(packet.getType(),
-                        (UncheckedFunction<PacketType, Function<PacketContainer, AbstractPacket>>) packetType -> {
-                            val packetWrapperClass = Class
-                                    .forName(PACKET_TYPES.get(packetType).toPacketWrapperClassName());
+                .computeIfAbsent(packet.getType(), packetType -> {
+                    final Class<?> packetWrapperClass;
+                    {
+                        val className = PACKET_TYPES.get(packetType).toPacketWrapperClassName();
+                        try {
+                            packetWrapperClass = Class.forName(className);
+                        } catch (final ClassNotFoundException e) {
+                            throw new IllegalStateException("Could not find class by name \"" + className + '"');
+                        }
+                    }
 
-                            val methodHandle = LOOKUP.unreflectConstructor(
-                                    packetWrapperClass.getDeclaredConstructor(PacketContainer.class)
-                            );
 
-                            val type = methodHandle.type();
+                    MethodHandle constructorMethodHandle;
+                    try {
+                        constructorMethodHandle = LOOKUP.findConstructor(
+                                packetWrapperClass, VOID_PACKET_CONTAINER__METHOD_TYPE
+                        );
+                    } catch (final NoSuchMethodException | IllegalAccessException e) {
+                        throw new IllegalStateException(
+                                "Cannot create method handle for constructor "
+                                        + packetWrapperClass + "(PacketContainer)", e
+                        );
+                    }
 
-                            //noinspection unchecked
-                            return (Function<PacketContainer, AbstractPacket>) metafactory(
-                                    LOOKUP, FUNCTION__APPLY__METHOD_NAME, FUNCTION__METHOD_TYPE,
-                                    type.generic(), methodHandle, type
-                            ).getTarget().invokeExact();
-                        })
+                    val type = constructorMethodHandle.type();
+
+                    final CallSite callSite;
+                    try {
+                        callSite = metafactory(
+                                LOOKUP, FUNCTION__APPLY__METHOD_NAME, FUNCTION__METHOD_TYPE,
+                                VOID_PACKET_CONTAINER__METHOD_TYPE, constructorMethodHandle, type
+                        );
+                    } catch (LambdaConversionException e) {
+                        throw new IllegalStateException(
+                                "Cannot invoke metafactory for constructor method-handle " + constructorMethodHandle, e
+                        );
+                    }
+
+                    constructorMethodHandle = callSite.getTarget();
+
+                    try {
+                        //noinspection unchecked
+                        return (Function<PacketContainer, AbstractPacket>) constructorMethodHandle.invokeExact();
+                    } catch (final Throwable x) {
+                        throw new IllegalStateException(
+                                "Cannot invoke metafactory-provided method-handle " + constructorMethodHandle, x
+                        );
+                    }
+                })
                 .apply(packet);
     }
 
@@ -139,20 +179,21 @@ public class PacketWrapperPacketAssociations {
         /**
          * Group of packets to which the one belongs
          */
-        final @NonNull String group;
+        @NonNull String group;
 
         /**
          * Direction of the packet
          */
-        final @NonNull PacketDirection direction;
+        @NonNull PacketDirection direction;
 
         /**
          * Name of the packet in the system
          */
-        final @NonNull String name;
+        @NonNull String name;
 
-        @NonNull private String toPacketWrapperClassName() {
-            return PACKET_WRAPPER_PACKAGE + ".Wrapper" + group + direction.name + name;
+        @NonNull
+        private String toPacketWrapperClassName() {
+            return PACKET_WRAPPER_PACKAGE + ".Wrapper" + group + direction.name() + name;
         }
     }
 }

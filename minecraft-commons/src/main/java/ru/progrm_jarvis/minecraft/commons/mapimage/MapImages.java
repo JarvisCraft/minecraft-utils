@@ -122,12 +122,12 @@ public class MapImages {
     }
 
     /**
-     * Gets the 2-dimensional {@link byte}-array (the 1-st index is columns, the 2-nd index is rows)
-     * of size {@link MapImage#WIDTH}×{@link MapImage#HEIGHT} of RGB-{@link int} colors.
+     * Gets the 2-dimensional {@code byte}-array (the 1-st index is columns, the 2-nd index is rows)
+     * of size {@link MapImage#WIDTH}×{@link MapImage#HEIGHT} of RGB-{@code int} colors.
      *
      * @param image image whose pixels to get
      * @param resize whether the image should be resized or cut to fit map image dimensions
-     * @return 2-dimensional array of RGB-{@link int} colors.
+     * @return 2-dimensional array of RGB-{@code int} colors.
      */
     public int[][] getNonNormalizedMapImagePixels2D(@NonNull BufferedImage image, final boolean resize) {
         image = fitImage(image, resize);
@@ -150,11 +150,11 @@ public class MapImages {
     }
 
     /**
-     * Gets the {@link byte}-array of RGB-{@link int} colors.
+     * Gets the {@code byte}-array of RGB-{@code int} colors.
      *
      * @param image image whose pixels to get
      * @param resize whether the image should be resized or cut to fit map image dimensions
-     * @return array of RGB-{@link int} colors.
+     * @return array of RGB-{@code int} colors.
      */
     public int[] getNonNormalizedMapImagePixels(@NonNull BufferedImage image, final boolean resize) {
         image = fitImage(image, resize);
@@ -179,7 +179,7 @@ public class MapImages {
     }
 
     /**
-     * Gets the 2-dimensional {@link byte}-array (the 1-st index is columns, the 2-nd index is rows)
+     * Gets the 2-dimensional {@code byte}-array (the 1-st index is columns, the 2-nd index is rows)
      * of size {@link MapImage#WIDTH}×{@link MapImage#HEIGHT} of valid map color ids.
      *
      * @param image image whose pixels to get
@@ -191,7 +191,7 @@ public class MapImages {
     }
 
     /**
-     * Gets the {@link byte}-array of size {@link MapImage#PIXELS_COUNT} of valid map color ids.
+     * Gets the {@code byte}-array of size {@link MapImage#PIXELS_COUNT} of valid map color ids.
      *
      * @param image image whose pixels to get
      * @param resize whether the image should be resized or cut to fit map image dimensions

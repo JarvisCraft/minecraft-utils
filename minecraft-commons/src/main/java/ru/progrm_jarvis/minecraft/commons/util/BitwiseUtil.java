@@ -10,23 +10,23 @@ import lombok.val;
 public class BitwiseUtil {
 
     /**
-     * Number of bits in a {@link byte}
+     * Number of bits in a {@code byte}
      */
     private static final int BYTE_BITS = 8,
     /**
-     * Number of bits in a {@link short}
+     * Number of bits in a {@code short}
      */
     SHORT_BITS = 16,
     /**
-     * Number of bits in a {@link int}
+     * Number of bits in a {@code int}
      */
     INT_BITS = 32,
     /**
-     * Number of bits in a {@link long}
+     * Number of bits in a {@code long}
      */
     LONG_BITS = 64,
     /**
-     * Number of bits in a {@link char}
+     * Number of bits in a {@code char}
      */
     CHAR_BITS = 16;
 
@@ -175,7 +175,7 @@ public class BitwiseUtil {
     }
 
     /**
-     * Converts the unsigned {@link int} to a 8-bit ({@link byte}) representation.
+     * Converts the unsigned {@code int} to a 8-bit ({@code byte}) representation.
      *
      * @param unsignedInt integer whose least significant 8 bits are to be stored in a byte
      * @return unsigned integer's least significant 8 bits in a single byte
@@ -185,7 +185,7 @@ public class BitwiseUtil {
     }
 
     /**
-     * Converts the 8-bit ({@link byte}) value to an unsigned int representation.
+     * Converts the 8-bit ({@code byte}) value to an unsigned int representation.
      *
      * @param byteValue byte value whose bits will be used as the trailing bits of the resulting integer
      * @return an integer value consisting of 24 foremost <code>0</code>s and 8 bits of the specified byte
