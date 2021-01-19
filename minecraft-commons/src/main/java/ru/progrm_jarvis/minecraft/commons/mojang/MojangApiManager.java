@@ -126,15 +126,15 @@ public class MojangApiManager implements AutoCloseable {
         );
     }
 
+    public void readUuid(final @NonNull String userName,
+                         final @NonNull Consumer<UUID> callback) {
+        asyncRunner.get().runAsynchronously(() -> readUuidUnchecked(userName), callback);
+    }
+
     @AsyncExpected
     @SneakyThrows(IOException.class)
     public @NotNull UUID readUuidUnchecked(final @NonNull String userName) {
         return readUuid(userName);
-    }
-
-    public void readUuid(final @NonNull String userName,
-                         final @NonNull Consumer<UUID> callback) {
-        asyncRunner.get().runAsynchronously(() -> readUuidUnchecked(userName), callback);
     }
 
     @SneakyThrows
@@ -176,15 +176,15 @@ public class MojangApiManager implements AutoCloseable {
         return profile;
     }
 
+    public void readProfile(final @NonNull UUID uuid, final boolean signed,
+                            final @NonNull Consumer<GameProfile> callback) {
+        asyncRunner.get().runAsynchronously(() -> readProfileUnchecked(uuid, signed), callback);
+    }
+
     @AsyncExpected
     @SneakyThrows(IOException.class)
     public @NotNull GameProfile readProfileUnchecked(final @NonNull UUID uuid, final boolean signed) {
         return readProfile(uuid, signed);
-    }
-
-    public void readProfile(final @NonNull UUID uuid, final boolean signed,
-                            final @NonNull Consumer<GameProfile> callback) {
-        asyncRunner.get().runAsynchronously(() -> readProfileUnchecked(uuid, signed), callback);
     }
 
     @SneakyThrows
