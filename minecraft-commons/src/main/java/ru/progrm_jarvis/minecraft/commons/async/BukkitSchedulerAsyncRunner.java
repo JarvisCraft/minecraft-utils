@@ -3,7 +3,6 @@ package ru.progrm_jarvis.minecraft.commons.async;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.plugin.Plugin;
-import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedRunnable;
 
 /**
  * Async runner based on {@link org.bukkit.scheduler.BukkitScheduler}.
@@ -20,7 +19,7 @@ public class BukkitSchedulerAsyncRunner implements AsyncRunner {
     @NonNull Plugin plugin;
 
     @Override
-    public void runAsynchronously(final UncheckedRunnable operation) {
+    public void runAsynchronously(final Runnable operation) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, operation);
     }
 }

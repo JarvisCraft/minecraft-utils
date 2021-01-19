@@ -47,7 +47,7 @@ public class SystemPropertyUtil {
     }
 
     /**
-     * Gets the system property of type {@link boolean} by the name specified
+     * Gets the system property of type {@code boolean} by the name specified
      * and using the default value specified if the property is unset.
      *
      * @param propertyName name of the property
@@ -63,7 +63,7 @@ public class SystemPropertyUtil {
     }
 
     /**
-     * Gets the system property of type {@link boolean} by the name specified
+     * Gets the system property of type {@code boolean} by the name specified
      * and using the default value specified if the property is unset.
      *
      * @param propertyName name of the property
@@ -76,7 +76,7 @@ public class SystemPropertyUtil {
     }
 
     /**
-     * Gets the system property of type {@link int} by the name specified
+     * Gets the system property of type {@code int} by the name specified
      * and using the default value specified if the property is unset or is not a valid number.
      *
      * @param propertyName name of the property
@@ -97,7 +97,7 @@ public class SystemPropertyUtil {
     }
 
     /**
-     * Gets the system property of type {@link int} by the name specified
+     * Gets the system property of type {@code int} by the name specified
      * and using the default value specified if the property is unset or is not a valid number.
      *
      * @param propertyName name of the property
@@ -110,7 +110,7 @@ public class SystemPropertyUtil {
     }
 
     /**
-     * Gets the system property of type {@link long} by the name specified
+     * Gets the system property of type {@code long} by the name specified
      * and using the default value specified if the property is unset or is not a valid number.
      *
      * @param propertyName name of the property
@@ -131,7 +131,7 @@ public class SystemPropertyUtil {
     }
 
     /**
-     * Gets the system property of type {@link long} by the name specified
+     * Gets the system property of type {@code long} by the name specified
      * and using the default value specified if the property is unset or is not a valid number.
      *
      * @param propertyName name of the property
@@ -144,7 +144,7 @@ public class SystemPropertyUtil {
     }
 
     /**
-     * Gets the system property of type {@link double} by the name specified
+     * Gets the system property of type {@code double} by the name specified
      * and using the default value specified if the property is unset or is not a valid number.
      *
      * @param propertyName name of the property
@@ -165,7 +165,7 @@ public class SystemPropertyUtil {
     }
 
     /**
-     * Gets the system property of type {@link double} by the name specified
+     * Gets the system property of type {@code double} by the name specified
      * and using the default value specified if the property is unset or is not a valid number.
      *
      * @param propertyName name of the property

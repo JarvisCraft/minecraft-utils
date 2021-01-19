@@ -19,9 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import ru.progrm_jarvis.javacommons.lazy.Lazy;
 import ru.progrm_jarvis.minecraft.commons.annotation.AsyncExpected;
 import ru.progrm_jarvis.minecraft.commons.async.AsyncRunner;
-import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedConsumer;
-import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedFunction;
-import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedSupplier;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,6 +27,9 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @ToString
 @EqualsAndHashCode
@@ -60,7 +60,7 @@ public class MojangApiManager implements AutoCloseable {
         httpConnectionManager = Lazy.createThreadSafe(configuration.httpConnectionManager);
         {
             val httpClientFunction = configuration.httpClient;
-            this.httpClient = Lazy.createThreadSafe(() -> httpClientFunction.apply(httpConnectionManager.get()));
+            httpClient = Lazy.createThreadSafe(() -> httpClientFunction.apply(httpConnectionManager.get()));
         }
 
         asyncRunner = Lazy.createThreadSafe(configuration.asyncRunner);
@@ -127,18 +127,24 @@ public class MojangApiManager implements AutoCloseable {
     }
 
     public void readUuid(final @NonNull String userName,
-                         final @NonNull UncheckedConsumer<UUID> callback) {
-        asyncRunner.get().runAsynchronously(() -> readUuid(userName), callback);
+                         final @NonNull Consumer<UUID> callback) {
+        asyncRunner.get().runAsynchronously(() -> readUuidUnchecked(userName), callback);
+    }
+
+    @AsyncExpected
+    @SneakyThrows(IOException.class)
+    public @NotNull UUID readUuidUnchecked(final @NonNull String userName) {
+        return readUuid(userName);
     }
 
     @SneakyThrows
     @AsyncExpected
     public @NotNull UUID getUuid(final @NonNull String userName) {
         return uuidsCache.get()
-                .get(userName.toLowerCase(), () -> readUuid(userName));
+                .get(userName.toLowerCase(), () -> readUuidUnchecked(userName));
     }
 
-    public void getUuid(final @NonNull String userName, final @NonNull UncheckedConsumer<UUID> callback) {
+    public void getUuid(final @NonNull String userName, final @NonNull Consumer<UUID> callback) {
         asyncRunner.get().runAsynchronously(() -> getUuid(userName), callback);
     }
 
@@ -171,8 +177,14 @@ public class MojangApiManager implements AutoCloseable {
     }
 
     public void readProfile(final @NonNull UUID uuid, final boolean signed,
-                            final @NonNull UncheckedConsumer<GameProfile> callback) {
-        asyncRunner.get().runAsynchronously(() -> readProfile(uuid, signed), callback);
+                            final @NonNull Consumer<GameProfile> callback) {
+        asyncRunner.get().runAsynchronously(() -> readProfileUnchecked(uuid, signed), callback);
+    }
+
+    @AsyncExpected
+    @SneakyThrows(IOException.class)
+    public @NotNull GameProfile readProfileUnchecked(final @NonNull UUID uuid, final boolean signed) {
+        return readProfile(uuid, signed);
     }
 
     @SneakyThrows
@@ -188,7 +200,7 @@ public class MojangApiManager implements AutoCloseable {
     }
 
     public void getProfile(final @NonNull UUID uuid, final boolean signed,
-                        final @NonNull UncheckedConsumer<GameProfile> callback) {
+                           final @NonNull Consumer<GameProfile> callback) {
         asyncRunner.get().runAsynchronously(() -> getProfile(uuid, signed), callback);
     }
 
@@ -200,25 +212,25 @@ public class MojangApiManager implements AutoCloseable {
     @FieldDefaults(level = AccessLevel.PROTECTED)
     public static class Configuration {
 
-        @Default UncheckedSupplier<HttpClientConnectionManager> httpConnectionManager
+        @Default Supplier<HttpClientConnectionManager> httpConnectionManager
                 = PoolingHttpClientConnectionManager::new;
 
-        @Default UncheckedFunction<HttpClientConnectionManager, HttpClient> httpClient = manager -> HttpClients
+        @Default Function<HttpClientConnectionManager, HttpClient> httpClient = manager -> HttpClients
                 .custom()
                 .setConnectionManager(manager)
                 .build();
 
-        @Default UncheckedSupplier<Cache<String, UUID>> uuidsCache
+        @Default Supplier<Cache<String, UUID>> uuidsCache
                 = () -> CacheBuilder.newBuilder()
                 .expireAfterWrite(5, TimeUnit.MINUTES)
                 .build();
 
-        @Default UncheckedSupplier<Cache<UUID, GameProfile>> profilesCache
+        @Default Supplier<Cache<UUID, GameProfile>> profilesCache
                 = () -> CacheBuilder.newBuilder()
                 .expireAfterWrite(5, TimeUnit.SECONDS)
                 .build();
 
-        @Default UncheckedSupplier<AsyncRunner> asyncRunner = () -> {
+        @Default Supplier<AsyncRunner> asyncRunner = () -> {
             throw new IllegalStateException("Async tasks are not available in this MojangApiManager");
         };
 
