@@ -65,6 +65,8 @@ public abstract class AbstractSchedulerChain implements SchedulerChain {
         /**
          * Gets the amount of times this task should be called.
          *
+         * @return the amount of times this task should be called
+         *
          * @apiNote the delay happens <b>once</b> after which the task is called multiple times without it
          */
         @Nonnegative default long getRunTimes() {

@@ -26,7 +26,7 @@ public class ChatComponentUtil {
     }
 
     /**
-     * {@link JsonSerializer<WrappedChatComponent>} and {@link JsonDeserializer<WrappedChatComponent>}
+     * {@link JsonSerializer} and {@link JsonDeserializer}
      * for use with {@link GsonBuilder#registerTypeAdapter(Type, Object)}.
      */
     @NoArgsConstructor(access = AccessLevel.PROTECTED)

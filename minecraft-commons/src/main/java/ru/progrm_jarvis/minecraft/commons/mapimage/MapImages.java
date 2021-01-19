@@ -64,13 +64,15 @@ public class MapImages {
      * <p>
      * The logic is the following:
      *
-     * <dt>The image is {@link MapImage#WIDTH}×{@link MapImage#HEIGHT} or is smaller</dt>
-     * <dd>Do nothing and return this image</dd>
+     * <dl>
+     *     <dt>The image is {@link MapImage#WIDTH}×{@link MapImage#HEIGHT} or is smaller</dt>
+     *     <dd>Do nothing and return this image</dd>
      *
-     * <dt>The image's width is bigger than {@link MapImage#WIDTH}
-     * or its height is bigger than{@link MapImage#HEIGHT}</dt>
-     * <dd>The image is resized proportionally to be of maximal possible size
-     * yet fitting the bounds of {@link MapImage#WIDTH}×{@link MapImage#HEIGHT}</dd>
+     *     <dt>The image's width is bigger than {@link MapImage#WIDTH}
+     *     or its height is bigger than{@link MapImage#HEIGHT}</dt>
+     *     <dd>The image is resized proportionally to be of maximal possible size
+     *     yet fitting the bounds of {@link MapImage#WIDTH}×{@link MapImage#HEIGHT}</dd>
+     * </dl>
      *
      * @param image image to fit (will be redrawn)
      * @param resize whether the image should be resized ({@code true}) or cut ({@code false})
@@ -122,12 +124,12 @@ public class MapImages {
     }
 
     /**
-     * Gets the 2-dimensional {@link byte}-array (the 1-st index is columns, the 2-nd index is rows)
-     * of size {@link MapImage#WIDTH}×{@link MapImage#HEIGHT} of RGB-{@link int} colors.
+     * Gets the 2-dimensional {@code byte}-array (the 1-st index is columns, the 2-nd index is rows)
+     * of size {@link MapImage#WIDTH}×{@link MapImage#HEIGHT} of RGB-{@code int} colors.
      *
      * @param image image whose pixels to get
      * @param resize whether the image should be resized or cut to fit map image dimensions
-     * @return 2-dimensional array of RGB-{@link int} colors.
+     * @return 2-dimensional array of RGB-{@code int} colors.
      */
     public int[][] getNonNormalizedMapImagePixels2D(@NonNull BufferedImage image, final boolean resize) {
         image = fitImage(image, resize);
@@ -150,11 +152,11 @@ public class MapImages {
     }
 
     /**
-     * Gets the {@link byte}-array of RGB-{@link int} colors.
+     * Gets the {@code byte}-array of RGB-{@code int} colors.
      *
      * @param image image whose pixels to get
      * @param resize whether the image should be resized or cut to fit map image dimensions
-     * @return array of RGB-{@link int} colors.
+     * @return array of RGB-{@code int} colors.
      */
     public int[] getNonNormalizedMapImagePixels(@NonNull BufferedImage image, final boolean resize) {
         image = fitImage(image, resize);
@@ -179,7 +181,7 @@ public class MapImages {
     }
 
     /**
-     * Gets the 2-dimensional {@link byte}-array (the 1-st index is columns, the 2-nd index is rows)
+     * Gets the 2-dimensional {@code byte}-array (the 1-st index is columns, the 2-nd index is rows)
      * of size {@link MapImage#WIDTH}×{@link MapImage#HEIGHT} of valid map color ids.
      *
      * @param image image whose pixels to get
@@ -191,7 +193,7 @@ public class MapImages {
     }
 
     /**
-     * Gets the {@link byte}-array of size {@link MapImage#PIXELS_COUNT} of valid map color ids.
+     * Gets the {@code byte}-array of size {@link MapImage#PIXELS_COUNT} of valid map color ids.
      *
      * @param image image whose pixels to get
      * @param resize whether the image should be resized or cut to fit map image dimensions
