@@ -8,7 +8,7 @@ import java.util.function.IntBinaryOperator;
 import java.util.function.IntUnaryOperator;
 
 /**
- * Wrapper for an {@link int} focused at providing polymorphism to its operations concurrency.
+ * Wrapper for an {@code int} focused at providing polymorphism to its operations concurrency.
  */
 public abstract class IntWrapper extends Number {
 
@@ -143,7 +143,7 @@ public abstract class IntWrapper extends Number {
     }
 
     /**
-     * {@link IntWrapper} implementation based on {@link int}.
+     * {@link IntWrapper} implementation based on {@code int}.
      */
     @Data
     @NoArgsConstructor

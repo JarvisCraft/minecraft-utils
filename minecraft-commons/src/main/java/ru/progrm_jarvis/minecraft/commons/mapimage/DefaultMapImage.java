@@ -25,7 +25,7 @@ import static ru.progrm_jarvis.minecraft.commons.mapimage.MapImageColor.NO_COLOR
 public class DefaultMapImage implements MapImage {
 
     /**
-     * {@link byte}-array of pixels of an image by X, Y indexes.
+     * {@code byte}-array of pixels of an image by X, Y indexes.
      * A pixel can be accessed as {@code pixels[x + y * getWidth()]}
      */
     byte[] pixels;
@@ -158,7 +158,7 @@ public class DefaultMapImage implements MapImage {
     }
 
     /**
-     * Buffered drawer based on 2-dimensional {@link byte}-array of changed pixels and {@link int}-bounds.
+     * Buffered drawer based on 2-dimensional {@code byte}-array of changed pixels and {@code int}-bounds.
      */
     @Getter
     @ToString

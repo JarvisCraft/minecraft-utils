@@ -81,7 +81,7 @@ public interface ShutdownHooks extends Shutdownable {
     /**
      * Retrieves whether or not {@link #shutdown()} was called.
      *
-     * @return {@link true} if this was shut down and {@link false} otherwise
+     * @return {@cpde true} if this was shut down and {@code false} otherwise
      */
     boolean isShutDown();
 
@@ -153,7 +153,7 @@ public interface ShutdownHooks extends Shutdownable {
         }
 
         @Override
-        @NonNull public <T> ShutdownHooks add(final @NonNull Supplier<Runnable> hookSupplier) {
+        @NonNull public ShutdownHooks add(final @NonNull Supplier<Runnable> hookSupplier) {
             checkState();
 
             shutdownHooks.add(hookSupplier.get());
@@ -255,7 +255,7 @@ public interface ShutdownHooks extends Shutdownable {
         }
 
         @Override
-        @NonNull public <T> ShutdownHooks add(final @NonNull Supplier<Runnable> hookSupplier) {
+        @NonNull public ShutdownHooks add(final @NonNull Supplier<Runnable> hookSupplier) {
             checkState();
 
             shutdownHooks.add(hookSupplier.get());
