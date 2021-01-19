@@ -33,7 +33,7 @@ jobs:
         uses: crazy-max/ghaction-import-gpg@v3.0.2
         with:
           gpg-private-key: ${{ GPG_PRIVATE_KEY }}
-          gpg-passphrase: ${{ GPG_PASSPHRASE }}
+          passphrase: ${{ GPG_PASSPHRASE }}
 
       # TODO check version
       - name: Deploy snapshot
