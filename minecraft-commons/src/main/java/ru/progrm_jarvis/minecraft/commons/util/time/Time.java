@@ -11,7 +11,7 @@ import javax.annotation.Nonnegative;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A simple value consisting of {@link long} duration and its {@link TimeUnit} type.
+ * A simple value consisting of {@code long} duration and its {@link TimeUnit} type.
  */
 @Value
 @Accessors(fluent = true)

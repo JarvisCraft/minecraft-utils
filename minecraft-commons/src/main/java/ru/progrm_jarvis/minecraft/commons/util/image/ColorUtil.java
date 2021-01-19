@@ -7,30 +7,30 @@ import org.jetbrains.annotations.Contract;
 import static java.lang.Math.min;
 
 /**
- * Utilities related to standard {@link int}-ARGB representation of colors.
+ * Utilities related to standard {@code int}-ARGB representation of colors.
  */
 @UtilityClass
 public class ColorUtil {
 
     /**
-     * Length of bitwise {@link int} shift for accessing alpha channel value of standard {@link int}-ARGB.
+     * Length of bitwise {@code int} shift for accessing alpha channel value of standard {@code int}-ARGB.
      */
     public static final byte ALPHA_CHANNEL = 24,
     /**
-     * Length of bitwise {@link int} shift for accessing red color channel value of standard {@link int}-ARGB.
+     * Length of bitwise {@code int} shift for accessing red color channel value of standard {@code int}-ARGB.
      */
     RED_CHANNEL = 16,
     /**
-     * Length of bitwise {@link int} shift for accessing green color channel value of standard {@link int}-ARGB.
+     * Length of bitwise {@code int} shift for accessing green color channel value of standard {@code int}-ARGB.
      */
     GREEN_CHANNEL = 8,
     /**
-     * Length of bitwise {@link int} shift for accessing blue color channel value of standard {@link int}-ARGB.
+     * Length of bitwise {@code int} shift for accessing blue color channel value of standard {@code int}-ARGB.
      */
     BLUE_CHANNEL = 0;
 
     /**
-     * Gets the alpha channel value for the specified ARGB {@link int}.
+     * Gets the alpha channel value for the specified ARGB {@code int}.
      *
      * @param rgb RGB encoded as a single integer
      * @return alpha channel value
@@ -41,7 +41,7 @@ public class ColorUtil {
     }
 
     /**
-     * Gets the red color channel value for the specified ARGB {@link int}.
+     * Gets the red color channel value for the specified ARGB {@code int}.
      *
      * @param rgb RGB encoded as a single integer
      * @return red color channel value
@@ -52,7 +52,7 @@ public class ColorUtil {
     }
 
     /**
-     * Gets the green color channel value for the specified ARGB {@link int}.
+     * Gets the green color channel value for the specified ARGB {@code int}.
      *
      * @param rgb RGB encoded as a single integer
      * @return green color channel value
@@ -63,7 +63,7 @@ public class ColorUtil {
     }
 
     /**
-     * Gets the blue color channel value for the specified ARGB {@link int}.
+     * Gets the blue color channel value for the specified ARGB {@code int}.
      *
      * @param rgb RGB encoded as a single integer
      * @return blue color channel value
@@ -74,13 +74,13 @@ public class ColorUtil {
     }
 
     /**
-     * Transforms 4 ARGB channels to a single {@link int}.
+     * Transforms 4 ARGB channels to a single {@code int}.
      *
      * @param alpha alpha color channel (between {@code 0} and {@code 255})
      * @param red red color channel (between {@code 0} and {@code 255})
      * @param green green color channel (between {@code 0} and {@code 255})
      * @param blue blue color channel (between {@code 0} and {@code 255})
-     * @return color as a single RGB {@link int}
+     * @return color as a single RGB {@code int}
      */
     @Contract(pure = true)
     public static int toArgb(final int alpha, final int red, final int green, final int blue) {
@@ -88,12 +88,12 @@ public class ColorUtil {
     }
 
     /**
-     * Transforms 3 color channels channels to a single ARGB {@link int} with no transparency.
+     * Transforms 3 color channels channels to a single ARGB {@code int} with no transparency.
      *
      * @param red red color channel (between {@code 0} and {@code 255})
      * @param green green color channel (between {@code 0} and {@code 255})
      * @param blue blue color channel (between {@code 0} and {@code 255})
-     * @return color as a single RGB {@link int}
+     * @return color as a single RGB {@code int}
      */
     @Contract(pure = true)
     public static int toArgb(final int red, final int green, final int blue) {
@@ -110,9 +110,9 @@ public class ColorUtil {
 
     /**
      * Blends two ARGB colors into one respecting alphas.
-     * @param backgroundColor background color as a standard {@link int}-ARGB
-     * @param foregroundColor foreground color as a standard {@link int}-ARGB
-     * @return standard {@link int}-ARGB color being the result of color-bleeding
+     * @param backgroundColor background color as a standard {@code int}-ARGB
+     * @param foregroundColor foreground color as a standard {@code int}-ARGB
+     * @return standard {@code int}-ARGB color being the result of color-bleeding
      */
     @Contract(pure = true)
     public int blendColors(final int backgroundColor, final int foregroundColor) {

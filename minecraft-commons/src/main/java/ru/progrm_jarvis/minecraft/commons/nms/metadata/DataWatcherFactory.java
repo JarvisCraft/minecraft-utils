@@ -145,7 +145,7 @@ public interface DataWatcherFactory {
     WrappedWatchableObject createWatchable(int id, BlockPosition value);
 
     /**
-     * Creates watchable object for {@link Optional<Byte>} value at index specified.
+     * Creates watchable object for {@link Optional} value at index specified.
      *
      * @param id id of a value
      * @param value value
@@ -174,7 +174,7 @@ public interface DataWatcherFactory {
     }
 
     /**
-     * Creates watchable object for {@link Optional<UUID>} value at index specified.
+     * Creates watchable object for {@link Optional} value at index specified.
      *
      * @param id id of a value
      * @param value value
@@ -360,7 +360,7 @@ public interface DataWatcherFactory {
         DataWatcherModifier set(int id, BlockPosition value);
 
         /**
-         * Sets DataWatcher's modifier to specified {@link Optional<BlockPosition>} value at specified index.
+         * Sets DataWatcher's modifier to specified {@link Optional} value at specified index.
          *
          * @param id id of a value
          * @param value value to set at id
@@ -398,7 +398,7 @@ public interface DataWatcherFactory {
         DataWatcherModifier setNBTTagCompound(int id, Object value);
 
         /**
-         * Sets DataWatcher's modifier to specified {@link Optional<UUID>} value at specified index.
+         * Sets DataWatcher's modifier to specified {@link Optional} value at specified index.
          *
          * @param id id of a value
          * @param value value to set at id

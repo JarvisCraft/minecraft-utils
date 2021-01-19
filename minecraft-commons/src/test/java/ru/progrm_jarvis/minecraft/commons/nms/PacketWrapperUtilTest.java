@@ -6,13 +6,12 @@ import lombok.val;
 import org.apache.commons.lang.math.RandomUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import ru.progrm_jarvis.javacommons.util.function.ThrowingFunction;
 import ru.progrm_jarvis.minecraft.commons.nms.protocol.misc.PacketWrapperUtil;
-import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedFunction;
 import ru.progrm_jarvis.reflector.wrapper.invoke.InvokeConstructorWrapper;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -35,7 +34,8 @@ class PacketWrapperUtilTest {
         assertEquals("get", PacketWrapperUtil.getterNameToString("get"));
     }
 
-    @Test@Disabled("Requires PortocolManager singleton at runtime")
+    @Test
+    @Disabled("Requires PortocolManager singleton at runtime")
     @SuppressWarnings({"UnstableApiUsage", "unchecked"})
     void defaultPacketsTest() throws IOException {
         val classLoader = AbstractPacket.class.getClassLoader();
@@ -45,17 +45,29 @@ class PacketWrapperUtilTest {
                 .stream()
                 .filter(classInfo -> PACKET_WRAPPER_CLASS_NAME_PATTERN.matcher(classInfo.getSimpleName()).matches())
                 .map(ClassPath.ClassInfo::getName)
-                .map((UncheckedFunction<String, Class<? extends AbstractPacket>>) className
-                        -> (Class<? extends AbstractPacket>) classLoader.loadClass(className))
-                .map((ThrowingFunction<Class<? extends AbstractPacket>, Constructor<? extends AbstractPacket>,
-                        NoSuchMethodException>) aClass -> aClass.getDeclaredConstructor())
+                .map((Function<String, Class<? extends AbstractPacket>>) className
+                        -> {
+                    try {
+                        return (Class<? extends AbstractPacket>) classLoader.loadClass(className);
+                    } catch (final ClassNotFoundException e) {
+                        throw new IllegalStateException("Could not find class by name \"" + className + '"');
+                    }
+                })
+                .map((Function<Class<? extends AbstractPacket>, Constructor<? extends AbstractPacket>>) clazz -> {
+                    try {
+                        return clazz.getDeclaredConstructor();
+                    } catch (final NoSuchMethodException e) {
+                        throw new IllegalStateException("Could not find empty constructor of class " + clazz);
+                    }
+                })
                 .map(InvokeConstructorWrapper::from)
                 .collect(Collectors.toSet())
                 .forEach(constructor -> {
                     System.out.println("Testing: " + constructor);
-                    for (int i = 0; i < 3 + RandomUtils.nextInt(3); i++) assertDoesNotThrow(
-                            () -> PacketWrapperUtil.toString(constructor.invoke())
-                    );
+                    for (int i = 0; i < 3 + RandomUtils.nextInt(3); i++)
+                        assertDoesNotThrow(
+                                () -> PacketWrapperUtil.toString(constructor.invoke())
+                        );
                 });
     }
 }

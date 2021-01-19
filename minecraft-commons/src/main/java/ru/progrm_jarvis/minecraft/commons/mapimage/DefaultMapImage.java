@@ -3,13 +3,13 @@ package ru.progrm_jarvis.minecraft.commons.mapimage;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.progrm_jarvis.javacommons.lazy.Lazy;
-import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedConsumer;
 import ru.progrm_jarvis.minecraft.commons.util.hack.PreSuperCheck;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Consumer;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static ru.progrm_jarvis.minecraft.commons.mapimage.MapImage.blankPixels;
@@ -25,7 +25,7 @@ import static ru.progrm_jarvis.minecraft.commons.mapimage.MapImageColor.NO_COLOR
 public class DefaultMapImage implements MapImage {
 
     /**
-     * {@link byte}-array of pixels of an image by X, Y indexes.
+     * {@code byte}-array of pixels of an image by X, Y indexes.
      * A pixel can be accessed as {@code pixels[x + y * getWidth()]}
      */
     byte[] pixels;
@@ -45,7 +45,7 @@ public class DefaultMapImage implements MapImage {
     /**
      * All subscribers active.
      */
-    Collection<UncheckedConsumer<Delta>> updateSubscribers = new ArrayList<>();
+    Collection<Consumer<Delta>> updateSubscribers = new ArrayList<>();
 
     /**
      * Creates new map image from pixels.
@@ -109,12 +109,12 @@ public class DefaultMapImage implements MapImage {
     }
 
     @Override
-    public void subscribeOnUpdates(final UncheckedConsumer<Delta> subscriber) {
+    public void subscribeOnUpdates(final Consumer<Delta> subscriber) {
         updateSubscribers.add(subscriber);
     }
 
     @Override
-    public void unsubscribeFromUpdates(final UncheckedConsumer<Delta> subscriber) {
+    public void unsubscribeFromUpdates(final Consumer<Delta> subscriber) {
         updateSubscribers.remove(subscriber);
     }
 
@@ -158,7 +158,7 @@ public class DefaultMapImage implements MapImage {
     }
 
     /**
-     * Buffered drawer based on 2-dimensional {@link byte}-array of changed pixels and {@link int}-bounds.
+     * Buffered drawer based on 2-dimensional {@code byte}-array of changed pixels and {@code int}-bounds.
      */
     @Getter
     @ToString

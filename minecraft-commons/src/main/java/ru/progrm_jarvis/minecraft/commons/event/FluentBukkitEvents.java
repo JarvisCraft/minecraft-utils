@@ -13,13 +13,13 @@ import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
-import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedConsumer;
 import ru.progrm_jarvis.minecraft.commons.util.shutdown.Shutdownable;
 
 import java.util.Deque;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.function.Consumer;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -99,7 +99,7 @@ public class FluentBukkitEvents {
          * @param listener listener to use for event handling
          * @return unregister to use for event unregistration
          */
-        public Shutdownable register(final @NonNull UncheckedConsumer<E> listener) {
+        public Shutdownable register(final @NonNull Consumer<E> listener) {
             val listenersGroup = getListenersGroup();
             listenersGroup.addListener(listener);
 
@@ -124,17 +124,18 @@ public class FluentBukkitEvents {
         /**
          * Event listeners in this event listener group's dequeue
          */
-        @Getter(AccessLevel.NONE) @NonNull Deque<UncheckedConsumer<E>> eventListeners = new ConcurrentLinkedDeque<>();
+        @Getter(AccessLevel.NONE) @NonNull Deque<Consumer<E>> eventListeners = new ConcurrentLinkedDeque<>();
 
         /**
          * Adds the listener to the deque of handled listeners for the event.
          *
          * @param listener listener to add to handling dequeue
          */
-        private void addListener(final @NonNull UncheckedConsumer<E> listener) {
+        private void addListener(final @NonNull Consumer<E> listener) {
             if (eventListeners.isEmpty()) {
-                PLUGIN_MANAGER
-                        .registerEvent(configuration.type, this, configuration.priority, this, configuration.plugin);
+                PLUGIN_MANAGER.registerEvent(
+                        configuration.getType(), this, configuration.getPriority(), this, configuration.getPlugin()
+                );
                 LISTENERS_GROUPS.putIfAbsent(configuration, this);
             }
 
@@ -146,7 +147,7 @@ public class FluentBukkitEvents {
          *
          * @param listener listener to remove from handling dequeue
          */
-        private void removeListener(final @NonNull UncheckedConsumer<E> listener) {
+        private void removeListener(final @NonNull Consumer<E> listener) {
             eventListeners.remove(listener);
 
             if (eventListeners.isEmpty()) {
@@ -157,7 +158,7 @@ public class FluentBukkitEvents {
 
         @Override
         public void execute(final @NotNull Listener listener, final Event event) {
-            if (configuration.type.isAssignableFrom(event.getClass())) {
+            if (configuration.getType().isAssignableFrom(event.getClass())) {
                 @SuppressWarnings("unchecked") val castEvent = (E) event;
                 for (val eventListener : eventListeners) eventListener.accept(castEvent);
             }
@@ -166,8 +167,8 @@ public class FluentBukkitEvents {
 
     @Value
     private static class ListenerConfiguration<E> {
-        final @NonNull Plugin plugin;
-        final @NonNull Class<E> type;
-        final @NonNull EventPriority priority;
+        @NonNull Plugin plugin;
+        @NonNull Class<E> type;
+        @NonNull EventPriority priority;
     }
 }

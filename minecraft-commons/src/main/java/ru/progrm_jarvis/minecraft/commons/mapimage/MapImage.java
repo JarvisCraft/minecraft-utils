@@ -5,9 +5,9 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedConsumer;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -141,7 +141,7 @@ public interface MapImage {
      * @apiNote may not be called whenever there are no changes, but yet should normally handle empty deltas
      * @implSpec may be unavailable, check {@link #isSubscribable()} before usage
      */
-    default void subscribeOnUpdates(final UncheckedConsumer<Delta> subscriber) {
+    default void subscribeOnUpdates(final Consumer<Delta> subscriber) {
         throw new UnsupportedOperationException(getClass() + " doesn't support update subscriptions");
     }
 
@@ -154,7 +154,7 @@ public interface MapImage {
      * @implSpec should do nothing if the callback is not subscribed
      * @implSpec may be unavailable, check {@link #isSubscribable()} before usage
      */
-    default void unsubscribeFromUpdates(final UncheckedConsumer<Delta> subscriber) {
+    default void unsubscribeFromUpdates(final Consumer<Delta> subscriber) {
         throw new UnsupportedOperationException(getClass() + " doesn't support update subscriptions");
     }
 
