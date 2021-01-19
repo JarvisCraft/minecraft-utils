@@ -36,7 +36,7 @@ public interface ShutdownHooks extends Shutdownable {
      *
      * @apiNote supplier is called instantly, not lazily
      */
-    @NonNull <T> ShutdownHooks add(@NonNull Supplier<Runnable> hookSupplier);
+    @NonNull ShutdownHooks add(@NonNull Supplier<Runnable> hookSupplier);
 
     /**
      * Adds a shutdown hook.

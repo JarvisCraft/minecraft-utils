@@ -4,7 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
-import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedRunnable;
 
 /**
  * Async runner based on {@link net.md_5.bungee.api.scheduler.TaskScheduler}.
@@ -21,7 +20,7 @@ public class BungeeSchedulerAsyncRunner implements AsyncRunner {
     @NonNull Plugin plugin;
 
     @Override
-    public void runAsynchronously(final UncheckedRunnable operation) {
+    public void runAsynchronously(final Runnable operation) {
         ProxyServer.getInstance().getScheduler().runAsync(plugin, operation);
     }
 }

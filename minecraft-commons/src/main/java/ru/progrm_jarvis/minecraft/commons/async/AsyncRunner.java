@@ -1,8 +1,7 @@
 package ru.progrm_jarvis.minecraft.commons.async;
 
-import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedRunnable;
-import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedConsumer;
-import ru.progrm_jarvis.minecraft.commons.util.function.UncheckedSupplier;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * An object capable of performing asynchronous operations.
@@ -15,7 +14,7 @@ public interface AsyncRunner {
      *
      * @param operation operation to perform asynchronously
      */
-    void runAsynchronously(final UncheckedRunnable operation);
+    void runAsynchronously(final Runnable operation);
 
     /**
      * Performs the specified operations asynchronously.
@@ -24,7 +23,7 @@ public interface AsyncRunner {
      * @param callback callback to handle the resulting value of the operation
      * @param <T> type of value returned by the operation
      */
-    default <T> void runAsynchronously(final UncheckedSupplier<T> operation, final UncheckedConsumer<T> callback) {
+    default <T> void runAsynchronously(final Supplier<T> operation, final Consumer<T> callback) {
         runAsynchronously(() -> callback.accept(operation.get()));
     }
 }
