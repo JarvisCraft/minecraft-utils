@@ -32,12 +32,12 @@ jobs:
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v3.0.2
         with:
-          gpg-private-key: ${{ GPG_PRIVATE_KEY }}
-          passphrase: ${{ GPG_PASSPHRASE }}
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
       # TODO check version
       - name: Deploy snapshot
         run: ./.github-actions/scripts/maven_deploy.sh
         env:
-          CODE_SIGNING_GPG_PRIVATE_KEY: ${{ GPG_PRIVATE_KEY }}
-          CODE_SIGNING_GPG_PASSPHRASE: ${{ GPG_PASSPHRASE }}
+          CODE_SIGNING_GPG_PRIVATE_KEY: ${{ steps.import_gpg.outputs.keyid }}
+          CODE_SIGNING_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
