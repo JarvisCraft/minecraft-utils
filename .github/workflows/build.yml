@@ -1,0 +1,36 @@
+name: Build
+
+# Build (creating JARs) on push, this includes building `master` and corresponding merge commits
+on: [ push ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Cache Maven local repository
+        uses: actions/cache@v2.1.2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      # This is a temporary workaround until stable PacketWrapper Legacy support is not merged into upstream
+      - name: Build submodules
+        run: ./build-submodules.sh
+
+      - name: Build with Maven
+        run: mvn -B package
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: plugin
+          path: custom-stuff-paper-plugin/target/custom-stuff-paper-plugin-*.jar
