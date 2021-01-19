@@ -4,6 +4,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import lombok.*;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 import ru.progrm_jarvis.javacommons.invoke.InvokeUtil;
 import ru.progrm_jarvis.minecraft.commons.nms.metadata.DataWatcherFactory;
 import ru.progrm_jarvis.minecraft.commons.nms.metadata.LegacyDataWatcherFactory;
@@ -11,6 +12,7 @@ import ru.progrm_jarvis.minecraft.commons.nms.metadata.StandardDataWatcherFactor
 
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Utility for NMS-related features
@@ -22,48 +24,51 @@ public class NmsUtil {
     /**
      * Base package of NMS (<i>net.minecraft.server.{version}</i>)
      */
-    private final String NMS_PACKAGE = "net.minecraft.server." + NMS_VERSION.name,
+    private final String NMS_PACKAGE = "net.minecraft.server." + NMS_VERSION.getName(),
     /**
      * Base package of CraftBukkit (<i>org.bukkit.craftbukkit.{version}</i>)
      */
-    CRAFT_BUKKIT_PACKAGE = "org.bukkit.craftbukkit." + NMS_VERSION.name;
+    CRAFT_BUKKIT_PACKAGE = "org.bukkit.craftbukkit." + NMS_VERSION.getName();
 
     /**
-     * Field access method-handle of <i>{nms}.Entity</i> class field responsible for entity <i>int-UID</i> generation.
+     * Field {@code {nms}.Entity.entityCount} responsible for entity ID generation.
+     *
+     * @apiNote this field should never be used directly, it is only intended for initialization
+     * of inner specific implementations of {@link EntityIdGenerator}.
      */
-    private final MethodHandle ENTITY_COUNT_FIELD__GETTER, ENTITY_COUNT_FIELD__SETTER;
+    private final @NotNull Field ENTITY_COUNT_FIELD;
 
-    private final Object ENTITY_COUNT_FIELD_MUTEX = new Object[0];
+    private final @NotNull EntityIdGenerator ENTITY_ID_GENERATOR;
 
     static {
         final Class<?> nmsEntityClass;
-        try {
-            nmsEntityClass = Class.forName(getNmsPackage() + ".Entity");
-        } catch (final ClassNotFoundException e) {
-            throw new IllegalStateException("Cannot find NMS-entity class", e);
+        {
+            val nmsEntityClassName = getNmsPackage() + ".Entity";
+            try {
+                nmsEntityClass = Class.forName(nmsEntityClassName);
+            } catch (final ClassNotFoundException e) {
+                throw new InternalError("Cannot find entity class by name \"" + nmsEntityClassName + '"', e);
+            }
         }
-        final Field entityCountField;
         try {
-            entityCountField = nmsEntityClass.getDeclaredField("entityCount");
+            ENTITY_COUNT_FIELD = nmsEntityClass.getDeclaredField("entityCount");
         } catch (NoSuchFieldException e) {
-            throw new IllegalStateException(
-                    "Cannot find field " + nmsEntityClass.getCanonicalName() + "#entityCount", e
+            throw new InternalError("Cannot find field " + nmsEntityClass.getCanonicalName() + "#entityCount", e);
+        }
+
+        final Class<?> entityCountFieldType;
+        if (AtomicInteger.class.isAssignableFrom(entityCountFieldType
+                = ENTITY_COUNT_FIELD.getType())) ENTITY_ID_GENERATOR = AtomicIntegerEntityIdGenerator.INSTANCE;
+        else if (entityCountFieldType == int.class) ENTITY_ID_GENERATOR = IntEntityIdGenerator.INSTANCE;
+        else throw new InternalError(
+                    "Field " + ENTITY_COUNT_FIELD + " of class " + nmsEntityClass + " has an unknown type"
             );
-        }
-        val accessible = entityCountField.isAccessible();
-        entityCountField.setAccessible(true);
-        try {
-            ENTITY_COUNT_FIELD__GETTER = InvokeUtil.toGetterMethodHandle(entityCountField);
-            ENTITY_COUNT_FIELD__SETTER = InvokeUtil.toSetterMethodHandle(entityCountField);
-        } finally {
-            entityCountField.setAccessible(accessible);
-        }
     }
 
     /**
      * DataWatcher factory valid for current server version
      */
-    private final DataWatcherFactory DATA_WATCHER_FACTORY = NMS_VERSION.generation < 9
+    private final DataWatcherFactory DATA_WATCHER_FACTORY = NMS_VERSION.getGeneration() < 9
             ? new LegacyDataWatcherFactory() : new StandardDataWatcherFactory();
 
     /**
@@ -127,12 +132,8 @@ public class NmsUtil {
      * @return new ID for an entity
      */
     @SneakyThrows
-    @Synchronized("ENTITY_COUNT_FIELD_MUTEX")
     public int nextEntityId() {
-        val id = (int) ENTITY_COUNT_FIELD__GETTER.invokeExact();
-        ENTITY_COUNT_FIELD__SETTER.invokeExact(id + 1);
-
-        return id;
+        return ENTITY_ID_GENERATOR.nextId();
     }
 
     /**
@@ -140,17 +141,17 @@ public class NmsUtil {
      */
     @Value
     @RequiredArgsConstructor
-    public static final class NmsVersion {
+    public static class NmsVersion {
 
         /**
          * Name of the version
          */
-        @NonNull private String name;
+        @NonNull String name;
 
         /**
          * Generation of a version (such as <b>13</b> for minecraft <i>1.<b>13</b>.2</i>)
          */
-        private short generation;
+        short generation;
 
         /**
          * Constructs a new NMS version by name specified (such as <i>v1_12_R1</i>).
@@ -171,6 +172,74 @@ public class NmsUtil {
             val craftServerPackage = Bukkit.getServer().getClass().getPackage().getName();
 
             return new NmsVersion(craftServerPackage.substring(craftServerPackage.lastIndexOf('.') + 1));
+        }
+    }
+
+    @FunctionalInterface
+    private interface EntityIdGenerator {
+        int nextId();
+    }
+
+    /**
+     * Implementation of {@link EntityIdGenerator} based on {@code int} {@link #ENTITY_COUNT_FIELD}.
+     *
+     * @implNote this implementation does allow ID generation
+     * only from {@link Bukkit#isPrimaryThread() Bukkit's primary thread}.
+     */
+    private final class IntEntityIdGenerator implements EntityIdGenerator {
+
+        private static final @NotNull EntityIdGenerator INSTANCE = new AtomicIntegerEntityIdGenerator();
+
+        /**
+         * Getter method-handle of {@link #ENTITY_COUNT_FIELD}.
+         */
+        private static final @NotNull MethodHandle ENTITY_COUNT_FIELD__GETTER;
+
+        /**
+         * Getter method-handle of {@link #ENTITY_COUNT_FIELD}.
+         */
+        private static final @NotNull MethodHandle ENTITY_COUNT_FIELD__SETTER;
+
+        static {
+            ENTITY_COUNT_FIELD__GETTER = InvokeUtil.toGetterMethodHandle(ENTITY_COUNT_FIELD);
+            ENTITY_COUNT_FIELD__SETTER = InvokeUtil.toSetterMethodHandle(ENTITY_COUNT_FIELD);
+        }
+
+        @Override
+        @SneakyThrows // MethodHandles invocation
+        public int nextId() {
+            if (!Bukkit.isPrimaryThread()) throw new IllegalStateException(
+                    "Entity IDs should only be generated on main Bukkit thread"
+            );
+
+            val id = (int) ENTITY_COUNT_FIELD__GETTER.invokeExact();
+            ENTITY_COUNT_FIELD__SETTER.invokeExact(id + 1);
+
+            return id;
+        }
+    }
+
+    /**
+     * Implementation of {@link EntityIdGenerator} based on {@link AtomicInteger} {@link #ENTITY_COUNT_FIELD}.
+     */
+    private final class AtomicIntegerEntityIdGenerator implements EntityIdGenerator {
+
+        private static final @NotNull EntityIdGenerator INSTANCE = new AtomicIntegerEntityIdGenerator();
+
+        private static final @NotNull AtomicInteger VALUE;
+
+        static {
+            final MethodHandle getter = InvokeUtil.toGetterMethodHandle(ENTITY_COUNT_FIELD);
+            try {
+                VALUE = (AtomicInteger) getter.invokeExact();
+            } catch (final Throwable x) {
+                throw new InternalError("Could not get the value of field " + ENTITY_COUNT_FIELD);
+            }
+        }
+
+        @Override
+        public int nextId() {
+            return VALUE.incrementAndGet();
         }
     }
 }
