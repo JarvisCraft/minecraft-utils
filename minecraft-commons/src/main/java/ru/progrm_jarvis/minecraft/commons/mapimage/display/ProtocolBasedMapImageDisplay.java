@@ -51,6 +51,8 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
 
     /**
      * Sends the whole image to the players.
+     *
+     * @param player player to whom the image should be sent
      */
     protected void sendFullImage(final @NonNull Player player) {
         new WrapperPlayServerMap() {{
@@ -125,7 +127,8 @@ public class ProtocolBasedMapImageDisplay implements MapImageDisplay {
     }
 
     @Override
-    @NonNull public Optional<Number> getMapId(final @NonNull Player player) {
+    @NonNull
+    public Optional<Number> getMapId(final @NonNull Player player) {
         return MapUtil.<Player, MapView, Optional<Number>>getOrDefault(
                 playerMaps, player, map -> Optional.of(PlayerMapManager.getMapId(map)), Optional::empty
         );
