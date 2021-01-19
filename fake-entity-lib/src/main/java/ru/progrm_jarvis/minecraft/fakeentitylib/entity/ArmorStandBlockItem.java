@@ -41,7 +41,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
             ARMOR_STAND_BODY_HEIGHT = (16 + 8) * PIXEL_SIZE,
             ARMOR_STAND_HEAD_ROOT_OFFSET = ARMOR_STAND_BODY_HEIGHT - HALF_PIXEL_SIZE,
             ITEM_CENTER_Y_OFFSET = 3 * PIXEL_SIZE + HALF_PIXEL_SIZE;
-                    // offset of the item center from the rotation center
+    // offset of the item center from the rotation center
 
     final boolean small, marker;
     final double itemCenterYOffset;
@@ -74,7 +74,10 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      * @param viewDistance view distance of this block-item
      * @param location location of this block-item
      * @param rotation rotation of this block item
+     * @param itemCenterYOffset offset of the item center on Y-axis
+     * @param offset offset of the entity from its logical center
      * @param small whether this block-item is small
+     * @param marker whether this block-item is marker
      * @param item item to be displayed by this block-item
      */
     protected ArmorStandBlockItem(final @Nullable UUID uuid,
@@ -105,12 +108,15 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
     /**
      * Creates new armor stand block-item by parameters specified.
      *
+     * @param uuid unique ID of the created entity
      * @param concurrent whether created block-item supports concurrent modification of players related to it
      * @param global whether created block-item is global (the value returned by {@link #isGlobal()})
      * @param viewDistance view distance of created block-item
+     * @param visible whether created block-item should be visible
      * @param location location of created block-item
      * @param rotation rotation of created block item
      * @param small whether created block-item is small
+     * @param marker whether created block-item is marker
      * @param item item to be displayed by this block-item
      * @return newly created armor stand block-item
      */
@@ -142,8 +148,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
         return location;
     }
 
-    protected static @NotNull
-    Offset rotationOffsets(final Vector3F rotation, double yOffset /* => y */) {
+    protected static @NotNull Offset rotationOffsets(final Vector3F rotation, double yOffset /* => y */) {
         // apply rotation matrices to align center: https://en.wikipedia.org/wiki/Rotation_matrix
         // let L be initial location and Q be geometrical center
         // the resulting location should be L' = L - Q'
@@ -165,6 +170,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
      *
      * @param rotation rotation of this block-item
      * @param small whether this block-item is small
+     * @param marker whether this block-item is marker
      * @return created metadata object
      */
     protected static WrappedDataWatcher createMetadata(final @Nullable Vector3F rotation,

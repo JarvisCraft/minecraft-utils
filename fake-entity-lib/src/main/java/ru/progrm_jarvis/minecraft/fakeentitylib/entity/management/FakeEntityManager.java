@@ -1,7 +1,6 @@
 package ru.progrm_jarvis.minecraft.fakeentitylib.entity.management;
 
 import lombok.NonNull;
-import org.bukkit.plugin.Plugin;
 import ru.progrm_jarvis.javacommons.annotation.DontOverrideEqualsAndHashCode;
 import ru.progrm_jarvis.javacommons.collection.concurrent.ConcurrentCollections;
 import ru.progrm_jarvis.minecraft.commons.plugin.BukkitPluginContainer;
@@ -85,7 +84,7 @@ public interface FakeEntityManager<E extends FakeEntity> extends BukkitPluginCon
      *
      * @param entity entity to manage
      *
-     * @apiNote Normally management should happen until {@link #unmanageEntity(E)} is called with this entity
+     * @apiNote Normally management should happen until {@link #unmanageEntity(FakeEntity)} is called with this entity
      * or (in most cases) if the entity is no longer non-weakly referenced.
      */
     void manageEntity(@NonNull E entity);
@@ -110,7 +109,7 @@ public interface FakeEntityManager<E extends FakeEntity> extends BukkitPluginCon
 
     /**
      * Removes the entity managed by this manager.
-     * This is a logical equivalent of calling {@link #unmanageEntity(E)} and {@link E#remove()}
+     * This is a logical equivalent of calling {@link #unmanageEntity(FakeEntity)} and {@link FakeEntity#remove()}
      *
      * @param entity entity to remove
      *
