@@ -9,7 +9,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.progrm_jarvis.minecraft.commons.nms.NmsUtil;
 
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +23,11 @@ import java.util.UUID;
 @ToString
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
+
+    /**
+     * Minor version of Minecraft.
+     */
+    private static final int MINECRAFT_MINOR_VERSION = NmsUtil.getVersion().getGeneration();
 
     ///////////////////////////////////////////////////////////////////////////
     // Basic entity data
@@ -176,6 +183,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
      */
     protected void performSpawnNoChecks(final Player player) {
         spawnPacket.sendPacket(player);
+        metadataPacket.sendPacket(player);
     }
 
     /**
@@ -207,11 +215,20 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
             thisSpawnPacket.setVelocityY(thisVelocity.getY());
             thisSpawnPacket.setVelocityZ(thisVelocity.getZ());
         }
+    }
 
-        {
-            final WrappedDataWatcher thisMetadata;
-            if ((thisMetadata = metadata) != null) thisSpawnPacket.setMetadata(thisMetadata);
+    protected void actualizeMetadataPacket(final @NotNull WrappedDataWatcher metadata) {
+        WrapperPlayServerEntityMetadata thisMetadataPacket;
+        if ((thisMetadataPacket = metadataPacket) == null) {
+            metadataPacket = thisMetadataPacket = new WrapperPlayServerEntityMetadata();
+            thisMetadataPacket.setEntityID(entityId);
         }
+        thisMetadataPacket.setMetadata(metadata.getWatchableObjects());
+    }
+
+    protected void actualizeMetadataPacket() {
+        final WrappedDataWatcher thisMetadata;
+        if ((thisMetadata = metadata) != null) actualizeMetadataPacket(thisMetadata);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -222,6 +239,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     public void spawn() {
         if (visible) {
             actualizeSpawnPacket();
+            actualizeMetadataPacket();
 
             for (val entry : players.entrySet()) if (entry.getValue()) performSpawnNoChecks(entry.getKey());
         }
@@ -397,14 +415,9 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
             final WrappedDataWatcher thisMetadata;
             if ((thisMetadata = metadata) == null) return;
 
-            WrapperPlayServerEntityMetadata thisMetadataPacket;
-            if ((thisMetadataPacket = metadataPacket) == null) {
-                metadataPacket = thisMetadataPacket = new WrapperPlayServerEntityMetadata();
-                thisMetadataPacket.setEntityID(entityId);
-            }
-            thisMetadataPacket.setMetadata(thisMetadata.getWatchableObjects());
+            actualizeMetadataPacket(thisMetadata);
 
-            for (val entry : players.entrySet()) if (entry.getValue()) thisMetadataPacket.sendPacket(entry.getKey());
+            for (val entry : players.entrySet()) if (entry.getValue()) metadataPacket.sendPacket(entry.getKey());
         }
     }
 
@@ -415,6 +428,7 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     @Override
     protected void render(final Player player) {
         actualizeSpawnPacket();
+        actualizeMetadataPacket();
         performSpawnNoChecks(player);
 
         players.put(player, true);
