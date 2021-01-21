@@ -22,12 +22,13 @@ import java.util.UUID;
  * @see <a href="https://wiki.vg/index.php?title=Entity_metadata&oldid=7410">1.8 metadata format</a>
  */
 @UtilityClass
+@SuppressWarnings("ClassWithOnlyPrivateConstructors")
 public class MetadataGenerator {
 
     private final int VERSION = NmsUtil.getVersion().getGeneration();
     private final DataWatcherFactory FACTORY = NmsUtil.getDataWatcherFactory();
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Entity {
 
         public static WrappedWatchableObject entityFlags(final Flag... flags) {
@@ -63,6 +64,8 @@ public class MetadataGenerator {
             throw new UnsupportedOperationException("Versions prior to 1.9 don't support No Gravity entity flag");
         }
 
+        // TODO add Pose support for late versions (available since 1.14)
+
         @RequiredArgsConstructor
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Flag {
@@ -79,39 +82,39 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Projectile extends Entity {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Snowball extends Projectile {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Egg extends Projectile {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Potion extends Projectile {
 
         public static WrappedWatchableObject potion(final Object nmsItemStackPotion) {
             if (VERSION >= 9) return FACTORY.createWatchableItemStack(6, nmsItemStackPotion);
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Potion metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
 
         public static WrappedWatchableObject potion(final ItemStack potion) {
             if (VERSION >= 9) return FACTORY.createWatchable(6, potion);
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Potion metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class FallingBlock extends Entity {
 
         public static WrappedWatchableObject position(final BlockPosition position) {
             if (VERSION >= 9) return FACTORY.createWatchable(6, position);
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Potion metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class AreaEffectCloud extends Entity {
 
         public static WrappedWatchableObject radius(final float radius) {
@@ -132,21 +135,21 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class FishingHook extends Entity {
 
         public static WrappedWatchableObject hookedEntity(final int hookedEntityId) {
             if (VERSION >= 9) return FACTORY.createWatchable(6, hookedEntityId);
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Fishing Hook metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
 
         public static WrappedWatchableObject hookedEntity(final org.bukkit.entity.Entity entity) {
             if (VERSION >= 9) return hookedEntity(entity.getEntityId() + 1);
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Fishing Hook metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Arrow extends Entity {
 
         public static WrappedWatchableObject arrowFlags(final Flag... flags) {
@@ -158,7 +161,7 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject shooter(final @Nullable UUID shooterUuid) {
             if (VERSION >= 9) return FACTORY.createWatchableOptionalUUID(7, Optional.ofNullable(shooterUuid));
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Arrow metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
 
         @RequiredArgsConstructor
@@ -171,7 +174,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class TippedArrow extends Arrow {
 
         public static WrappedWatchableObject color(final int color) {
@@ -179,7 +182,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Trident extends Arrow {
 
         public static WrappedWatchableObject loyaltyLevel(final int loyaltyLevel) {
@@ -187,7 +190,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Boat extends Entity {
 
         public static WrappedWatchableObject timeSinceLastHit(final int timeSinceLastHit) {
@@ -204,22 +207,22 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject type(final Type type) {
             if (VERSION >= 9) return FACTORY.createWatchable(9, type.value);
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Boat type metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
 
         public static WrappedWatchableObject rightPaddleTurning(final boolean rightPaddleTurning) {
             if (VERSION >= 9) return FACTORY.createWatchable(10, rightPaddleTurning);
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Boat right paddle turning metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
 
         public static WrappedWatchableObject leftPaddleTurning(final boolean leftPaddleTurning) {
             if (VERSION >= 9) return FACTORY.createWatchable(11, leftPaddleTurning);
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Boat left paddle turning metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
 
         public static WrappedWatchableObject splashTimer(final int splashTimer) {
             if (VERSION >= 9) return FACTORY.createWatchable(12, splashTimer);
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Boat splash timer metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
 
         @RequiredArgsConstructor
@@ -236,7 +239,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class EnderCrystal extends Entity {
 
         public static WrappedWatchableObject position(final BlockPosition position) {
@@ -249,25 +252,25 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject health(final int health) {
             if (VERSION >= 9) throw new UnsupportedOperationException(
-                    "1.9 and later don't support Ender Crystal health metadata"
+                    "1.9 and later don't support this metadata"
             );
             return FACTORY.createWatchable(8, health);
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Fireball extends Entity {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class WitherSkull extends Entity {
 
         public static WrappedWatchableObject invulnerable(final boolean invulnerable) {
             if (VERSION >= 9) return FACTORY.createWatchable(6, invulnerable);
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Wither Skull invulnerable metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Fireworks extends Entity {
 
         public static WrappedWatchableObject item(final Object nmsItem) {
@@ -280,19 +283,19 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject shooter(final int shooter) {
             if (VERSION >= 9) return FACTORY.createWatchable(6, shooter);
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Wither Fireworks shooter metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
 
         public static WrappedWatchableObject shooter(final org.bukkit.entity.Entity entity) {
             if (VERSION >= 9) return shooter(entity.getEntityId());
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Fireworks shooter metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Hanging extends Entity {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class ItemFrame extends Hanging {
 
         public static WrappedWatchableObject item(final Object nmsItem) {
@@ -309,7 +312,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Item extends Entity {
 
         public static WrappedWatchableObject item(final Object nmsItem) {
@@ -321,39 +324,51 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
-    public static class Living extends Entity {
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class LivingEntity extends Entity {
 
         public static WrappedWatchableObject handStates(final HandState... handStates) {
             if (VERSION >= 9) {
                 var handStateBytes = (byte) 0;
                 for (val handState : handStates) handStateBytes |= handState.value;
 
-                return FACTORY.createWatchableObject(6, handStateBytes);
+                return FACTORY.createWatchableObject(VERSION >= 14 ? 7 : 6, handStateBytes);
             }
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Living handStates metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
 
         public static WrappedWatchableObject health(final float health) {
-            return FACTORY.createWatchable(VERSION >= 9 ? 7 : 6, health);
+            return FACTORY.createWatchable(VERSION >= 14 ? 8 : VERSION >= 9 ? 7 : 6, health);
         }
 
         public static WrappedWatchableObject potionEffectColor(final int potionEffectColor) {
-            return FACTORY.createWatchable(VERSION >= 9 ? 8 : 7, potionEffectColor);
+            return FACTORY.createWatchable(VERSION >= 14 ? 9 : VERSION >= 9 ? 8 : 7, potionEffectColor);
         }
 
         public static WrappedWatchableObject potionEffectAmbient(final boolean potionEffectAmbient) {
-            return FACTORY.createWatchable(VERSION >= 9 ? 8 : 9, potionEffectAmbient);
+            return FACTORY.createWatchable(VERSION >= 14 ? 10 : VERSION >= 9 ? 8 : 9, potionEffectAmbient);
         }
 
         public static WrappedWatchableObject numberOfArrows(final int numberOfArrows) {
-            return FACTORY.createWatchable(VERSION >= 9 ? 10 : 9, numberOfArrows);
+            return FACTORY.createWatchable(VERSION >= 14 ? 11 : VERSION >= 9 ? 10 : 9, numberOfArrows);
         }
 
-        @Deprecated
+        public static WrappedWatchableObject healthAddedByAbsorption(final int healthAddedByAbsorption) {
+            // TODO check version
+            if (VERSION >= 14) return FACTORY.createWatchable(12, healthAddedByAbsorption);
+            throw new UnsupportedOperationException("Versions prior to 1.14 don't support this metadata");
+        }
+
+        public static WrappedWatchableObject bedLocation(final @Nullable BlockPosition bedLocation) {
+            // TODO check version & if nullability is correct
+            if (VERSION >= 14) return FACTORY.createWatchable(13, bedLocation);
+            throw new UnsupportedOperationException("Versions prior to 1.14 don't support this metadata");
+        }
+
+        @Deprecated // since 1.9 this is part of Insentient
         public static WrappedWatchableObject noAi(final boolean noAi) {
             if (VERSION >= 9) return noAi
-                    ? Insentient.insentientFlags(Insentient.Flag.NO_AI) : Insentient.insentientFlags();
+                    ? Mob.insentientFlags(Mob.Flag.NO_AI) : Mob.insentientFlags();
             return FACTORY.createWatchable(15, noAi);
         }
 
@@ -368,20 +383,20 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
-    public static class Player extends Living {
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Player extends LivingEntity {
 
         public static WrappedWatchableObject additionalHearts(final float additionalHearts) {
             if (VERSION >= 9) return FACTORY.createWatchable(11, additionalHearts);
             throw new UnsupportedOperationException(
-                    "Versions prior to 1.9 don't support Player additional hearts metadata"
+                    "Versions prior to 1.9 don't support this metadata"
             );
         }
 
         public static WrappedWatchableObject score(final int score) {
             if (VERSION >= 9) return FACTORY.createWatchable(12, score);
             throw new UnsupportedOperationException(
-                    "Versions prior to 1.9 don't support Player score metadata"
+                    "Versions prior to 1.9 don't support this metadata"
             );
         }
 
@@ -393,42 +408,42 @@ public class MetadataGenerator {
                 return FACTORY.createWatchableObject(13, skinPartBytes);
             }
             throw new UnsupportedOperationException(
-                    "Versions prior to 1.9 don't support Player skin parts metadata"
+                    "Versions prior to 1.9 don't support this metadata"
             );
         }
 
         public static WrappedWatchableObject mainHand(final MainHand mainHand) {
             if (VERSION >= 9) return FACTORY.createWatchable(14, mainHand.value);
             throw new UnsupportedOperationException(
-                    "Versions prior to 1.9 don't support Player main hand metadata"
+                    "Versions prior to 1.9 don't support this metadata"
             );
         }
 
         public static WrappedWatchableObject leftShoulderEntity(final Object leftShoulderEntityNbtTagCompound) {
             if (VERSION >=13) return FACTORY.createWatchableObject(15, leftShoulderEntityNbtTagCompound);
             throw new UnsupportedOperationException(
-                    "Versions prior to 1.13 don't support Player left shoulder entity metadata"
+                    "Versions prior to 1.13 don't support this metadata"
             );
         }
 
         public static WrappedWatchableObject leftShoulderEntity(final NbtCompound leftShoulderEntityNbt) {
             if (VERSION >= 13) return leftShoulderEntity(leftShoulderEntityNbt.getHandle());
             throw new UnsupportedOperationException(
-                    "Versions prior to 1.13 don't support Player left shoulder entity metadata"
+                    "Versions prior to 1.13 don't support this metadata"
             );
         }
 
         public static WrappedWatchableObject rightShoulderEntity(final Object rightShoulderEntityNbtTagCompound) {
             if (VERSION >= 13) return FACTORY.createWatchableNBTTagCompound(16, rightShoulderEntityNbtTagCompound);
             throw new UnsupportedOperationException(
-                    "Versions prior to 1.13 don't support Player right shoulder entity metadata"
+                    "Versions prior to 1.13 don't support this metadata"
             );
         }
 
         public static WrappedWatchableObject rightShoulderEntity(final NbtCompound rightShoulderEntityNbt) {
             if (VERSION >= 13) return rightShoulderEntity(rightShoulderEntityNbt.getHandle());
             throw new UnsupportedOperationException(
-                    "Versions prior to 1.13 don't support Player right shoulder entity metadata"
+                    "Versions prior to 1.13 don't support this metadata"
             );
         }
 
@@ -455,38 +470,39 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
-    public static class ArmorStand extends Living {
+    // TODO check versions
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class ArmorStand extends LivingEntity {
 
         public static WrappedWatchableObject armorStandFlags(final Flag... flags) {
             var flagBytes = (byte) 0;
             for (val flag : flags) flagBytes |= flag.value;
 
-            return FACTORY.createWatchable(VERSION >= 9 ? 11 : 10, flagBytes);
+            return FACTORY.createWatchable(VERSION >= 14 ? 14 : VERSION >= 9 ? 11 : 10, flagBytes);
         }
 
         public static WrappedWatchableObject headRotation(final Vector3F headRotation) {
-            return FACTORY.createWatchable(VERSION >= 9 ? 12 : 11, headRotation);
+            return FACTORY.createWatchable(VERSION >= 14 ? 15 : VERSION >= 9 ? 12 : 11, headRotation);
         }
 
         public static WrappedWatchableObject bodyRotation(final Vector3F bodyRotation) {
-            return FACTORY.createWatchable(VERSION >= 9 ? 13 : 12, bodyRotation);
+            return FACTORY.createWatchable(VERSION >= 14 ? 16 : VERSION >= 9 ? 13 : 12, bodyRotation);
         }
 
         public static WrappedWatchableObject leftArmRotation(final Vector3F leftArmRotation) {
-            return FACTORY.createWatchable(VERSION >= 9 ? 14 : 13, leftArmRotation);
+            return FACTORY.createWatchable(VERSION >= 14 ? 17 : VERSION >= 9 ? 14 : 13, leftArmRotation);
         }
 
         public static WrappedWatchableObject rightArmRotation(final Vector3F rightArmRotation) {
-            return FACTORY.createWatchable(VERSION >= 9 ? 15 : 14, rightArmRotation);
+            return FACTORY.createWatchable(VERSION >= 14 ? 18 : VERSION >= 9 ? 15 : 14, rightArmRotation);
         }
 
         public static WrappedWatchableObject leftLegRotation(final Vector3F leftLegRotation) {
-            return FACTORY.createWatchable(VERSION >= 9 ? 16 : 15, leftLegRotation);
+            return FACTORY.createWatchable(VERSION >= 14 ? 19 : VERSION >= 9 ? 16 : 15, leftLegRotation);
         }
 
         public static WrappedWatchableObject rightLegRotation(final Vector3F rightLegRotation) {
-            return FACTORY.createWatchable(VERSION >= 9 ? 17 : 16, rightLegRotation);
+            return FACTORY.createWatchable(VERSION >= 14 ? 20 : VERSION >= 9 ? 17 : 16, rightLegRotation);
         }
 
         @RequiredArgsConstructor
@@ -501,8 +517,8 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
-    public static class Insentient extends Living {
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Mob extends LivingEntity {
 
         public static WrappedWatchableObject insentientFlags(final Flag... flags) {
             if (VERSION >= 9) {
@@ -527,11 +543,11 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
-    public static class Ambient extends Insentient {}
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class AmbientCreature extends Mob {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
-    public static class Bat extends Ambient {
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Bat extends AmbientCreature {
 
         public static WrappedWatchableObject batFlags(final Flag... flags) {
             var flagBytes = (byte) 0;
@@ -549,17 +565,17 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
-    public static class Creature extends Insentient {}
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class PathfinderMob extends Mob {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
-    public static class WaterMob extends Creature {}
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class WaterAnimal extends PathfinderMob {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
-    public static class Squid extends WaterMob {}
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Squid extends WaterAnimal {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
-    public static class Dolphin extends WaterMob {
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Dolphin extends WaterAnimal {
 
         public static WrappedWatchableObject treasurePosition(final BlockPosition treasurePosition) {
             return FACTORY.createWatchable(12, treasurePosition);
@@ -574,18 +590,18 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
-    public static class Fish extends WaterMob {
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Fish extends WaterAnimal {
 
         public static WrappedWatchableObject fromBucket(final boolean fromBucket) {
             return FACTORY.createWatchable(12, fromBucket);
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Cod extends Fish {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class PufferFish extends Fish {
 
         public static WrappedWatchableObject puffState(final int puffState) {
@@ -593,10 +609,10 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Salmon extends Fish {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class TropicalFish extends Fish {
 
         public static WrappedWatchableObject variant(final int variant) {
@@ -604,18 +620,18 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
-    public static class Ageable extends Creature {
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Ageable extends PathfinderMob {
 
         public static WrappedWatchableObject baby(final boolean baby) {
             return FACTORY.createWatchable(12, baby);
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Animal extends Ageable {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class AbstractHorse extends Animal {
 
         public static WrappedWatchableObject horseFlags(final Flag... flags) {
@@ -657,13 +673,13 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Horse extends AbstractHorse {
 
         @Deprecated
         public static WrappedWatchableObject horseType(final Type horseType) {
             if (VERSION >= 9) throw new UnsupportedOperationException(
-                    "Versions 1.9 and later don't support Horse type metadata"
+                    "Versions 1.9 and later don't support this metadata"
             );
             return FACTORY.createWatchable(19, horseType.value);
         }
@@ -729,13 +745,13 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class ZombieHorse extends AbstractHorse {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class SkeletonHorse extends AbstractHorse {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class ChestedHorse extends AbstractHorse {
 
         public static WrappedWatchableObject chest(final boolean chest) {
@@ -744,10 +760,10 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Donkey extends ChestedHorse {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Llama extends ChestedHorse {
 
         public static WrappedWatchableObject strength(final int strength) {
@@ -774,10 +790,10 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Mule extends ChestedHorse {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Pig extends Animal {
 
         public static WrappedWatchableObject saddle(final boolean saddle) {
@@ -786,11 +802,11 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject boostTime(final int boostTime) {
             if (VERSION >= 9) return FACTORY.createWatchable(14, boostTime);
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Pig boost time metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Rabbit extends Animal {
 
         public static WrappedWatchableObject type(final int type) {
@@ -798,7 +814,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Turtle extends Animal {
 
         public static WrappedWatchableObject home(final BlockPosition home) {
@@ -826,7 +842,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class PolarBear extends Animal {
 
         public static WrappedWatchableObject standingUp(final boolean standingUp) {
@@ -834,7 +850,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Sheep extends Animal {
 
         public static WrappedWatchableObject sheepData(final byte color, final boolean sheared) {
@@ -842,7 +858,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Tameable extends Animal {
 
         public static WrappedWatchableObject tameableFlags(final Flag... flags) {
@@ -867,7 +883,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Ocelot extends Tameable {
 
         public static WrappedWatchableObject variant(final Variant variant) {
@@ -886,7 +902,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Wolf extends Tameable {
 
         public static WrappedWatchableObject damageTaken(final float damageTaken) {
@@ -902,7 +918,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Parrot extends Tameable {
 
         public static WrappedWatchableObject variant(final Variant variant) {
@@ -922,12 +938,12 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Villager extends Ageable {
 
         public static WrappedWatchableObject profession(final Profession profession) {
             if (VERSION >= 9) throw new UnsupportedOperationException(
-                    "1.9 and later don't support Villager profession metadata"
+                    "1.9 and later don't support this metadata"
             );
             return FACTORY.createWatchable(13, profession.value);
         }
@@ -945,10 +961,10 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
-    public static class Golem extends Creature {}
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Golem extends PathfinderMob {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class IronGolem extends Golem {
 
         public static WrappedWatchableObject ironGolemFlags(final Flag... flags) {
@@ -967,7 +983,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Snowman extends Golem {
 
         public static WrappedWatchableObject snowmanFlags(final Flag... flags) {
@@ -977,7 +993,7 @@ public class MetadataGenerator {
 
                 return FACTORY.createWatchable(12, flagBytes);
             }
-            throw new UnsupportedOperationException("Versions lower than 1.9 don't support Snowman flags metadata");
+            throw new UnsupportedOperationException("Versions lower than 1.9 don't support this metadata");
         }
 
         @RequiredArgsConstructor
@@ -989,7 +1005,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Shulker extends Golem {
 
         public static WrappedWatchableObject facing(final Object enumDirection) {
@@ -1013,10 +1029,10 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
-    public static class Monster extends Creature {}
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Monster extends PathfinderMob {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Blaze extends Monster {
 
         public static WrappedWatchableObject blazeFlags(final Flag... flags) {
@@ -1035,7 +1051,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Creeper extends Monster {
 
         public static WrappedWatchableObject creeperState(final State state) {
@@ -1048,7 +1064,7 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject ignited(final boolean ignited) {
             if (VERSION >= 9) return FACTORY.createWatchable(14, ignited);
-            throw new UnsupportedOperationException("Versions lower than 1.9 don't support Creeper ignited metadata");
+            throw new UnsupportedOperationException("Versions lower than 1.9 don't support this metadata");
         }
 
         @RequiredArgsConstructor
@@ -1061,13 +1077,13 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Endermite extends Monster {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class GiantZombie extends Monster {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Guardian extends Monster {
 
         public static WrappedWatchableObject retractingSpikes(final boolean retractingSpikes) {
@@ -1092,13 +1108,13 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class ElderGuardian extends Guardian {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Silverfish extends Monster {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Illager extends Monster {
 
         public static WrappedWatchableObject illagerState(final State state) {
@@ -1114,10 +1130,10 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class VindicatorIllager extends Illager {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class SpellcasterIllager extends Illager {
 
         public static WrappedWatchableObject spell(final Spell spell) {
@@ -1136,13 +1152,13 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class EvocationIllager extends SpellcasterIllager {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class IllusionIllager extends SpellcasterIllager {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Vex extends Monster {
 
         public static WrappedWatchableObject vexFlags(final Flag... flags) {
@@ -1161,10 +1177,10 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class EvocationFangs extends Entity {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class AbstractSkeleton extends Monster {
 
         public static WrappedWatchableObject swingingArms(final boolean swingingArms) {
@@ -1172,16 +1188,16 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Skeleton extends AbstractSkeleton {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class WitherSkeleton extends AbstractSkeleton {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Stray extends AbstractSkeleton {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Spider extends Monster {
 
         public static WrappedWatchableObject spiderFlags(final Flag... flags) {
@@ -1200,7 +1216,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Witch extends Monster {
 
         public static WrappedWatchableObject drinkingPotion(final boolean drinkingPotion) {
@@ -1208,7 +1224,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Wither extends Monster {
 
         public static WrappedWatchableObject centerHeadTarget(final int centerHeadTargetId) {
@@ -1240,7 +1256,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Zombie extends Monster {
 
         public static WrappedWatchableObject baby(final boolean baby) {
@@ -1255,19 +1271,19 @@ public class MetadataGenerator {
         public static WrappedWatchableObject handsUp(final boolean handsUp) {
             if (VERSION >= 9) return FACTORY.createWatchable(14, handsUp);
             else throw new UnsupportedOperationException(
-                    "Versions prior to 1.9 don't support Zombie hands up flag metadata"
+                    "Versions prior to 1.9 don't support this metadata"
             );
         }
 
         public static WrappedWatchableObject becomingDrowned(final boolean becomingDrowned) {
             if (VERSION >= 13) return FACTORY.createWatchable(15, becomingDrowned);
             else throw new UnsupportedOperationException(
-                    "Versions prior to 1.13 don't support Zombie becoming drowned flag metadata"
+                    "Versions prior to 1.13 don't support this metadata"
             );
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class ZombieVillager extends Zombie {
 
         public static WrappedWatchableObject converting(final boolean converting) {
@@ -1279,30 +1295,30 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Husk extends Zombie {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Drowned extends Zombie {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Enderman extends Monster {
 
         public static WrappedWatchableObject carriedBlock(final Object carriedBlock) {
             if (VERSION >= 9) return FACTORY.createWatchableOptionalIBlockData(12, Optional.of(carriedBlock));
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Enderman carriedBlock<NMSBlockData> metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
 
         public static WrappedWatchableObject carriedBlockId(final short carriedBlockId) {
             if (VERSION >= 9) throw new UnsupportedOperationException(
-                    "Versions 1.9 and later don't support Enderman carried block ID metadata"
+                    "Versions 1.9 and later don't support this metadata"
             );
             return FACTORY.createWatchable(16, carriedBlockId);
         }
 
         public static WrappedWatchableObject carriedBlockData(final byte carriedBlockData) {
             if (VERSION >= 9) throw new UnsupportedOperationException(
-                    "Versions 1.9 and later don't support Enderman carried block data metadata"
+                    "Versions 1.9 and later don't support this metadata"
             );
             return FACTORY.createWatchable(17, carriedBlockData);
         }
@@ -1312,12 +1328,12 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class EnderDragon extends Monster {
 
         public static WrappedWatchableObject phase(final Phase phase) {
             if (VERSION >= 9) return FACTORY.createWatchable(12, phase.value);
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Ender Dragon phase metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
 
         @RequiredArgsConstructor
@@ -1339,10 +1355,10 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
-    public static class Flying extends Insentient {}
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Flying extends Mob {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Ghast extends Flying {
 
         public static WrappedWatchableObject attacking(final boolean attacking) {
@@ -1350,7 +1366,7 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Phantom extends Flying {
 
         public static WrappedWatchableObject size(final int size) {
@@ -1358,18 +1374,18 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
-    public static class Slime extends Insentient {
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Slime extends Mob {
 
         public static WrappedWatchableObject size(final int size) {
             return FACTORY.createWatchable(VERSION >= 9 ? 12 : 16, size);
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class LlamaSpit extends Entity {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Minecart extends Entity {
 
         public static WrappedWatchableObject shakingPower(final int shakingPower) {
@@ -1397,19 +1413,19 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class MinecartRideable extends Minecart {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class MinecartContainer extends Minecart {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class MinecartHopper extends Minecart {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class MinecartChest extends Minecart {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class MinecartFurnace extends Minecart {
 
         public static WrappedWatchableObject powered(final boolean powered) {
@@ -1417,32 +1433,32 @@ public class MetadataGenerator {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class MinecartTnt extends Minecart {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class MinecartSpawner extends Minecart {}
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class MinecartCommandBlock extends Minecart {
-        
+
         public static WrappedWatchableObject command(final String command) {
             if (VERSION >= 9) return FACTORY.createWatchable(12, command);
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Minecart Command Block command metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
-        
+
         public static WrappedWatchableObject lastOutput(final WrappedChatComponent lastOutput) {
             if (VERSION >= 9) return FACTORY.createWatchable(13, lastOutput);
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support Minecart Command Block last output metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.NONE)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class TNTPrimed extends Entity {
 
         public static WrappedWatchableObject fuseTime(final int fuseTime) {
             if (VERSION >= 9) return FACTORY.createWatchable(6, fuseTime);
-            throw new UnsupportedOperationException("Versions prior to 1.9 don't support TNT Primed fuse time metadata");
+            throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
     }
 }
