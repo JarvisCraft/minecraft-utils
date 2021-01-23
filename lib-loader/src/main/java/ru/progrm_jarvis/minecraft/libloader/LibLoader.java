@@ -3,6 +3,7 @@ package ru.progrm_jarvis.minecraft.libloader;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.java.Log;
 
 import java.io.*;
 import java.lang.invoke.MethodHandle;
@@ -18,22 +19,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 
 /**
  * A tiny loader of JAR dependencies to runtime.
  */
+@Log
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LibLoader {
-
-    /**
-     * Default logger to use if no other was specified for the lib loader instance
-     */
-    private static final Logger DEFAULT_LOGGER = Logger.getLogger("LibLoader");
 
     /**
      * Method handle of {@code URLClassLoader.addURL(URL)}
@@ -49,11 +45,6 @@ public class LibLoader {
      * Directory to store library artifacts and hashes in
      */
     @NonNull private final File rootDirectory;
-
-    /**
-     * Logger for external usage
-     */
-    @Getter @Setter @NonNull private Logger log = DEFAULT_LOGGER;
 
     final @NonNull Map<String, File> loadedLibs;
 
@@ -249,7 +240,9 @@ public class LibLoader {
         if (!artifactFile.isFile() || !hashFile.isFile() || !Files.lines(hashFile.toPath()).findFirst().equals(hash)) {
             {
                 log.info("Downloading library " + name);
-                loadFromInputStreamClosing(libCoords.openArtifactStream(), artifactFile);
+                try (val stream = libCoords.openArtifactStream()) {
+                    loadFromInputStream(stream, artifactFile);
+                }
             }
             Files.write(hashFile.toPath(), hash.orElse("").getBytes(StandardCharsets.UTF_8));
         }
@@ -328,17 +321,12 @@ public class LibLoader {
 
     /**
      * Loads a file from input stream to file specified.
-     * The input stream will be closed after the operation (even if it exits with an exception).
      *
      * @param inputStream input stream from which to get the file
      * @param file file to which to read read data
      * @throws IOException if an exception occurs in an I/O operation
      */
-    public static void loadFromInputStreamClosing(final InputStream inputStream, final File file) throws IOException {
-        try {
-            Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } finally {
-            inputStream.close();
-        }
+    public static void loadFromInputStream(final InputStream inputStream, final File file) throws IOException {
+        Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 }
