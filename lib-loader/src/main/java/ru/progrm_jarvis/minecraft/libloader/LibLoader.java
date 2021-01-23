@@ -331,6 +331,7 @@ public class LibLoader {
      * The input stream will be closed after the operation (even if it exits with an exception).
      *
      * @param inputStream input stream from which to get the file
+     * @param file file to which to read read data
      * @throws IOException if an exception occurs in an I/O operation
      */
     public static void loadFromInputStreamClosing(final InputStream inputStream, final File file) throws IOException {
