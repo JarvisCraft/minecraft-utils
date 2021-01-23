@@ -22,9 +22,5 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
 
-      # This is a temporary workaround until stable PacketWrapper Legacy support is not merged into upstream
-      - name: Build submodules
-        run: ./build-submodules.sh
-
       - name: Build with Maven
         run: mvn -B test

@@ -71,25 +71,26 @@
     </distributionManagement>
 
     <repositories>
-        <!-- Sonatype Repository of Snapshots-->
         <repository>
-            <id>sonatype-snapshot-repo</id>
+            <id>sonatype-ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
-        <!-- Mojang's Minecraft repository -->
         <repository>
-            <id>minecraft-repo</id>
+            <id>minecraft-libraries</id>
             <url>https://libraries.minecraft.net/</url>
         </repository>
-        <!-- Spigot repository -->
         <repository>
-            <id>spigotmc-repo</id>
+            <id>spigotmc</id>
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
-        <!-- Dmulloy2 repo -->
         <repository>
-            <id>dmulloy2-repo</id>
+            <id>dmulloy2</id>
             <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
+        </repository>
+        <!-- Temporary repo for -->
+        <repository>
+            <id>packet-wrapper-repo</id>
+            <url>https://maven.pkg.github.com/JarvisCraft/PacketWrapper</url>
         </repository>
     </repositories>
 
@@ -219,9 +220,9 @@
                 <version>1.5.21</version>
             </dependency>
             <dependency>
-                <groupId>com.comphenix.packetwrapper</groupId>
-                <artifactId>PacketWrapper</artifactId>
-                <version>1.16.4-R0.1-SNAPSHOT</version>
+                <groupId>ru.progrm-jarvis.minecraft</groupId>
+                <artifactId>packet-wrapper</artifactId>
+                <version>1.16.4-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>

@@ -23,10 +23,6 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
 
-      # This is a temporary workaround until stable PacketWrapper Legacy support is not merged into upstream
-      - name: Build submodules
-        run: ./build-submodules.sh
-
       - name: Import GPG signing key
         run: |
           echo -e "${{ secrets.CODE_SIGNING_GPG_PRIVATE_KEY }}" | gpg --batch --import
