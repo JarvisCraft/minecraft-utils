@@ -395,7 +395,7 @@
             <distributionManagement>
                 <repository>
                     <id>github-package-registry</id>
-                    <url>https://maven.pkg.github.com/JarvisCraft/padla</url>
+                    <url>https://maven.pkg.github.com/JarvisCraft/minecraft-utils</url>
                 </repository>
             </distributionManagement>
         </profile>
