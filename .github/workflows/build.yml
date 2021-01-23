@@ -22,12 +22,11 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
 
-      # This is a temporary workaround until stable PacketWrapper Legacy support is not merged into upstream
-      - name: Build submodules
-        run: ./build-submodules.sh
-
       - name: Build with Maven
-        run: mvn -B package
+        env:
+          PACKET_WRAPPER_GITHUB_PACKAGE_REGISTRY_ACCESS_USERNAME: JarvisCraft
+          PACKET_WRAPPER_GITHUB_PACKAGE_REGISTRY_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mvn -B package -s ./.github-actions/maven/minimal-settings.xml
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2

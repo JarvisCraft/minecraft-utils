@@ -26,8 +26,8 @@
             <artifactId>ProtocolLib</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.comphenix.packetwrapper</groupId>
-            <artifactId>PacketWrapper</artifactId>
+            <groupId>ru.progrm-jarvis.minecraft</groupId>
+            <artifactId>packet-wrapper</artifactId>
         </dependency>
         <dependency>
             <groupId>ru.progrm-jarvis</groupId>

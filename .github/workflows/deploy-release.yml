@@ -23,10 +23,6 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
 
-      # This is a temporary workaround until stable PacketWrapper Legacy support is not merged into upstream
-      - name: Build submodules
-        run: ./build-submodules.sh
-
       - name: Import GPG signing key
         run: |
           echo -e "${{ secrets.CODE_SIGNING_GPG_PRIVATE_KEY }}" | gpg --batch --import
@@ -34,6 +30,8 @@ jobs:
 
       - name: Deploy snapshot
         env:
+          PACKET_WRAPPER_GITHUB_PACKAGE_REGISTRY_ACCESS_USERNAME: JarvisCraft
+          PACKET_WRAPPER_GITHUB_PACKAGE_REGISTRY_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CODE_SIGNING_GPG_KEY_ID: ${{ secrets.CODE_SIGNING_GPG_KEY_ID }}
           CODE_SIGNING_GPG_KEY_PASSPHRASE: ${{ secrets.CODE_SIGNING_GPG_KEY_PASSPHRASE }}
           GITHUB_PACKAGE_REGISTRY_DEPLOYER: JarvisCraft

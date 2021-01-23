@@ -57,8 +57,8 @@ public class PacketListeners {
     @ToString
     public enum PacketCategory {
         PROTOCOL(PacketType.Protocol.class),
-        LEGACY_CLIENT(PacketType.Legacy.Client.class),
-        LEGACY_SERVER(PacketType.Legacy.Server.class),
+        //LEGACY_CLIENT(PacketType.Legacy.Client.class),
+        //LEGACY_SERVER(PacketType.Legacy.Server.class),
         LOGIN_CLIENT(PacketType.Login.Client.class),
         LOGIN_SERVER(PacketType.Login.Server.class),
         STATUS_CLIENT(PacketType.Status.Client.class),
