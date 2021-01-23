@@ -31,6 +31,7 @@ public interface LibCoords {
      * Opens stream for accessing library artifact.
      *
      * @return URL of the artifact containing dependency classes
+     * @throws IOException if an IO-error occurs while opening stream
      *
      * @apiNote returned stream <b>must</b> be manually closed
      * @apiNote should call{@link #assureIsRefreshed()} before all logic
