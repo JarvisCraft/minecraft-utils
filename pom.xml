@@ -89,7 +89,7 @@
         </repository>
         <!-- Temporary repo for -->
         <repository>
-            <id>packet-wrapper-repo</id>
+            <id>packet-wrapper</id>
             <url>https://maven.pkg.github.com/JarvisCraft/PacketWrapper</url>
         </repository>
     </repositories>
