@@ -3,11 +3,6 @@
     xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
     <servers>
         <server>
-            <id>packet-wrapper</id>
-            <username>${env.PACKET_WRAPPER_GITHUB_PACKAGE_REGISTRY_ACCESS_USERNAME}</username>
-            <password>${env.PACKET_WRAPPER_GITHUB_PACKAGE_REGISTRY_ACCESS_TOKEN}</password>
-        </server>
-        <server>
             <id>sonatype-ossrh</id>
             <username>${env.SONATYPE_OSSRH_DEPLOYER}</username>
             <password>${env.SONATYPE_OSSRH_TOKEN}</password>

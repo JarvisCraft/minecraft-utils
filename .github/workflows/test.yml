@@ -23,7 +23,4 @@ jobs:
           restore-keys: ${{ runner.os }}-maven-
 
       - name: Build with Maven
-        env:
-          PACKET_WRAPPER_GITHUB_PACKAGE_REGISTRY_ACCESS_USERNAME: JarvisCraft
-          PACKET_WRAPPER_GITHUB_PACKAGE_REGISTRY_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mvn -B test -s ./.github-actions/maven/minimal-settings.xml
+        run: mvn -B test
