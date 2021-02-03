@@ -80,11 +80,6 @@
             <id>dmulloy2</id>
             <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
         </repository>
-        <!-- Temporary repo for -->
-        <repository>
-            <id>packet-wrapper</id>
-            <url>https://maven.pkg.github.com/JarvisCraft/PacketWrapper</url>
-        </repository>
     </repositories>
 
     <build>
