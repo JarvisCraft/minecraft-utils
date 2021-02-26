@@ -5,7 +5,7 @@
     <parent>
         <groupId>ru.progrm-jarvis.minecraft</groupId>
         <artifactId>minecraft-utils</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>fake-entity-lib</artifactId>
 

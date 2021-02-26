@@ -9,7 +9,7 @@
          The version stands the same for all modules which will guarantee
          that modules depending on others will always be updated on update of others
                                                                                      -->
-    <version>0.1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <modules>
         <module>mc-unit</module>
         <module>minecraft-commons</module>
@@ -56,7 +56,8 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- JUnit -->
+        <!-- Versions -->
+        <version.minecraft-utils>1.0.0-SNAPSHOT</version.minecraft-utils>
         <version.padla>1.0.0-SNAPSHOT</version.padla>
         <version.junit>5.7.1</version.junit>
         <version.junit.platform>1.7.1</version.junit.platform>
@@ -139,30 +140,30 @@
         <dependencies>
             <!-- Local elements -->
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.progrm-jarvis.minecraft</groupId>
                 <artifactId>mc-unit</artifactId>
-                <version>${project.version}</version>
+                <version>${version.minecraft-utils}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.progrm-jarvis.minecraft</groupId>
                 <artifactId>minecraft-commons</artifactId>
-                <version>${project.version}</version>
+                <version>${version.minecraft-utils}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.progrm-jarvis.minecraft</groupId>
                 <artifactId>ez-cfg</artifactId>
-                <version>${project.version}</version>
+                <version>${version.minecraft-utils}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.progrm-jarvis.minecraft</groupId>
                 <artifactId>fake-entity-lib</artifactId>
-                <version>${project.version}</version>
+                <version>${version.minecraft-utils}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.progrm-jarvis.minecraft</groupId>
                 <artifactId>lib-loader</artifactId>
-                <version>${project.version}</version>
+                <version>${version.minecraft-utils}</version>
             </dependency>
 
             <!-- Hamcrest should be above any possible JUnit dependencies -->
