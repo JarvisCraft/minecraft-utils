@@ -1,7 +1,7 @@
 name: Build
 
 # Build (creating JARs) on push, this includes building `master` and corresponding merge commits
-on: [ push ]
+on: [ push, workflow_dispatch ]
 
 jobs:
   build:
