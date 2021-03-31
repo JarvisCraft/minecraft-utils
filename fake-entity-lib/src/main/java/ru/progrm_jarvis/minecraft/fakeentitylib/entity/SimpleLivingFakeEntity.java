@@ -65,16 +65,11 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
     /**
      * View distance for this entity or {@code -1} if none
      */
-    @Getter int viewDistance;
+    @Getter final int viewDistance;
 
     ///////////////////////////////////////////////////////////////////////////
     // Entity changing parameters
     ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Location of this fake entity
-     */
-    @Getter final @NonNull Location location;
 
     /**
      * Head pitch of this fake entity
@@ -153,7 +148,6 @@ public class SimpleLivingFakeEntity extends AbstractBasicFakeEntity {
 
         this.visible = visible;
 
-        this.location = location;
         this.headPitch = headPitch;
 
         this.metadata = metadata;
