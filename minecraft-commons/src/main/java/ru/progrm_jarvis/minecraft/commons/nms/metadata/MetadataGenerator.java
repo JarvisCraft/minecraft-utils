@@ -4,13 +4,14 @@ import com.comphenix.protocol.wrappers.*;
 import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import lombok.*;
+import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-import ru.progrm_jarvis.minecraft.commons.nms.ProtocolLibConversions;
 import ru.progrm_jarvis.minecraft.commons.nms.NmsUtil;
+import ru.progrm_jarvis.minecraft.commons.nms.ProtocolLibConversions;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -22,7 +23,7 @@ import java.util.UUID;
  * @see <a href="https://wiki.vg/index.php?title=Entity_metadata&oldid=7410">1.8 metadata format</a>
  */
 @UtilityClass
-@SuppressWarnings("ClassWithOnlyPrivateConstructors")
+@SuppressWarnings({"ClassWithOnlyPrivateConstructors", "EmptyClass", "unused", "NonFinalUtilityClass"})
 public class MetadataGenerator {
 
     private final int VERSION = NmsUtil.getVersion().getGeneration();
@@ -33,7 +34,7 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject entityFlags(final Flag... flags) {
             var flagBytes = (byte) 0;
-            for (val flag : flags) flagBytes |= flag.value;
+            for (val flag : flags) flagBytes |= flag.value();
 
             return FACTORY.createWatchable(0, flagBytes);
         }
@@ -67,6 +68,7 @@ public class MetadataGenerator {
         // TODO add Pose support for late versions (available since 1.14)
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Flag {
             ON_FIRE((byte) 0x01),
@@ -78,7 +80,7 @@ public class MetadataGenerator {
             INVISIBLE((byte) 0x20),
             GLOWING((byte) 0x80);
 
-            byte value;
+            @Getter byte value;
         }
     }
 
@@ -154,13 +156,13 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject arrowFlags(final Flag... flags) {
             var flagBytes = (byte) 0;
-            for (val flag : flags) flagBytes |= flag.value;
+            for (val flag : flags) flagBytes |= flag.value();
 
             return FACTORY.createWatchable(VERSION >= 9 ? 6 : 16, flagBytes);
         }
 
         public static WrappedWatchableObject shooter(final @Nullable UUID shooterUuid) {
-            if (VERSION >= 9) return FACTORY.createWatchableOptional(7, Optional.ofNullable(shooterUuid));
+            if (VERSION >= 9) return FACTORY.createWatchableOptional(7, shooterUuid);
             throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
 
@@ -206,7 +208,7 @@ public class MetadataGenerator {
         }
 
         public static WrappedWatchableObject type(final Type type) {
-            if (VERSION >= 9) return FACTORY.createWatchable(9, type.value);
+            if (VERSION >= 9) return FACTORY.createWatchable(9, type.value());
             throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
 
@@ -226,6 +228,7 @@ public class MetadataGenerator {
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Type {
             OAK((byte) 0),
@@ -235,7 +238,7 @@ public class MetadataGenerator {
             ACACIA((byte) 4),
             DARK_OAK((byte) 5);
 
-            byte value;
+            @Getter byte value;
         }
     }
 
@@ -243,7 +246,7 @@ public class MetadataGenerator {
     public static class EnderCrystal extends Entity {
 
         public static WrappedWatchableObject position(final BlockPosition position) {
-            return FACTORY.createWatchableOptional(6, Optional.of(position));
+            return FACTORY.createWatchableOptional(6, position);
         }
 
         public static WrappedWatchableObject showBottom(final boolean showBottom) {
@@ -330,7 +333,7 @@ public class MetadataGenerator {
         public static WrappedWatchableObject handStates(final HandState... handStates) {
             if (VERSION >= 9) {
                 var handStateBytes = (byte) 0;
-                for (val handState : handStates) handStateBytes |= handState.value;
+                for (val handState : handStates) handStateBytes |= handState.value();
 
                 return FACTORY.createWatchableObject(VERSION >= 14 ? 7 : 6, handStateBytes);
             }
@@ -361,7 +364,7 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject bedLocation(final @Nullable BlockPosition bedLocation) {
             // TODO check version & if nullability is correct
-            if (VERSION >= 14) return FACTORY.createWatchable(13, bedLocation);
+            if (VERSION >= 14) return FACTORY.createWatchableOptional(13, bedLocation);
             throw new UnsupportedOperationException("Versions prior to 1.14 don't support this metadata");
         }
 
@@ -373,13 +376,14 @@ public class MetadataGenerator {
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum HandState {
             HAND_ACTIVE((byte) 0x01),
             OFFHAND((byte) 0x02),
             RIPTIDE_SPIN_ATTACK((byte) 0x04);
 
-            byte value;
+            @Getter byte value;
         }
     }
 
@@ -403,7 +407,7 @@ public class MetadataGenerator {
         public static WrappedWatchableObject skinParts(final SkinPart... skinParts) {
             if (VERSION >= 9) {
                 var skinPartBytes = (byte) 0;
-                for (val skinPart : skinParts) skinPartBytes |= skinPart.value;
+                for (val skinPart : skinParts) skinPartBytes |= skinPart.value();
 
                 return FACTORY.createWatchableObject(13, skinPartBytes);
             }
@@ -413,41 +417,29 @@ public class MetadataGenerator {
         }
 
         public static WrappedWatchableObject mainHand(final MainHand mainHand) {
-            if (VERSION >= 9) return FACTORY.createWatchable(14, mainHand.value);
+            if (VERSION >= 9) return FACTORY.createWatchable(14, mainHand.value());
             throw new UnsupportedOperationException(
                     "Versions prior to 1.9 don't support this metadata"
             );
         }
 
-        public static WrappedWatchableObject leftShoulderEntity(final Object leftShoulderEntityNbtTagCompound) {
-            if (VERSION >=13) return FACTORY.createWatchableObject(15, leftShoulderEntityNbtTagCompound);
+        public static WrappedWatchableObject leftShoulderEntity(final NbtCompound leftShoulderEntity) {
+            if (VERSION >= 13) return FACTORY.createWatchable(15, leftShoulderEntity);
             throw new UnsupportedOperationException(
                     "Versions prior to 1.13 don't support this metadata"
             );
         }
 
-        public static WrappedWatchableObject leftShoulderEntity(final NbtCompound leftShoulderEntityNbt) {
-            if (VERSION >= 13) return leftShoulderEntity(leftShoulderEntityNbt.getHandle());
-            throw new UnsupportedOperationException(
-                    "Versions prior to 1.13 don't support this metadata"
-            );
-        }
-
-        public static WrappedWatchableObject rightShoulderEntity(final Object rightShoulderEntityNbtTagCompound) {
-            if (VERSION >= 13) return FACTORY.createWatchableNBTTagCompound(16, rightShoulderEntityNbtTagCompound);
-            throw new UnsupportedOperationException(
-                    "Versions prior to 1.13 don't support this metadata"
-            );
-        }
-
-        public static WrappedWatchableObject rightShoulderEntity(final NbtCompound rightShoulderEntityNbt) {
-            if (VERSION >= 13) return rightShoulderEntity(rightShoulderEntityNbt.getHandle());
+        public static WrappedWatchableObject rightShoulderEntity(final NbtCompound rightShoulderEntity) {
+            if (VERSION >= 13) return FACTORY.createWatchable(15, rightShoulderEntity);
             throw new UnsupportedOperationException(
                     "Versions prior to 1.13 don't support this metadata"
             );
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
+        @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum SkinPart {
             CAPE((byte) 0x01),
             JACKET((byte) 0x02),
@@ -458,15 +450,17 @@ public class MetadataGenerator {
             HAT((byte) 0x40),
             UNUSED((byte) 0x80);
 
-            private final byte value;
+            @Getter byte value;
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
+        @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum MainHand {
             LEFT((byte) 0),
             RIGHT((byte) 1);
 
-            private final byte value;
+            @Getter byte value;
         }
     }
 
@@ -476,7 +470,7 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject armorStandFlags(final Flag... flags) {
             var flagBytes = (byte) 0;
-            for (val flag : flags) flagBytes |= flag.value;
+            for (val flag : flags) flagBytes |= flag.value();
 
             return FACTORY.createWatchable(VERSION >= 14 ? 14 : VERSION >= 9 ? 11 : 10, flagBytes);
         }
@@ -506,6 +500,7 @@ public class MetadataGenerator {
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Flag {
             SMALL((byte) 0x01),
@@ -513,7 +508,7 @@ public class MetadataGenerator {
             NO_BASE_PLATE((byte) 0x08),
             MARKER((byte) 0x10);
 
-            byte value;
+            @Getter byte value;
         }
     }
 
@@ -523,7 +518,7 @@ public class MetadataGenerator {
         public static WrappedWatchableObject insentientFlags(final Flag... flags) {
             if (VERSION >= 9) {
                 var flagBytes = (byte) 0;
-                for (val flag : flags) flagBytes |= flag.value;
+                for (val flag : flags) flagBytes |= flag.value();
 
                 return FACTORY.createWatchable(11, flagBytes);
             }
@@ -534,12 +529,13 @@ public class MetadataGenerator {
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Flag {
             NO_AI((byte) 0x01),
             LEFT_HANDED((byte) 0x02);
 
-            byte value;
+            @Getter byte value;
         }
     }
 
@@ -551,17 +547,19 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject batFlags(final Flag... flags) {
             var flagBytes = (byte) 0;
-            for (val flag : flags) flagBytes |= flag.value;
+            for (val flag : flags) flagBytes |= flag.value();
 
             return FACTORY.createWatchable(VERSION >= 9 ? 12 : 16, flagBytes);
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
+        @SuppressWarnings("Singleton") // there just is single entry in this enum
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Flag {
             HANGING((byte) 0x01);
 
-            byte value;
+            @Getter byte value;
         }
     }
 
@@ -636,25 +634,26 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject horseFlags(final Flag... flags) {
             var flagBytes = (byte) 0;
-            for (val flag : flags) flagBytes |= flag.value;
+            for (val flag : flags) flagBytes |= flag.value();
 
             return FACTORY.createWatchable(13, flagBytes);
         }
 
-        public static WrappedWatchableObject owner(final UUID ownerUuid) {
-            if (VERSION >= 9) return FACTORY.createWatchableOptional(14, Optional.ofNullable(ownerUuid));
-            return FACTORY.createWatchable(21, Bukkit.getOfflinePlayer(ownerUuid).getName());
+        public static WrappedWatchableObject owner(final @Nullable UUID ownerUuid) {
+            if (VERSION >= 9) return FACTORY.createWatchableOptional(14, ownerUuid);
+            return FACTORY.createWatchable(21, Bukkit.getOfflinePlayer(ownerUuid).getName()); // FIXME
         }
 
         @Deprecated
         public static WrappedWatchableObject owner(final String ownerName) {
             if (VERSION >= 9) return FACTORY.createWatchableOptional(
-                    14, Optional.of(Bukkit.getOfflinePlayer(ownerName).getUniqueId())
+                    14, Bukkit.getOfflinePlayer(ownerName).getUniqueId()
             );
             return FACTORY.createWatchable(21, ownerName);
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Flag {
             TAME((byte) 0x02),
@@ -665,7 +664,8 @@ public class MetadataGenerator {
             REARING((byte) 0x20, (byte) 0x40),
             MOUTH_OPEN((byte) 0x40, (byte) 0x80);
 
-            byte value, legacyValue;
+            @Getter byte value;
+            @Getter byte legacyValue;
 
             Flag(final byte value) {
                 this(value, value);
@@ -681,7 +681,7 @@ public class MetadataGenerator {
             if (VERSION >= 9) throw new UnsupportedOperationException(
                     "Versions 1.9 and later don't support this metadata"
             );
-            return FACTORY.createWatchable(19, horseType.value);
+            return FACTORY.createWatchable(19, horseType.value());
         }
 
         public static WrappedWatchableObject variant(final int variant) {
@@ -689,7 +689,7 @@ public class MetadataGenerator {
         }
 
         public static WrappedWatchableObject armor(final Armor armor) {
-            return FACTORY.createWatchable(VERSION > 9 ? 16 : 22, armor.value);
+            return FACTORY.createWatchable(VERSION > 9 ? 16 : 22, armor.value());
         }
 
         public static WrappedWatchableObject forgeArmor(final Object nmsItem) {
@@ -704,6 +704,7 @@ public class MetadataGenerator {
 
         @Deprecated
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Type {
             HORSE((byte) 0),
@@ -712,10 +713,11 @@ public class MetadataGenerator {
             ZOMBIE((byte) 3),
             SKELETON((byte) 4);
 
-            byte value;
+            @Getter byte value;
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Armor {
             NONE(0),
@@ -723,10 +725,11 @@ public class MetadataGenerator {
             GOLD(2),
             DIAMOND(3);
 
-            int value;
+            @Getter int value;
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Flag {
             TAME((byte) 0x02),
@@ -737,7 +740,8 @@ public class MetadataGenerator {
             REARING((byte) 0x20, (byte) 0x40),
             MOUTH_OPEN((byte) 0x40, (byte) 0x80);
 
-            byte value, legacyValue;
+            @Getter byte value;
+            @Getter byte legacyValue;
 
             Flag(final byte value) {
                 this(value, value);
@@ -775,10 +779,11 @@ public class MetadataGenerator {
         }
 
         public static WrappedWatchableObject variant(final Variant variant) {
-            return FACTORY.createWatchable(18, variant.value);
+            return FACTORY.createWatchable(18, variant.value());
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Variant {
             CREAMY((byte) 0),
@@ -786,7 +791,7 @@ public class MetadataGenerator {
             BROWN((byte) 2),
             GRAY((byte) 3);
 
-            byte value;
+            @Getter byte value;
         }
     }
 
@@ -863,23 +868,24 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject tameableFlags(final Flag... flags) {
             var flagBytes = (byte) 0;
-            for (val flag : flags) flagBytes |= flag.value;
+            for (val flag : flags) flagBytes |= flag.value();
 
             return FACTORY.createWatchable(VERSION >= 9 ? 13 : 16, flagBytes);
         }
 
-        public static WrappedWatchableObject owner(final UUID ownerUuid) {
-            return FACTORY.createWatchableOptional(VERSION >= 9 ? 14 : 17, Optional.ofNullable(ownerUuid));
+        public static WrappedWatchableObject owner(final @Nullable UUID ownerUuid) {
+            return FACTORY.createWatchableOptional(VERSION >= 9 ? 14 : 17, ownerUuid);
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Flag {
             SITTING((byte) 0x01),
             ANGRY((byte) 0x02),
             TAMED((byte) 0x04);
 
-            byte value;
+            @Getter byte value;
         }
     }
 
@@ -887,10 +893,11 @@ public class MetadataGenerator {
     public static class Ocelot extends Tameable {
 
         public static WrappedWatchableObject variant(final Variant variant) {
-            return FACTORY.createWatchable(VERSION >= 9 ? 15 : 18, variant.value);
+            return FACTORY.createWatchable(VERSION >= 9 ? 15 : 18, variant.value());
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Variant {
             UNTAMED(0),
@@ -898,7 +905,7 @@ public class MetadataGenerator {
             TABBY(2),
             SIAMESE(3);
 
-            int value;
+            @Getter int value;
         }
     }
 
@@ -922,10 +929,11 @@ public class MetadataGenerator {
     public static class Parrot extends Tameable {
 
         public static WrappedWatchableObject variant(final Variant variant) {
-            return FACTORY.createWatchable(15, variant.value);
+            return FACTORY.createWatchable(15, variant.value());
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Variant {
             RED_BLUE(0),
@@ -934,7 +942,7 @@ public class MetadataGenerator {
             YELLOW_BLUE(3),
             SILVER(4);
 
-            int value;
+            @Getter int value;
         }
     }
 
@@ -945,10 +953,11 @@ public class MetadataGenerator {
             if (VERSION >= 9) throw new UnsupportedOperationException(
                     "1.9 and later don't support this metadata"
             );
-            return FACTORY.createWatchable(13, profession.value);
+            return FACTORY.createWatchable(13, profession.value());
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Profession {
             FARMER(0),
@@ -957,7 +966,7 @@ public class MetadataGenerator {
             BLACKSMITH(3),
             SILVER(4);
 
-            int value;
+            @Getter int value;
         }
     }
 
@@ -969,16 +978,19 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject ironGolemFlags(final Flag... flags) {
             var flagBytes = (byte) 0;
-            for (val flag : flags) flagBytes |= flag.value;
+            for (val flag : flags) flagBytes |= flag.value();
 
             return FACTORY.createWatchable(VERSION >= 9 ? 12 : 16, flagBytes);
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
+        @SuppressWarnings("Singleton") // there just is single entry in this enum
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Flag {
             PLAYER_CREATED((byte) 0x01);
 
+            @Getter
             byte value;
         }
     }
@@ -989,7 +1001,7 @@ public class MetadataGenerator {
         public static WrappedWatchableObject snowmanFlags(final Flag... flags) {
             if (VERSION >= 9) {
                 var flagBytes = (byte) 0;
-                for (val flag : flags) flagBytes |= flag.value;
+                for (val flag : flags) flagBytes |= flag.value();
 
                 return FACTORY.createWatchable(12, flagBytes);
             }
@@ -997,27 +1009,29 @@ public class MetadataGenerator {
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
+        @SuppressWarnings("Singleton") // there just is single entry in this enum
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Flag {
             HAS_PUMPKIN((byte) 0x10);
 
-            byte value;
+            @Getter byte value;
         }
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Shulker extends Golem {
 
-        public static WrappedWatchableObject facing(final Object enumDirection) {
+        public static WrappedWatchableObject facing(final @NonNull Object enumDirection) {
             return FACTORY.createWatchableEnumDirection(12, enumDirection);
         }
 
-        public static WrappedWatchableObject facing(final EnumWrappers.Direction direction) {
+        public static WrappedWatchableObject facing(final @NonNull EnumWrappers.Direction direction) {
             return FACTORY.createWatchable(12, direction);
         }
 
-        public static WrappedWatchableObject attachmentPosition(final BlockPosition attachmentPosition) {
-            return FACTORY.createWatchableOptional(13, Optional.ofNullable(attachmentPosition));
+        public static WrappedWatchableObject attachmentPosition(final @Nullable BlockPosition attachmentPosition) {
+            return FACTORY.createWatchableOptional(13, attachmentPosition);
         }
 
         public static WrappedWatchableObject shieldHeight(final byte shieldHeight) {
@@ -1037,17 +1051,19 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject blazeFlags(final Flag... flags) {
             var flagBytes = (byte) 0;
-            for (val flag : flags) flagBytes |= flag.value;
+            for (val flag : flags) flagBytes |= flag.value();
 
             return FACTORY.createWatchable(VERSION >= 9 ? 12 : 16, flagBytes);
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
+        @SuppressWarnings("Singleton") // there just is single entry in this enum
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Flag {
             ON_FIRE((byte) 0x01);
 
-            byte value;
+            @Getter byte value;
         }
     }
 
@@ -1055,7 +1071,7 @@ public class MetadataGenerator {
     public static class Creeper extends Monster {
 
         public static WrappedWatchableObject creeperState(final State state) {
-            return FACTORY.createWatchable(VERSION >= 9 ? 12 : 16, state.value);
+            return FACTORY.createWatchable(VERSION >= 9 ? 12 : 16, state.value());
         }
 
         public static WrappedWatchableObject charged(final boolean charged) {
@@ -1068,12 +1084,13 @@ public class MetadataGenerator {
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum State {
             IDLE(-1),
             FUSE(1);
 
-            int value;
+            @Getter int value;
         }
     }
 
@@ -1118,15 +1135,17 @@ public class MetadataGenerator {
     public static class Illager extends Monster {
 
         public static WrappedWatchableObject illagerState(final State state) {
-            return FACTORY.createWatchable(12, state.value);
+            return FACTORY.createWatchable(12, state.value());
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
+        @SuppressWarnings("Singleton") // there just is single entry in this enum
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum State {
             HAS_TARGET((byte) 0x01);
 
-            byte value;
+            @Getter byte value;
         }
     }
 
@@ -1137,10 +1156,11 @@ public class MetadataGenerator {
     public static class SpellcasterIllager extends Illager {
 
         public static WrappedWatchableObject spell(final Spell spell) {
-            return FACTORY.createWatchable(13, spell.value);
+            return FACTORY.createWatchable(13, spell.value());
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Spell {
             NONE((byte) 0),
@@ -1148,7 +1168,7 @@ public class MetadataGenerator {
             ATTACK((byte) 2),
             WOLOLO((byte) 3);
 
-            byte value;
+            @Getter byte value;
         }
     }
 
@@ -1163,17 +1183,19 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject vexFlags(final Flag... flags) {
             var flagBytes = (byte) 0;
-            for (val flag : flags) flagBytes |= flag.value;
+            for (val flag : flags) flagBytes |= flag.value();
 
             return FACTORY.createWatchable(12, flagBytes);
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
+        @SuppressWarnings("Singleton") // there just is single entry in this enum
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Flag {
             ATTACK_MODE((byte) 0x01);
 
-            byte value;
+            @Getter byte value;
         }
     }
 
@@ -1202,17 +1224,19 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject spiderFlags(final Flag... flags) {
             var flagBytes = (byte) 0;
-            for (val flag : flags) flagBytes |= flag.value;
+            for (val flag : flags) flagBytes |= flag.value();
 
             return FACTORY.createWatchable(VERSION >= 9 ? 12 : 16, flagBytes);
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
+        @SuppressWarnings("Singleton") // there just is single entry in this enum
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Flag {
             CLIMBING((byte) 0x01);
 
-            byte value;
+            @Getter byte value;
         }
     }
 
@@ -1291,7 +1315,7 @@ public class MetadataGenerator {
         }
 
         public static WrappedWatchableObject profession(final Villager.Profession profession) {
-            return FACTORY.createWatchable(17, profession.value);
+            return FACTORY.createWatchable(17, profession.value());
         }
     }
 
@@ -1332,11 +1356,12 @@ public class MetadataGenerator {
     public static class EnderDragon extends Monster {
 
         public static WrappedWatchableObject phase(final Phase phase) {
-            if (VERSION >= 9) return FACTORY.createWatchable(12, phase.value);
+            if (VERSION >= 9) return FACTORY.createWatchable(12, phase.value());
             throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
 
         @RequiredArgsConstructor
+        @Accessors(fluent = true)
         @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
         public enum Phase {
             CIRCLING(0),
@@ -1351,6 +1376,7 @@ public class MetadataGenerator {
             FLYDYING(9),
             NO_AI(10);
 
+            @Getter
             int value;
         }
     }
