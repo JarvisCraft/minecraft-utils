@@ -69,7 +69,7 @@ public class NmsUtil {
      * DataWatcher factory valid for current server version
      */
     private final DataWatcherFactory DATA_WATCHER_FACTORY = NMS_VERSION.getGeneration() < 9
-            ? new LegacyDataWatcherFactory() : new StandardDataWatcherFactory();
+            ? LegacyDataWatcherFactory.create() : StandardDataWatcherFactory.create();
 
     /**
      * Gets version of the current server.

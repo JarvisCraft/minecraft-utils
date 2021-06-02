@@ -1,11 +1,13 @@
 package ru.progrm_jarvis.minecraft.commons.nms.metadata;
 
-import com.comphenix.protocol.utility.MinecraftReflection;
-import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import lombok.AccessLevel;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.inventory.ItemStack;
+import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -13,234 +15,300 @@ import java.util.UUID;
 /**
  * DataWatcher factory for pre 1.9 versions.
  */
-public class LegacyDataWatcherFactory implements DataWatcherFactory {
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public final class LegacyDataWatcherFactory implements DataWatcherFactory {
 
-    @Override
-    public DataWatcherModifier modifier(WrappedDataWatcher watcher) {
-        return new DataWatcherModifier(watcher);
+    public static @NotNull DataWatcherFactory create() {
+        return new LegacyDataWatcherFactory();
     }
 
     @Override
-    public DataWatcherModifier modifier() {
-        return new DataWatcherModifier();
+    public @NotNull DataWatcherModifier modifier(final @NonNull WrappedDataWatcher watcher) {
+        return new LegacyDataWatcherModifier(watcher);
     }
 
     @Override
-    public WrappedWatchableObject createWatchable(final int id, final byte value) {
+    public @NotNull DataWatcherModifier modifier() {
+        return new LegacyDataWatcherModifier(new WrappedDataWatcher());
+    }
+
+    // Actual types
+
+    @Override
+    public @NotNull WrappedWatchableObject createWatchable(final int id, final byte value) {
         return new WrappedWatchableObject(id, value);
     }
 
     @Override
-    public WrappedWatchableObject createWatchable(final int id, final short value) {
+    public @NotNull WrappedWatchableObject createWatchable(final int id, final int value) {
         return new WrappedWatchableObject(id, value);
     }
 
     @Override
-    public WrappedWatchableObject createWatchable(final int id, final int value) {
+    public @NotNull WrappedWatchableObject createWatchable(final int id, final float value) {
         return new WrappedWatchableObject(id, value);
     }
 
     @Override
-    public WrappedWatchableObject createWatchable(final int id, final float value) {
+    public @NotNull WrappedWatchableObject createWatchable(final int id, final String value) {
         return new WrappedWatchableObject(id, value);
     }
 
     @Override
-    public WrappedWatchableObject createWatchable(final int id, final String value) {
+    public @NotNull WrappedWatchableObject createWatchableIChatBaseComponent(final int id,
+                                                                             final @NonNull Object value) {
         return new WrappedWatchableObject(id, value);
     }
 
     @Override
-    public WrappedWatchableObject createWatchableIChatBaseComponent(final int id, final Object value) {
+    public @NotNull WrappedWatchableObject createWatchableOptionalIChatBaseComponent(final int id,
+                                                                                     final @Nullable Object value) {
+        return new WrappedWatchableObject(id, Optional.ofNullable(value));
+    }
+
+    @Override
+    public @NotNull WrappedWatchableObject createWatchableItemStack(final int id, final Object value) {
         return new WrappedWatchableObject(id, value);
     }
 
     @Override
-    public WrappedWatchableObject createWatchableItemStack(final int id, final Object value) {
-        return new WrappedWatchableObject(id, value);
-    }
-
-    @Override
-    public WrappedWatchableObject createWatchableOptionalIBlockData(final int id, final Optional<Object> value) {
-        return new WrappedWatchableObject(id, value);
-    }
-
-    @Override
-    public WrappedWatchableObject createWatchable(final int id, final boolean value) {
+    public @NotNull WrappedWatchableObject createWatchable(final int id, final boolean value) {
         return createWatchable(id, value ? (byte) 0x1 : (byte) 0x0);
     }
 
     @Override
-    public WrappedWatchableObject createWatchableVector3f(final int id, final Object value) {
+    public @NotNull WrappedWatchableObject createWatchableVector3f(final int id, final @NonNull Object value) {
         return new WrappedWatchableObject(id, value);
     }
 
     @Override
-    public WrappedWatchableObject createWatchable(final int id, final BlockPosition value) {
+    public @NotNull WrappedWatchableObject createWatchableBlockPosition(final int id, final @NonNull Object value) {
         return new WrappedWatchableObject(id, value);
     }
 
     @Override
-    public WrappedWatchableObject createWatchableOptionalBlockPosition(final int id, final Optional<BlockPosition> value) {
+    public @NotNull WrappedWatchableObject createWatchableOptionalBlockPosition(final int id,
+                                                                                final @Nullable Object value) {
+        return new WrappedWatchableObject(id, Optional.ofNullable(value));
+    }
+
+    @Override
+    public @NotNull WrappedWatchableObject createWatchableEnumDirection(final int id, final @NonNull Object value) {
         return new WrappedWatchableObject(id, value);
     }
 
     @Override
-    public WrappedWatchableObject createWatchableEnumDirection(final int id, final Object value) {
+    public @NotNull WrappedWatchableObject createWatchableOptional(final int id, final @Nullable UUID value) {
+        return new WrappedWatchableObject(id, Optional.ofNullable(value));
+    }
+
+    @Override
+    public @NotNull WrappedWatchableObject createWatchableOptionalIBlockData(final int id,
+                                                                             final @Nullable Object value) {
+        return new WrappedWatchableObject(id, Optional.ofNullable(value));
+    }
+
+    @Override
+    public @NotNull WrappedWatchableObject createWatchableNBTTagCompound(final int id, final @NonNull Object value) {
         return new WrappedWatchableObject(id, value);
     }
 
     @Override
-    public WrappedWatchableObject createWatchableOptionalUUID(final int id, final Optional<UUID> value) {
+    public @NotNull WrappedWatchableObject createWatchableParticle(final int id, final @NonNull Object value) {
         return new WrappedWatchableObject(id, value);
     }
 
     @Override
-    public WrappedWatchableObject createWatchableNBTTagCompound(final int id, final Object value) {
+    public @NotNull WrappedWatchableObject createWatchableVillagerData(final int id, final @NonNull Object value) {
         return new WrappedWatchableObject(id, value);
     }
 
     @Override
-    public WrappedWatchableObject createWatchableObject(final int id, final Object value) {
+    public @NotNull WrappedWatchableObject createWatchableOptional(final int id, final @Nullable Integer value) {
+        return new WrappedWatchableObject(id, Optional.ofNullable(value));
+    }
+
+    @Override
+    public @NotNull WrappedWatchableObject createWatchableEntityPose(final int id, final @NonNull Object value) {
         return new WrappedWatchableObject(id, value);
     }
 
-    @RequiredArgsConstructor
-    private class DataWatcherModifier implements DataWatcherFactory.DataWatcherModifier {
+    // Unsupported types
 
-        private final WrappedDataWatcher dataWatcher;
+    @Override
+    public @NotNull WrappedWatchableObject createWatchable(final int id, final short value) {
+        return new WrappedWatchableObject(id, value);
+    }
 
-        private DataWatcherModifier() {
-            this(new WrappedDataWatcher());
-        }
+    @Override
+    public @NotNull WrappedWatchableObject createWatchableObject(final int id, final Object value) {
+        return new WrappedWatchableObject(id, value);
+    }
+
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+    private static final class LegacyDataWatcherModifier implements DataWatcherFactory.DataWatcherModifier {
+
+        @NotNull WrappedDataWatcher dataWatcher;
 
         @Override
-        @SuppressWarnings("MethodDoesntCallSuperMethod")
-        public DataWatcherFactory.DataWatcherModifier clone() {
-            return new DataWatcherModifier(dataWatcher.deepClone());
-        }
-
-        @Override
-        public WrappedDataWatcher dataWatcher() {
+        public @NotNull WrappedDataWatcher dataWatcher() {
             return dataWatcher;
         }
 
         @Override
-        public DataWatcherModifier set(final int id, final byte value) {
+        @SuppressWarnings("MethodDoesntCallSuperMethod")
+        public @NotNull DataWatcherFactory.DataWatcherModifier clone() {
+            return new LegacyDataWatcherModifier(dataWatcher.deepClone());
+        }
+
+        // Actual types
+
+        @Override
+        public @NotNull DataWatcherModifier set(final int id, final byte value) {
             dataWatcher.setObject(id, value);
 
             return this;
         }
 
         @Override
-        public DataWatcherFactory.DataWatcherModifier set(final int id, final short value) {
+        public @NotNull DataWatcherModifier set(final int id, final int value) {
             dataWatcher.setObject(id, value);
 
             return this;
         }
 
         @Override
-        public DataWatcherModifier set(final int id, final int value) {
+        public @NotNull DataWatcherModifier set(final int id, final float value) {
             dataWatcher.setObject(id, value);
 
             return this;
         }
 
         @Override
-        public DataWatcherModifier set(final int id, final float value) {
+        public @NotNull DataWatcherModifier set(final int id, final @NonNull String value) {
             dataWatcher.setObject(id, value);
 
             return this;
         }
 
         @Override
-        public DataWatcherModifier set(final int id, final String value) {
+        public @NotNull DataWatcherModifier setIChatBaseComponent(final int id, final @NonNull Object value) {
             dataWatcher.setObject(id, value);
 
             return this;
         }
 
         @Override
-        public DataWatcherModifier setIChatBaseComponent(final int id, final Object value) {
-            dataWatcher.setObject(id, value);
+        public @NotNull DataWatcherModifier setOptionalIChatBaseComponent(final int id, final @Nullable Object value) {
+            dataWatcher.setObject(id, Optional.ofNullable(value));
 
             return this;
         }
 
 
         @Override
-        public DataWatcherModifier setItemStack(final int id, final Object value) {
-            dataWatcher.setObject(id, value);
-
-            return this;
-        }
-
-        @Override
-        public DataWatcherModifier set(final int id, final ItemStack value) {
-            dataWatcher.setObject(id, MinecraftReflection.getMinecraftItemStack(value));
-
-            return this;
-        }
-
-        @Override
-        public DataWatcherModifier setOptionalIBlockData(final int id, final Optional<Object> value) {
+        public @NotNull DataWatcherModifier setItemStack(final int id, final @NonNull Object value) {
             dataWatcher.setObject(id, value);
 
             return this;
         }
 
         @Override
-        public DataWatcherModifier set(final int id, final boolean value) {
+        public @NotNull DataWatcherModifier set(final int id, final boolean value) {
             dataWatcher.setObject(id, value ? (byte) 0x1 : (byte) 0x0);
 
             return this;
         }
 
         @Override
-        public DataWatcherModifier setVector3f(final int id, final Object value) {
+        public @NotNull DataWatcherModifier setVector3f(final int id, final @NonNull Object value) {
             dataWatcher.setObject(id, value);
 
             return this;
         }
 
         @Override
-        public DataWatcherModifier set(final int id, final BlockPosition value) {
+        public @NotNull DataWatcherModifier setBlockPosition(final int id, final @NonNull Object value) {
             dataWatcher.setObject(id, value);
 
             return this;
         }
 
         @Override
-        public DataWatcherModifier setOptionalBlockPosition(final int id, final Optional<BlockPosition> value) {
+        public @NotNull DataWatcherModifier setOptionalBlockPosition(final int id, final @Nullable Object value) {
+            dataWatcher.setObject(id, Optional.ofNullable(value));
+
+            return this;
+        }
+
+        @Override
+        public @NotNull DataWatcherModifier setEnumDirection(final int id, final @NonNull Object value) {
             dataWatcher.setObject(id, value);
 
             return this;
         }
 
         @Override
-        public DataWatcherModifier setEnumDirection(final int id, final Object value) {
+        public @NotNull DataWatcherModifier setOptional(final int id, final @Nullable UUID value) {
+            dataWatcher.setObject(id, Optional.ofNullable(value));
+
+            return this;
+        }
+
+        @Override
+        public @NotNull DataWatcherModifier setOptionalIBlockData(final int id, final @Nullable Object value) {
+            dataWatcher.setObject(id, Optional.ofNullable(value));
+
+            return this;
+        }
+
+        @Override
+        public @NotNull DataWatcherModifier setNBTTagCompound(final int id, final @NonNull Object value) {
             dataWatcher.setObject(id, value);
 
             return this;
         }
 
         @Override
-        public DataWatcherModifier setNBTTagCompound(final int id, final Object value) {
+        public @NotNull DataWatcherModifier setParticle(final int id, final @NonNull Object value) {
             dataWatcher.setObject(id, value);
 
             return this;
         }
 
         @Override
-        public DataWatcherModifier setOptionalUUID(final int id, final Optional<UUID> value) {
+        public @NotNull DataWatcherModifier setVillagerData(final int id, final @NonNull Object value) {
             dataWatcher.setObject(id, value);
 
             return this;
         }
 
-        // should be used if and only if none of default #setOptionalBlockPosition(id, value) methods don't provide type given
         @Override
-        public DataWatcherModifier setObject(final int id, final Object value) {
+        public @NotNull DataWatcherModifier setOptional(final int id, final @Nullable Integer value) {
+            dataWatcher.setObject(id, Optional.ofNullable(value));
+
+            return this;
+        }
+
+        @Override
+        public @NotNull DataWatcherModifier setEntityPose(final int id, final @NonNull Object value) {
+            dataWatcher.setObject(id, value);
+
+            return this;
+        }
+
+        // Unsupported types
+
+        @Override
+        public @NotNull DataWatcherModifier set(final int id, final short value) {
+            dataWatcher.setObject(id, value);
+
+            return this;
+        }
+
+        @Override
+        public @NotNull DataWatcherModifier setObject(final int id, final Object value) {
             dataWatcher.setObject(id, value);
 
             return this;

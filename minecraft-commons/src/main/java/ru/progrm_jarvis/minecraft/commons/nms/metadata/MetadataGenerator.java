@@ -9,7 +9,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-import ru.progrm_jarvis.minecraft.commons.nms.Conversions;
+import ru.progrm_jarvis.minecraft.commons.nms.ProtocolLibConversions;
 import ru.progrm_jarvis.minecraft.commons.nms.NmsUtil;
 
 import java.util.Optional;
@@ -131,7 +131,7 @@ public class MetadataGenerator {
 
         public static WrappedWatchableObject singlePoint(final Particle particle) {
             // unsure (?)
-            return FACTORY.createWatchableObject(9, Conversions.toNms(particle));
+            return FACTORY.createWatchableObject(9, ProtocolLibConversions.toNms(particle));
         }
     }
 
@@ -160,7 +160,7 @@ public class MetadataGenerator {
         }
 
         public static WrappedWatchableObject shooter(final @Nullable UUID shooterUuid) {
-            if (VERSION >= 9) return FACTORY.createWatchableOptionalUUID(7, Optional.ofNullable(shooterUuid));
+            if (VERSION >= 9) return FACTORY.createWatchableOptional(7, Optional.ofNullable(shooterUuid));
             throw new UnsupportedOperationException("Versions prior to 1.9 don't support this metadata");
         }
 
@@ -243,7 +243,7 @@ public class MetadataGenerator {
     public static class EnderCrystal extends Entity {
 
         public static WrappedWatchableObject position(final BlockPosition position) {
-            return FACTORY.createWatchableOptionalBlockPosition(6, Optional.of(position));
+            return FACTORY.createWatchableOptional(6, Optional.of(position));
         }
 
         public static WrappedWatchableObject showBottom(final boolean showBottom) {
@@ -642,13 +642,13 @@ public class MetadataGenerator {
         }
 
         public static WrappedWatchableObject owner(final UUID ownerUuid) {
-            if (VERSION >= 9) return FACTORY.createWatchableOptionalUUID(14, Optional.ofNullable(ownerUuid));
+            if (VERSION >= 9) return FACTORY.createWatchableOptional(14, Optional.ofNullable(ownerUuid));
             return FACTORY.createWatchable(21, Bukkit.getOfflinePlayer(ownerUuid).getName());
         }
 
         @Deprecated
         public static WrappedWatchableObject owner(final String ownerName) {
-            if (VERSION >= 9) return FACTORY.createWatchableOptionalUUID(
+            if (VERSION >= 9) return FACTORY.createWatchableOptional(
                     14, Optional.of(Bukkit.getOfflinePlayer(ownerName).getUniqueId())
             );
             return FACTORY.createWatchable(21, ownerName);
@@ -869,7 +869,7 @@ public class MetadataGenerator {
         }
 
         public static WrappedWatchableObject owner(final UUID ownerUuid) {
-            return FACTORY.createWatchableOptionalUUID(VERSION >= 9 ? 14 : 17, Optional.ofNullable(ownerUuid));
+            return FACTORY.createWatchableOptional(VERSION >= 9 ? 14 : 17, Optional.ofNullable(ownerUuid));
         }
 
         @RequiredArgsConstructor
@@ -1017,7 +1017,7 @@ public class MetadataGenerator {
         }
 
         public static WrappedWatchableObject attachmentPosition(final BlockPosition attachmentPosition) {
-            return FACTORY.createWatchableOptionalBlockPosition(13, Optional.ofNullable(attachmentPosition));
+            return FACTORY.createWatchableOptional(13, Optional.ofNullable(attachmentPosition));
         }
 
         public static WrappedWatchableObject shieldHeight(final byte shieldHeight) {
