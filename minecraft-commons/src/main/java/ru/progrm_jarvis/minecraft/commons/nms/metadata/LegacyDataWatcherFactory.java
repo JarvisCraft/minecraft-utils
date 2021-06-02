@@ -26,22 +26,22 @@ public class LegacyDataWatcherFactory implements DataWatcherFactory {
     }
 
     @Override
-    public WrappedWatchableObject createWatchable(final int id, final Byte value) {
+    public WrappedWatchableObject createWatchable(final int id, final byte value) {
         return new WrappedWatchableObject(id, value);
     }
 
     @Override
-    public WrappedWatchableObject createWatchable(final int id, final Short value) {
+    public WrappedWatchableObject createWatchable(final int id, final short value) {
         return new WrappedWatchableObject(id, value);
     }
 
     @Override
-    public WrappedWatchableObject createWatchable(final int id, final Integer value) {
+    public WrappedWatchableObject createWatchable(final int id, final int value) {
         return new WrappedWatchableObject(id, value);
     }
 
     @Override
-    public WrappedWatchableObject createWatchable(final int id, final Float value) {
+    public WrappedWatchableObject createWatchable(final int id, final float value) {
         return new WrappedWatchableObject(id, value);
     }
 
@@ -66,7 +66,7 @@ public class LegacyDataWatcherFactory implements DataWatcherFactory {
     }
 
     @Override
-    public WrappedWatchableObject createWatchable(final int id, final Boolean value) {
+    public WrappedWatchableObject createWatchable(final int id, final boolean value) {
         return createWatchable(id, value ? (byte) 0x1 : (byte) 0x0);
     }
 
@@ -126,28 +126,28 @@ public class LegacyDataWatcherFactory implements DataWatcherFactory {
         }
 
         @Override
-        public DataWatcherModifier set(final int id, final Byte value) {
+        public DataWatcherModifier set(final int id, final byte value) {
             dataWatcher.setObject(id, value);
 
             return this;
         }
 
         @Override
-        public DataWatcherFactory.DataWatcherModifier set(final int id, final Short value) {
+        public DataWatcherFactory.DataWatcherModifier set(final int id, final short value) {
             dataWatcher.setObject(id, value);
 
             return this;
         }
 
         @Override
-        public DataWatcherModifier set(final int id, final Integer value) {
+        public DataWatcherModifier set(final int id, final int value) {
             dataWatcher.setObject(id, value);
 
             return this;
         }
 
         @Override
-        public DataWatcherModifier set(final int id, final Float value) {
+        public DataWatcherModifier set(final int id, final float value) {
             dataWatcher.setObject(id, value);
 
             return this;
@@ -190,7 +190,7 @@ public class LegacyDataWatcherFactory implements DataWatcherFactory {
         }
 
         @Override
-        public DataWatcherModifier set(final int id, final Boolean value) {
+        public DataWatcherModifier set(final int id, final boolean value) {
             dataWatcher.setObject(id, value ? (byte) 0x1 : (byte) 0x0);
 
             return this;

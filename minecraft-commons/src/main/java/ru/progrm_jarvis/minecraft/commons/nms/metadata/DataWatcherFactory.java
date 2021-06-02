@@ -13,40 +13,40 @@ import java.util.UUID;
 public interface DataWatcherFactory {
 
     /**
-     * Creates watchable object for {@link Byte} value at index specified.
+     * Creates watchable object for {@code byte} value at index specified.
      *
      * @param id id of a value
      * @param value value
      * @return created watchable object
      */
-    WrappedWatchableObject createWatchable(int id, Byte value);
+    WrappedWatchableObject createWatchable(int id, byte value);
 
     /**
-     * Creates watchable object for {@link Short} value at index specified.
+     * Creates watchable object for {@code short} value at index specified.
      *
      * @param id id of a value
      * @param value value
      * @return created watchable object
      */
-    WrappedWatchableObject createWatchable(int id, Short value);
+    WrappedWatchableObject createWatchable(int id, short value);
 
     /**
-     * Creates watchable object for {@link Integer} value at index specified.
+     * Creates watchable object for {@code int} value at index specified.
      *
      * @param id id of a value
      * @param value value
      * @return created watchable object
      */
-    WrappedWatchableObject createWatchable(int id, Integer value);
+    WrappedWatchableObject createWatchable(int id, int value);
 
     /**
-     * Creates watchable object for {@link Float} value at index specified.
+     * Creates watchable object for {@code float} value at index specified.
      *
      * @param id id of a value
      * @param value value
      * @return created watchable object
      */
-    WrappedWatchableObject createWatchable(int id, Float value);
+    WrappedWatchableObject createWatchable(int id, float value);
 
     /**
      * Creates watchable object for {@link String} value at index specified.
@@ -107,13 +107,13 @@ public interface DataWatcherFactory {
     WrappedWatchableObject createWatchableOptionalIBlockData(int id, Optional<Object> value);
 
     /**
-     * Creates watchable object for {@link Boolean} value at index specified.
+     * Creates watchable object for {@code boolean} value at index specified.
      *
      * @param id id of a value
      * @param value value
      * @return created watchable object
      */
-    WrappedWatchableObject createWatchable(int id, Boolean value);
+    WrappedWatchableObject createWatchable(int id, boolean value);
 
     /**
      * Creates watchable object for {@code Vector3f} value at index specified.
@@ -228,40 +228,40 @@ public interface DataWatcherFactory {
         DataWatcherModifier clone();
 
         /**
-         * Sets DataWatcher's modifier to specified {@link Byte} value at specified index.
+         * Sets DataWatcher's modifier to specified {@code byte} value at specified index.
          *
          * @param id id of a value
          * @param value value to set at id
          * @return this DataWatcher builder
          */
-        DataWatcherModifier set(int id, Byte value);
+        DataWatcherModifier set(int id, byte value);
 
         /**
-         * Sets DataWatcher's modifier to specified {@link Short} value at specified index.
+         * Sets DataWatcher's modifier to specified {@code short} value at specified index.
          *
          * @param id id of a value
          * @param value value to set at id
          * @return this DataWatcher builder
          */
-        DataWatcherModifier set(int id, Short value);
+        DataWatcherModifier set(int id, short value);
 
         /**
-         * Sets DataWatcher's modifier to specified {@link Integer} value at specified index.
+         * Sets DataWatcher's modifier to specified {@code int} value at specified index.
          *
          * @param id id of a value
          * @param value value to set at id
          * @return this DataWatcher builder
          */
-        DataWatcherModifier set(int id, Integer value);
+        DataWatcherModifier set(int id, int value);
 
         /**
-         * Sets DataWatcher's modifier to specified {@link Float} value at specified index.
+         * Sets DataWatcher's modifier to specified {@code float} value at specified index.
          *
          * @param id id of a value
          * @param value value to set at id
          * @return this DataWatcher builder
          */
-        DataWatcherModifier set(int id, Float value);
+        DataWatcherModifier set(int id, float value);
 
         /**
          * Sets DataWatcher's modifier to specified {@link String} value at specified index.
@@ -322,13 +322,13 @@ public interface DataWatcherFactory {
         DataWatcherModifier setOptionalIBlockData(int id, Optional<Object> value);
 
         /**
-         * Sets DataWatcher's modifier to specified {@link Boolean} value at specified index.
+         * Sets DataWatcher's modifier to specified {@code boolean} value at specified index.
          *
          * @param id id of a value
          * @param value value to set at id
          * @return this DataWatcher builder
          */
-        DataWatcherModifier set(int id, Boolean value);
+        DataWatcherModifier set(int id, boolean value);
 
         /**
          * Sets DataWatcher's modifier to specified {@code Vector3f} value at specified index.
