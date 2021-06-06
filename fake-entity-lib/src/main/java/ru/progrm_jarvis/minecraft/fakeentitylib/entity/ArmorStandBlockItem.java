@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.progrm_jarvis.javacommons.ownership.annotation.Own;
 import ru.progrm_jarvis.minecraft.commons.nms.NmsUtil;
-import ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand;
+import ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand.ArmorStandFlag;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +25,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.Math.*;
+import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand.ArmorStandFlag.*;
 import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand.armorStandFlags;
 import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.ArmorStand.headRotation;
 import static ru.progrm_jarvis.minecraft.commons.nms.metadata.MetadataGenerator.Entity.*;
@@ -180,17 +181,17 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
         metadata.add(air(300));
         metadata.add(noGravity(true));
         if (marker) {
-            metadata.add(entityFlags(Flag.INVISIBLE, Flag.ON_FIRE));
-            metadata.add(armorStandFlags(small ? new ArmorStand.Flag[]{
-                    ArmorStand.Flag.SMALL, ArmorStand.Flag.NO_BASE_PLATE, ArmorStand.Flag.MARKER
-            } : new ArmorStand.Flag[]{
-                    ArmorStand.Flag.MARKER, ArmorStand.Flag.NO_BASE_PLATE
+            metadata.add(entityFlags(EntityFlag.INVISIBLE, EntityFlag.ON_FIRE));
+            metadata.add(armorStandFlags(small ? new ArmorStandFlag[]{
+                    SMALL, NO_BASE_PLATE, MARKER
+            } : new ArmorStandFlag[]{
+                    MARKER, NO_BASE_PLATE
             }));
         } else {
-            metadata.add(entityFlags(Flag.INVISIBLE));
+            metadata.add(entityFlags(EntityFlag.INVISIBLE));
             metadata.add(armorStandFlags(small
-                    ? new ArmorStand.Flag[]{ArmorStand.Flag.SMALL, ArmorStand.Flag.NO_BASE_PLATE}
-                    : new ArmorStand.Flag[]{ArmorStand.Flag.NO_BASE_PLATE}
+                    ? new ArmorStandFlag[]{SMALL, NO_BASE_PLATE}
+                    : new ArmorStandFlag[]{NO_BASE_PLATE}
             ));
         }
         if (rotation != null) metadata.add(headRotation(rotation));
