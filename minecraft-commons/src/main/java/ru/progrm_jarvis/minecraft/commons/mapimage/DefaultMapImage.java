@@ -92,6 +92,7 @@ public class DefaultMapImage implements MapImage {
      *
      * @param image from which to create the map image
      * @param resize whether the image should be resized or cut to fit map image dimensions
+     * @param displayMode display mode of the image
      * @return created map image
      */
     public static MapImage from(final @NonNull BufferedImage image, final boolean resize,

@@ -21,7 +21,8 @@ import java.util.UUID;
  * <p>Editor for Metadata of {@link WrappedWatchableObject} providing classes
  * containing static methods for developer-friendly object creation.</p>
  *
- * <p>Version specifications:<ul>
+ * <p>Version specifications:</p>
+ * <ul>
  * <li><a href="https://wiki.vg/index.php?title=Entity_metadata&oldid=16539">1.16</a></li>
  * <li><a href="https://wiki.vg/index.php?title=Entity_metadata&oldid=15885">1.15</a></li>
  * <li><a href="https://wiki.vg/index.php?title=Entity_metadata&oldid=15063">1.14</a></li>
@@ -31,7 +32,7 @@ import java.util.UUID;
  * <li><a href="https://wiki.vg/index.php?title=Entity_metadata&oldid=8241">1.10</a></li>
  * <li><a href="https://wiki.vg/index.php?title=Entity_metadata&oldid=7955">1.9</a></li>
  * <li><a href="https://wiki.vg/index.php?title=Entity_metadata&oldid=6816">1.8</a></li><!-- May be wrong -->
- * </ul></p>
+ * </ul>
  */
 @UtilityClass
 @SuppressWarnings({
