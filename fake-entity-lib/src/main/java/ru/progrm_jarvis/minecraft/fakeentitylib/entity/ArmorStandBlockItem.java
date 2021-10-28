@@ -40,7 +40,7 @@ public class ArmorStandBlockItem extends SimpleLivingFakeEntity {
     protected static final double PIXEL_SIZE = 0x1p-4,
             HALF_PIXEL_SIZE = 0x1p-5,
             ARMOR_STAND_BODY_HEIGHT = (16 + 8) * PIXEL_SIZE,
-            ARMOR_STAND_HEAD_ROOT_OFFSET = ARMOR_STAND_BODY_HEIGHT - HALF_PIXEL_SIZE,
+            ARMOR_STAND_HEAD_ROOT_OFFSET = ARMOR_STAND_BODY_HEIGHT - PIXEL_SIZE - HALF_PIXEL_SIZE,
             ITEM_CENTER_Y_OFFSET = 3 * PIXEL_SIZE + HALF_PIXEL_SIZE;
     // offset of the item center from the rotation center
 
