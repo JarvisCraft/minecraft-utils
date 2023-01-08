@@ -5,36 +5,32 @@ on:
     tags: [ v* ]
 
 jobs:
-  deploy:
+  deploy-release:
+    name: Deploy release
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3.3.0
 
-      - name: Set up JDK 8
-        uses: actions/setup-java@v3
+      - name: Set up Java 8 & Deployment credentials
+        uses: actions/setup-java@v3.9.0
         with:
-          distribution: 'adopt'
+          distribution: 'zulu'
           java-version: '8'
+          cache: 'maven'
+          server-id: 'sonatype-ossrh'
+          server-username: SONATYPE_OSSRH_DEPLOYER
+          server-password: SONATYPE_OSSRH_TOKEN
+          gpg-private-key: ${{ secrets.CODE_SIGNING_GPG_PRIVATE_KEY }}
+          gpg-passphrase: CODE_SIGNING_GPG_KEY_PASSPHRASE
 
-      - name: Cache Maven local repository
-        uses: actions/cache@v3.2.2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
+      - uses: jactions/maven-version@v1.2.0
+        id: get_version
 
-      - name: Import GPG signing key
-        run: |
-          echo -e "${{ secrets.CODE_SIGNING_GPG_PRIVATE_KEY }}" | gpg --batch --import
-          gpg --list-secret-keys --keyid-format LONG
-
-      - name: Deploy snapshot
+      - name: Deploy release
+        if: ${{ !endsWith(steps.get_version.outputs.version, '-SNAPSHOT') }}
+        run: mvn deploy -B -P build-extras,sign-artifacts,automatic-central-release
         env:
-          CODE_SIGNING_GPG_KEY_ID: ${{ secrets.CODE_SIGNING_GPG_KEY_ID }}
-          CODE_SIGNING_GPG_KEY_PASSPHRASE: ${{ secrets.CODE_SIGNING_GPG_KEY_PASSPHRASE }}
           SONATYPE_OSSRH_DEPLOYER: ${{ secrets.SONATYPE_OSSRH_DEPLOYER }}
           SONATYPE_OSSRH_TOKEN: ${{ secrets.SONATYPE_OSSRH_TOKEN }}
-          GITHUB_PACKAGE_REGISTRY_DEPLOYER: JarvisCraft
-          GITHUB_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./.github-actions/scripts/maven_deploy.sh release
+          CODE_SIGNING_GPG_KEY_PASSPHRASE: ${{ secrets.CODE_SIGNING_GPG_KEY_PASSPHRASE }}
